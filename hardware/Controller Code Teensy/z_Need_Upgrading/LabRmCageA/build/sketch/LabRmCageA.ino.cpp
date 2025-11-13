@@ -1,0 +1,222 @@
+#include <Arduino.h>
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageA/LabRmCageA.ino"
+// Lab Mechanical SubPanel
+// The Cage Teensy A
+
+#include <ParagonMQTT.h>
+#include <AccelStepper.h>
+
+const char *deviceID = "LabRmCageA";
+const char *roomID = "Clockwork";
+const byte POWERLED = 13;
+
+// Door One
+const byte D1SENSOROPEN_A = 10;
+const byte D1SENSOROPEN_B = 12;
+const byte D1SENSORCLOSED_A = 9;
+const byte D1SENSORCLOSED_B = 11;
+const byte D1ENABLE = 35;
+int D1OpenA = 0;
+int D1OpenB = 0;
+int D1ClosedA = 0;
+int D1ClosedB = 0;
+const byte CANISTERCHARGING = 41;
+
+int D1Direction = 0;
+// Pul+, Pul-, Dir+, Dir-
+AccelStepper D1stepperOne(AccelStepper::FULL4WIRE, 24, 25, 26, 27);
+AccelStepper D1stepperTwo(AccelStepper::FULL4WIRE, 28, 29, 30, 31);
+
+// Door Two
+const byte D2SENSOROPEN_A = 3;
+const byte D2SENSOROPEN_B = 2;
+const byte D2SENSORCLOSED_A = 1;
+const byte D2SENSORCLOSED_B = 0;
+const byte D2ENABLE = 36;
+int D2OpenA = 0;
+int D2OpenB = 0;
+int D2ClosedA = 0;
+int D2ClosedB = 0;
+int D2Direction = 0;
+// Pul+, Pul-, Dir+, Dir-
+AccelStepper D2stepperOne(AccelStepper::FULL4WIRE, 4, 5, 6, 7);
+
+char sensors[50];
+String readString;
+
+#line 45 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageA/LabRmCageA.ino"
+void setup();
+#line 89 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageA/LabRmCageA.ino"
+void loop();
+#line 166 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageA/LabRmCageA.ino"
+void cageDoors(const char *value);
+#line 190 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageA/LabRmCageA.ino"
+void canisterCharger(const char *value);
+#line 45 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageA/LabRmCageA.ino"
+void setup()
+{
+  Serial.begin(115200);
+  pinMode(POWERLED, OUTPUT);
+  digitalWrite(POWERLED, HIGH); // Power LED ON
+
+  // Door 1
+  pinMode(D1SENSOROPEN_A, INPUT_PULLDOWN);
+  pinMode(D1SENSOROPEN_B, INPUT_PULLDOWN);
+  pinMode(D1SENSORCLOSED_A, INPUT_PULLDOWN);
+  pinMode(D1SENSORCLOSED_B, INPUT_PULLDOWN);
+  pinMode(D1ENABLE, OUTPUT);
+  digitalWrite(D1ENABLE, LOW);
+
+  // Door 2
+  pinMode(D2SENSOROPEN_A, INPUT_PULLDOWN);
+  pinMode(D2SENSOROPEN_B, INPUT_PULLDOWN);
+  pinMode(D2SENSORCLOSED_A, INPUT_PULLDOWN);
+  pinMode(D2SENSORCLOSED_B, INPUT_PULLDOWN);
+  pinMode(D2ENABLE, OUTPUT);
+  digitalWrite(D2ENABLE, LOW);
+
+  // Canister Charging
+  pinMode(CANISTERCHARGING, OUTPUT);
+  digitalWrite(CANISTERCHARGING, LOW);
+
+  registerAction("cageDoors", cageDoors);
+  registerAction("canisterCharger", canisterCharger);
+
+  networkSetup();
+  mqttSetup();
+  delay(2000);
+
+  D1stepperOne.setMaxSpeed(500);
+  D1stepperOne.setAcceleration(100);
+  D1stepperTwo.setMaxSpeed(500);
+  D1stepperTwo.setAcceleration(100);
+  D2stepperOne.setMaxSpeed(500);
+  D2stepperOne.setAcceleration(100);
+}
+
+unsigned long lastStatusTime = 0;
+const unsigned long statusInterval = 5000; // ms
+
+void loop()
+{
+  sendDataMQTT();
+
+  // Debug and Test Code
+  while (Serial.available())
+  {
+    delay(2); // delay to allow byte to arrive in input buffer
+    char c = Serial.read();
+    readString += c;
+  }
+
+  if (readString.length() > 0)
+  {
+    Serial.println(readString.toInt());
+    // D1Direction = readString.toInt();
+    D2Direction = readString.toInt();
+    readString = "";
+  }
+  // Door 1
+  D1OpenA = digitalRead(D1SENSOROPEN_A);
+  D1OpenB = digitalRead(D1SENSOROPEN_B);
+  D1ClosedA = digitalRead(D1SENSORCLOSED_A);
+  D1ClosedB = digitalRead(D1SENSORCLOSED_B);
+
+  // Door 2
+  D2OpenA = digitalRead(D2SENSOROPEN_A);
+  D2OpenB = digitalRead(D2SENSOROPEN_B);
+  D2ClosedA = digitalRead(D2SENSORCLOSED_A);
+  D2ClosedB = digitalRead(D2SENSORCLOSED_B);
+
+  // Door 1 logic
+  if (D1Direction == 1 && D1OpenA != 0 && D1OpenB != 0)
+  {
+    D1stepperOne.setSpeed(-400);
+    D1stepperTwo.setSpeed(400);
+  }
+  else if (D1Direction == 2 && D1ClosedA != 0 && D1ClosedB != 0)
+  {
+    D1stepperOne.setSpeed(400);
+    D1stepperTwo.setSpeed(-400);
+  }
+  else
+  {
+    D1stepperOne.setSpeed(0);
+    D1stepperTwo.setSpeed(0);
+  }
+
+  // Door 2 logic
+  if (D2Direction == 1 && D2OpenA != 0 && D2OpenB != 0)
+  {
+    D2stepperOne.setSpeed(400);
+  }
+  else if (D2Direction == 2 && D2ClosedA != 0 && D2ClosedB != 0)
+  {
+    D2stepperOne.setSpeed(-400);
+  }
+  else
+  {
+    D2stepperOne.setSpeed(0);
+  }
+
+  // Always run steppers for smooth motion
+  D1stepperOne.runSpeed();
+  D1stepperTwo.runSpeed();
+  D2stepperOne.runSpeed();
+
+  // Only print status every statusInterval ms
+  unsigned long now = millis();
+  if (now - lastStatusTime > statusInterval)
+  {
+    sprintf(sensors, "%d,%d,%d,%d -- %d,%d,%d,%d", D1OpenA, D1OpenB, D1ClosedA, D1ClosedB, D2OpenA, D2OpenB, D2ClosedA, D2ClosedB);
+    Serial.println(sensors);
+    lastStatusTime = now;
+  }
+}
+
+void cageDoors(const char *value)
+{
+  Serial.println("cageDoors Function");
+  Serial.print("cageDoorValue: ");
+  Serial.println(value);
+
+  if (strcmp(value, "open") == 0)
+  {
+    D1Direction = 1; // Set Door 1 direction to open
+    D2Direction = 1; // Set Door 2 direction to open
+    Serial.println("Opening Doors");
+  }
+  else if (strcmp(value, "close") == 0)
+  {
+    D1Direction = 2; // Set Door 1 direction to close
+    D2Direction = 2; // Set Door 2 direction to close
+    Serial.println("Closing Doors");
+  }
+  else
+  {
+    Serial.println("Invalid Command - use 'open' or 'close'");
+  }
+}
+
+void canisterCharger(const char *value)
+{
+  Serial.println("canisterCharger Function");
+  Serial.print("chargerValue: ");
+  Serial.println(value);
+
+  if (strcmp(value, "on") == 0)
+  {
+    digitalWrite(CANISTERCHARGING, HIGH);
+    Serial.println("Canister Charger ON");
+  }
+  else if (strcmp(value, "off") == 0)
+  {
+    digitalWrite(CANISTERCHARGING, LOW);
+    Serial.println("Canister Charger OFF");
+  }
+  else
+  {
+    Serial.println("Invalid Canister Charger Command - use 'on' or 'off'");
+  }
+}
+

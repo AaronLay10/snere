@@ -1,0 +1,28 @@
+/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Syringe/build/libraries/FastLED/fl/hsv16.cpp.o: \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/hsv16.cpp \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/hsv16.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/stdint.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/int.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/int.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/arm/int.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/crgb.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/chsv.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/hsv.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/namespace.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/color.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/lib8tion/types.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/force_inline.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/type_traits.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/move.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/hsv2rgb.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/ease.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fastled_progmem.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/null_progmem.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/math.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/clamp.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/map_range.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/math_macros.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/compiler_control.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/geometry.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/lib8tion/intmap.h \
+ /Users/aaron/Documents/Arduino/libraries/FastLED/src/lib8tion/lib8static.h

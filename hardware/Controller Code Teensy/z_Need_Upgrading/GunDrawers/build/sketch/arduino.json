@@ -1,0 +1,7 @@
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/GunDrawers/arduino.json"
+{
+  "sketch": "GunDrawers.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

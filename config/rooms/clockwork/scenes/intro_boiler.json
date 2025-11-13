@@ -1,0 +1,27 @@
+{
+  "id": "intro_boiler",
+  "name": "Scene 1 - Intro & Boiler",
+  "type": "scene",
+  "roomId": "clockwork",
+  "description": "Introduction to the room by Finneas Sterling and then Boiler Room Puzzles.",
+  "devices": [
+    "tv_power"
+  ],
+  "timeline": [
+    {
+      "delayMs": 0,
+      "action": "powerTV_on",
+      "target": "tv_power"
+    }
+  ],
+  "estimatedDurationMs": 0,
+  "prerequisites": [],
+  "metadata": {
+    "exported_from_ui": true,
+    "exported_at": "2025-10-25T00:09:10.534Z",
+    "original_database_room_id": "clockwork-corridor",
+    "scene_number": 1,
+    "slug": "intro-boiler",
+    "puzzle_files": []
+  }
+}

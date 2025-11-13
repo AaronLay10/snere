@@ -1,0 +1,5 @@
+{
+    "configuration": "teensy41",
+    "board": "teensy:avr:teensy41",
+    "sketch": "StudyD.ino"
+}

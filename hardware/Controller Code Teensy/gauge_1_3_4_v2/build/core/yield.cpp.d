@@ -1,0 +1,4 @@
+/opt/sentient/hardware/Controller\ Code\ Teensy/gauge_1_3_4_v2/build/core/yield.cpp.o: \
+ /home/techadmin/.arduino15/packages/teensy/hardware/avr/1.59.0/cores/teensy4/yield.cpp \
+ /home/techadmin/.arduino15/packages/teensy/hardware/avr/1.59.0/cores/teensy4/EventResponder.h \
+ /opt/sentient/hardware/Controller\ Code\ Teensy/gauge_1_3_4_v2/build/pch/Arduino.h

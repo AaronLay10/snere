@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-neural-bg text-gray-100 font-sans antialiased;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(0, 171, 255, 0.05) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(115, 0, 230, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  * {
+    @apply border-neural-border;
+  }
+}
+
+@layer components {
+  /* Neural Button Styles */
+  .btn-neural {
+    @apply px-6 py-3 bg-neural-primary-500 text-white rounded-lg font-semibold;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:bg-neural-primary-400 hover:shadow-neural;
+    @apply active:scale-95;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-neural-outline {
+    @apply px-6 py-3 border-2 border-neural-primary-500 text-neural-primary-500 rounded-lg font-semibold;
+    @apply transition-all duration-300 ease-out;
+    @apply hover:bg-neural-primary-500 hover:text-white hover:shadow-neural;
+    @apply active:scale-95;
+  }
+
+  .btn-neural-ghost {
+    @apply px-6 py-3 text-neural-primary-500 rounded-lg font-semibold;
+    @apply transition-all duration-200;
+    @apply hover:bg-neural-primary-500/10;
+    @apply active:scale-95;
+  }
+
+  /* Neural Card Styles */
+  .card-neural {
+    @apply bg-neural-card border border-neural-border rounded-xl p-6;
+    @apply backdrop-blur-sm;
+    @apply transition-all duration-300;
+    @apply hover:border-neural-primary-500/50 hover:shadow-neural;
+  }
+
+  .card-neural-glow {
+    @apply card-neural;
+    @apply shadow-neural animate-pulse-glow;
+  }
+
+  /* Neural Input Styles */
+  .input-neural {
+    @apply w-full px-4 py-3 bg-neural-surface border border-neural-border rounded-lg;
+    @apply text-gray-100 placeholder-gray-500;
+    @apply focus:outline-none focus:border-neural-primary-500 focus:ring-2 focus:ring-neural-primary-500/20;
+    @apply transition-all duration-200;
+  }
+
+  /* Neural Glow Text */
+  .text-neural-glow {
+    @apply text-neural-primary-500;
+    text-shadow: 0 0 20px rgba(0, 171, 255, 0.5);
+  }
+
+  .text-neural-purple-glow {
+    @apply text-neural-accent-500;
+    text-shadow: 0 0 20px rgba(115, 0, 230, 0.5);
+  }
+
+  /* Neural Grid Background */
+  .bg-neural-grid {
+    background-image:
+      linear-gradient(rgba(0, 171, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 171, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+
+  /* Pulse Animation */
+  .pulse-ring {
+    @apply absolute rounded-full bg-neural-primary-500/20;
+    animation: pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulseRing {
+    0% {
+      transform: scale(0.8);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1.5);
+      opacity: 0;
+    }
+  }
+
+  /* Scrollbar Styling */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-neural-surface;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-neural-primary-500/50 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-neural-primary-500;
+  }
+}

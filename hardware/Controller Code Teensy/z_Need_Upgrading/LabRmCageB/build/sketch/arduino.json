@@ -1,0 +1,7 @@
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/LabRmCageB/arduino.json"
+{
+  "sketch": "LabRmCageB.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

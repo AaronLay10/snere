@@ -1,0 +1,103 @@
+# Prometheus Configuration
+# Sentient Engine Monitoring
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'sentient-production'
+    environment: 'production'
+
+# Alertmanager configuration (optional)
+# alerting:
+#   alertmanagers:
+#     - static_configs:
+#         - targets:
+#           - alertmanager:9093
+
+# Load alerting rules
+rule_files:
+  - '/etc/prometheus/alerts/*.yml'
+
+# Scrape configurations
+scrape_configs:
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+        labels:
+          service: 'prometheus'
+
+  # Sentient API instances
+  - job_name: 'sentient-api'
+    static_configs:
+      - targets:
+          - 'sentient-api-1:3000'
+          - 'sentient-api-2:3000'
+        labels:
+          service: 'sentient-api'
+          layer: 'backend'
+
+  # Scene Executor
+  - job_name: 'scene-executor'
+    static_configs:
+      - targets: ['scene-executor:3004']
+        labels:
+          service: 'scene-executor'
+          layer: 'backend'
+
+  # Device Monitor
+  - job_name: 'device-monitor'
+    static_configs:
+      - targets: ['device-monitor:3003']
+        labels:
+          service: 'device-monitor'
+          layer: 'backend'
+
+  # Frontend Web
+  - job_name: 'sentient-web'
+    static_configs:
+      - targets: ['sentient-web:3002']
+        labels:
+          service: 'sentient-web'
+          layer: 'frontend'
+
+  # PostgreSQL (if using postgres_exporter)
+  # - job_name: 'postgres'
+  #   static_configs:
+  #     - targets: ['postgres-exporter:9187']
+  #       labels:
+  #         service: 'postgres'
+  #         layer: 'database'
+
+  # MQTT Mosquitto (if using mosquitto_exporter)
+  # - job_name: 'mosquitto'
+  #   static_configs:
+  #     - targets: ['mosquitto-exporter:9234']
+  #       labels:
+  #         service: 'mosquitto'
+  #         layer: 'messaging'
+
+  # Nginx (if using nginx-prometheus-exporter)
+  # - job_name: 'nginx'
+  #   static_configs:
+  #     - targets: ['nginx-exporter:9113']
+  #       labels:
+  #         service: 'nginx'
+  #         layer: 'proxy'
+
+  # Node exporter for host metrics (optional)
+  # - job_name: 'node'
+  #   static_configs:
+  #     - targets: ['node-exporter:9100']
+  #       labels:
+  #         service: 'node-exporter'
+  #         layer: 'infrastructure'
+
+  # cAdvisor for container metrics (optional)
+  # - job_name: 'cadvisor'
+  #   static_configs:
+  #     - targets: ['cadvisor:8080']
+  #       labels:
+  #         service: 'cadvisor'
+  #         layer: 'infrastructure'

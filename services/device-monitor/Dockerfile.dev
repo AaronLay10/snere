@@ -1,0 +1,20 @@
+# Device Monitor Development Dockerfile
+
+FROM node:20-alpine
+
+# Install development tools
+RUN apk add --no-cache git curl
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install all dependencies
+RUN npm install
+
+# Expose port and debug port
+EXPOSE 3003 9231
+
+# Start with nodemon for hot-reload
+CMD ["npm", "run", "dev"]

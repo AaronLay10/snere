@@ -1,0 +1,11 @@
+{
+  "id": "intro_boiler_puzzle_8",
+  "name": "Pilot lIght",
+  "type": "puzzle",
+  "description": "",
+  "devices": [],
+  "timeline": [],
+  "onSolve": {
+    "actions": []
+  }
+}

@@ -1,0 +1,7 @@
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Music/arduino.json"
+{
+  "sketch": "Music.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

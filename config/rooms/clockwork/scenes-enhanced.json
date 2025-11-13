@@ -1,0 +1,451 @@
+{
+  "roomId": "clockwork",
+  "roomName": "Clockwork Corridor",
+  "scenes": [
+    {
+      "id": "intro_cutscene",
+      "type": "cutscene",
+      "name": "Scene 1: Intro Movie & Setup",
+      "roomId": "clockwork",
+      "description": "Gamemaster starts intro movie, TV lowers, fog heats up, movie plays, TV raises",
+      "manualTrigger": true,
+      "triggerSource": "gamemaster_touchscreen",
+      "devices": [
+        "intro_tv",
+        "intro_tv_actuator",
+        "boiler_fog_machine",
+        "video_player_main",
+        "audio_overture"
+      ],
+      "sequence": [
+        {
+          "delayMs": 0,
+          "action": "device.power_on",
+          "target": "boiler_fog_machine",
+          "description": "Turn on fog machine to heat up"
+        },
+        {
+          "delayMs": 0,
+          "action": "actuator.lower",
+          "target": "intro_tv_actuator",
+          "duration": 3000,
+          "description": "Lower intro TV into view"
+        },
+        {
+          "delayMs": 3000,
+          "action": "video.play",
+          "target": "intro_video_main",
+          "description": "Play intro movie"
+        },
+        {
+          "delayMs": 3000,
+          "action": "audio.fadeIn",
+          "target": "overture",
+          "duration": 2000,
+          "description": "Fade in overture music"
+        },
+        {
+          "delayMs": 45000,
+          "action": "audio.fadeOut",
+          "target": "overture",
+          "duration": 3000,
+          "description": "Fade out overture"
+        },
+        {
+          "delayMs": 48000,
+          "action": "actuator.raise",
+          "target": "intro_tv_actuator",
+          "duration": 3000,
+          "description": "Raise TV back up"
+        }
+      ],
+      "estimatedDurationMs": 51000,
+      "nextScene": "pilot_light_puzzle"
+    },
+    {
+      "id": "pilot_light_puzzle",
+      "type": "puzzle",
+      "name": "Scene 1: Pilot Light Puzzle",
+      "roomId": "clockwork",
+      "description": "Players insert Pilot Light into Boiler. Color sensor validates.",
+      "prerequisites": ["intro_cutscene"],
+      "devices": [
+        "pilot_light_device",
+        "pilot_light_sensor",
+        "pilot_light_color_sensor",
+        "boiler_fog_machine",
+        "boiler_led_fire",
+        "pilot_light_speaker"
+      ],
+      "initialization": [
+        {
+          "action": "device.activate",
+          "target": "pilot_light_device",
+          "description": "Activate pilot light and wait for player interaction"
+        },
+        {
+          "action": "sensor.monitor",
+          "target": "pilot_light_sensor",
+          "event": "pilot_light_inserted",
+          "description": "Monitor for pilot light insertion"
+        }
+      ],
+      "triggers": [
+        {
+          "event": "pilot_light_inserted",
+          "sensor": "pilot_light_sensor",
+          "description": "Triggered when player inserts pilot light",
+          "actions": [
+            {
+              "action": "sensor.read",
+              "target": "pilot_light_color_sensor",
+              "storeAs": "detected_color",
+              "description": "Read color from sensor"
+            },
+            {
+              "action": "logic.compare",
+              "condition": "detected_color == expected_color",
+              "ifTrue": "solve_pilot_light",
+              "ifFalse": "pilot_light_fail",
+              "description": "Validate color accuracy"
+            }
+          ]
+        }
+      ],
+      "solveActions": [
+        {
+          "action": "sfx.play",
+          "target": "pilot_light_solve_sfx",
+          "description": "Play pilot light solve sound"
+        },
+        {
+          "action": "fog.trigger",
+          "target": "boiler_fog_machine",
+          "duration": 10000,
+          "description": "Trigger fog to flow into room"
+        },
+        {
+          "action": "led.animate",
+          "target": "boiler_led_fire",
+          "params": {
+            "animation": "fire",
+            "loop": true
+          },
+          "description": "Start LED fire animation"
+        },
+        {
+          "action": "puzzle.activate",
+          "target": "gauge_puzzle",
+          "description": "Activate gauge puzzle"
+        }
+      ],
+      "failActions": [
+        {
+          "action": "sfx.play",
+          "target": "pilot_light_fail_sfx",
+          "description": "Play error sound"
+        }
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "gauge_puzzle",
+      "type": "puzzle",
+      "name": "Scene 1: Gauge Puzzle (3 Stages)",
+      "roomId": "clockwork",
+      "description": "Players adjust boiler valves (potentiometers) to match ceiling clock LED colors across 3 stages",
+      "prerequisites": ["pilot_light_puzzle"],
+      "devices": [
+        "ceiling_clock_leds",
+        "boiler_valve_1",
+        "boiler_valve_2",
+        "boiler_valve_3",
+        "gauge_stepper_1",
+        "gauge_stepper_2",
+        "gauge_stepper_3",
+        "gauge_led_1",
+        "gauge_led_2",
+        "gauge_led_3",
+        "study_door_maglock",
+        "gauge_speaker"
+      ],
+      "multiStage": true,
+      "stages": [
+        {
+          "stage": 1,
+          "description": "First color sequence",
+          "initialization": [
+            {
+              "action": "led.show_pattern",
+              "target": "ceiling_clock_leds",
+              "params": {
+                "pattern": [
+                  {"position": 1, "color": "red"},
+                  {"position": 3, "color": "blue"},
+                  {"position": 7, "color": "green"}
+                ]
+              },
+              "description": "Show first series of colored LEDs on ceiling clock"
+            }
+          ],
+          "monitoring": [
+            {
+              "sensor": "boiler_valve_1",
+              "type": "potentiometer",
+              "range": [0, 1023],
+              "setpoint": 512,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_1",
+                  "formula": "map(value, 0, 1023, 0, 360)",
+                  "description": "Move stepper motor based on valve position"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_1",
+                  "params": {
+                    "color": "red",
+                    "intensity": "value/1023"
+                  },
+                  "description": "Flicker LED based on pressure"
+                }
+              ]
+            },
+            {
+              "sensor": "boiler_valve_2",
+              "type": "potentiometer",
+              "range": [0, 1023],
+              "setpoint": 768,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_2",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_2",
+                  "params": {
+                    "color": "blue",
+                    "intensity": "value/1023"
+                  }
+                }
+              ]
+            },
+            {
+              "sensor": "boiler_valve_3",
+              "type": "potentiometer",
+              "range": [0, 1023],
+              "setpoint": 256,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_3",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_3",
+                  "params": {
+                    "color": "green",
+                    "intensity": "value/1023"
+                  }
+                }
+              ]
+            }
+          ],
+          "solveCondition": "all_valves_at_setpoint",
+          "onStageSolve": [
+            {
+              "action": "sfx.play",
+              "target": "gauge_stage_complete_sfx",
+              "description": "Play stage completion sound"
+            }
+          ]
+        },
+        {
+          "stage": 2,
+          "description": "Second color sequence",
+          "initialization": [
+            {
+              "action": "led.show_pattern",
+              "target": "ceiling_clock_leds",
+              "params": {
+                "pattern": [
+                  {"position": 2, "color": "yellow"},
+                  {"position": 5, "color": "purple"},
+                  {"position": 9, "color": "orange"}
+                ]
+              }
+            }
+          ],
+          "monitoring": [
+            {
+              "sensor": "boiler_valve_1",
+              "setpoint": 820,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_1",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_1",
+                  "params": {"color": "yellow", "intensity": "value/1023"}
+                }
+              ]
+            },
+            {
+              "sensor": "boiler_valve_2",
+              "setpoint": 410,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_2",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_2",
+                  "params": {"color": "purple", "intensity": "value/1023"}
+                }
+              ]
+            },
+            {
+              "sensor": "boiler_valve_3",
+              "setpoint": 650,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_3",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_3",
+                  "params": {"color": "orange", "intensity": "value/1023"}
+                }
+              ]
+            }
+          ],
+          "solveCondition": "all_valves_at_setpoint"
+        },
+        {
+          "stage": 3,
+          "description": "Final color sequence",
+          "initialization": [
+            {
+              "action": "led.show_pattern",
+              "target": "ceiling_clock_leds",
+              "params": {
+                "pattern": [
+                  {"position": 4, "color": "cyan"},
+                  {"position": 8, "color": "magenta"},
+                  {"position": 12, "color": "white"}
+                ]
+              }
+            }
+          ],
+          "monitoring": [
+            {
+              "sensor": "boiler_valve_1",
+              "setpoint": 300,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_1",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_1",
+                  "params": {"color": "cyan", "intensity": "value/1023"}
+                }
+              ]
+            },
+            {
+              "sensor": "boiler_valve_2",
+              "setpoint": 900,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_2",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_2",
+                  "params": {"color": "magenta", "intensity": "value/1023"}
+                }
+              ]
+            },
+            {
+              "sensor": "boiler_valve_3",
+              "setpoint": 512,
+              "tolerance": 50,
+              "onValueChange": [
+                {
+                  "action": "stepper.move",
+                  "target": "gauge_stepper_3",
+                  "formula": "map(value, 0, 1023, 0, 360)"
+                },
+                {
+                  "action": "led.flicker",
+                  "target": "gauge_led_3",
+                  "params": {"color": "white", "intensity": "value/1023"}
+                }
+              ]
+            }
+          ],
+          "solveCondition": "all_valves_at_setpoint"
+        }
+      ],
+      "solveActions": [
+        {
+          "action": "sfx.play",
+          "target": "gauge_puzzle_solve_sfx",
+          "description": "Play gauge puzzle solve sound"
+        },
+        {
+          "action": "maglock.release",
+          "target": "study_door_maglock",
+          "description": "Open study door by releasing maglock"
+        },
+        {
+          "action": "stepper.move_to",
+          "target": "gauge_stepper_1",
+          "params": {"position": 0, "speed": "slow"},
+          "description": "Return gauge 1 to zero"
+        },
+        {
+          "action": "stepper.move_to",
+          "target": "gauge_stepper_2",
+          "params": {"position": 0, "speed": "slow"},
+          "description": "Return gauge 2 to zero"
+        },
+        {
+          "action": "stepper.move_to",
+          "target": "gauge_stepper_3",
+          "params": {"position": 0, "speed": "slow"},
+          "description": "Return gauge 3 to zero"
+        },
+        {
+          "action": "led.off",
+          "target": "ceiling_clock_leds",
+          "description": "Turn off all ceiling clock LEDs"
+        }
+      ],
+      "timeLimitMs": 900000
+    }
+  ]
+}

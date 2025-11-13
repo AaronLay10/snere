@@ -1,0 +1,7 @@
+#line 1 "/opt/sentient/hardware/Controller Code Teensy/z_archive/Version_1-archived/Lighting_Main/arduino.json"
+{
+  "sketch": "Lighting_Main.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

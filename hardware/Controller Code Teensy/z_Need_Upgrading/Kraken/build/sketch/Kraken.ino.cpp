@@ -1,0 +1,164 @@
+#include <Arduino.h>
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+#include <ParagonMQTT.h>
+
+// ------------------- CONSTANTS & VARIABLES -------------------
+const char *deviceID = "Kraken"; // e.g., can be used in MQTT topics
+const char *roomID = "Clockwork";
+
+#define POWERLED 13
+
+// Throttle Handle
+#define FWD1 6
+#define FWD2 7
+#define FWD3 5
+#define NEUTRAL 2
+#define REV1 3
+#define REV2 4
+#define REV3 1
+
+// Capitan Wheel
+#define WHEELA 8 // White Wire
+#define WHEELB 9 // Green Wire
+
+// This variable will increase or decrease depending on the rotation of encoder
+volatile long x, counterA = 0;
+volatile long y, counterB = 0;
+
+String sensorDetail;
+String direction;
+
+int readingA = 0;
+int readingB = 0;
+int moveValue = 0;
+int throttle = 0;
+
+#line 34 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+void setup();
+#line 62 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+void loop();
+#line 116 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+void CounterA();
+#line 128 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+void CounterB();
+#line 141 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+void resetCounterHandler(const char *value);
+#line 34 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Kraken/Kraken.ino"
+void setup()
+{
+    Serial.begin(9600);
+    pinMode(WHEELB, INPUT_PULLUP);
+    pinMode(WHEELA, INPUT_PULLUP);
+    pinMode(FWD1, INPUT_PULLUP);
+    pinMode(FWD2, INPUT_PULLUP);
+    pinMode(FWD3, INPUT_PULLUP);
+    pinMode(NEUTRAL, INPUT_PULLUP);
+    pinMode(REV1, INPUT_PULLUP);
+    pinMode(REV2, INPUT_PULLUP);
+    pinMode(REV3, INPUT_PULLUP);
+
+    pinMode(POWERLED, OUTPUT);
+
+    attachInterrupt(WHEELB, CounterA, RISING); // Green Wire
+    attachInterrupt(WHEELA, CounterB, RISING); // White Wire
+
+    digitalWrite(POWERLED, HIGH);
+
+    // Setup Ethernet & MQTT (from ParagonMQTT library)
+    networkSetup();
+    mqttSetup();
+
+    // Register MQTT action handlers
+    registerAction("resetCounter", resetCounterHandler);
+}
+
+void loop()
+{
+    Serial.print(counterA);
+    Serial.print(":");
+    Serial.print(digitalRead(FWD1));
+    Serial.print(":");
+    Serial.print(digitalRead(FWD2));
+    Serial.print(":");
+    Serial.print(digitalRead(FWD3));
+    Serial.print(":");
+    Serial.print(digitalRead(NEUTRAL));
+    Serial.print(":");
+    Serial.print(digitalRead(REV1));
+    Serial.print(":");
+    Serial.print(digitalRead(REV2));
+    Serial.print(":");
+    Serial.println(digitalRead(REV3));
+
+    if (digitalRead(NEUTRAL) == LOW)
+    {
+        throttle = 0;
+    }
+    else if (digitalRead(FWD1) == LOW)
+    {
+        throttle = 1;
+    }
+    else if (digitalRead(FWD2) == LOW)
+    {
+        throttle = 2;
+    }
+    else if (digitalRead(FWD3) == LOW)
+    {
+        throttle = 3;
+    }
+    else if (digitalRead(REV1) == LOW)
+    {
+        throttle = -1;
+    }
+    else if (digitalRead(REV2) == LOW)
+    {
+        throttle = -2;
+    }
+    else if (digitalRead(REV3) == LOW)
+    {
+        throttle = -3;
+    }
+
+    // Update publishDetail buffer with current sensor readings
+    sprintf(publishDetail, "%ld:%d", counterA, throttle);
+    
+    // sendDataMQTT() publishes publishDetail buffer and maintains connection
+    sendDataMQTT();
+}
+
+void CounterA()
+{
+    if (digitalRead(WHEELA) == LOW)
+    {
+        counterA++;
+    }
+    else
+    {
+        counterA--;
+    }
+}
+
+void CounterB()
+{
+    if (digitalRead(WHEELB) == LOW)
+    {
+        counterA--;
+    }
+    else
+    {
+        counterA++;
+    }
+}
+
+// ------------------- ACTION HANDLERS -------------------
+void resetCounterHandler(const char *value)
+{
+    Serial.print("Reset counter command received: ");
+    Serial.println(value);
+    
+    counterA = 0;
+    counterB = 0;
+    
+    Serial.println("Wheel counter reset to 0");
+}
+

@@ -1,0 +1,30 @@
+/opt/sentient/hardware/Controller\ Code\ Teensy/gauge_6_leds_v2/build/libraries/FastLED/fl/hsv16.cpp.o: \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/hsv16.cpp \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/hsv16.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/stdint.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/int.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/platforms/int.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/platforms/arm/is_arm.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/platforms/arm/int.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/crgb.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/chsv.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/hsv.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/namespace.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/color.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/lib8tion/types.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/force_inline.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/type_traits.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/move.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/hsv2rgb.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/ease.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fastled_progmem.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/platforms/null_progmem.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/math.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/has_include.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/clamp.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/map_range.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/math_macros.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/compiler_control.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/fl/geometry.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/lib8tion/intmap.h \
+ /home/techadmin/Arduino/libraries/FastLED/src/lib8tion/lib8static.h

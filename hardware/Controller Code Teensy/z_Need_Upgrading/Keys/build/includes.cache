@@ -1,0 +1,1602 @@
+[
+  {
+    "Sourcefile": null,
+    "Include": "",
+    "Includepath": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/cores/teensy4"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "ParagonMQTT.h",
+    "Includepath": "/Users/aaron/Documents/ParagonEscape/Libraries/ParagonMQTT"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "PubSubClient.h",
+    "Includepath": "/Users/aaron/Documents/Arduino/libraries/PubSubClient/src"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "NativeEthernet.h",
+    "Includepath": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "fnet.h",
+    "Includepath": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "TeensyID.h",
+    "Includepath": "/Users/aaron/Documents/Arduino/libraries/TeensyID"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "FastLED.h",
+    "Includepath": "/Users/aaron/Documents/Arduino/libraries/FastLED/src"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "SPI.h",
+    "Includepath": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/SPI"
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Keys/build/sketch/Keys.ino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/ParagonEscape/Libraries/ParagonMQTT/ParagonMQTT.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/PubSubClient/src/PubSubClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/NativeDns.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/NativeEthernet.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/NativeEthernetClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/NativeEthernetServer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/NativeEthernetUdp.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/NativeMdns.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/NativeEthernet/src/Nativesocket.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/fnet_cpu.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/mimxrt/fnet_mimxrt.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/mimxrt/fnet_mimxrt_eth.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/mimxrt/fnet_mimxrt_isr.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/mimxrt/fnet_mimxrt_isr_inst.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/mimxrt/fnet_mimxrt_serial.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/cpu/mimxrt/fnet_mimxrt_serial.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/fnet_usb.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/fnet_usb_config.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/port/netif/fec/fnet_fec.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/autoip/fnet_autoip.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_lock.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_platform.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_socketio.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_threadapi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_tickcounter.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_tlsio.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/azure/fnet_azure_tlsio_socketio.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/bench/fnet_bench_cln.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/bench/fnet_bench_srv.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/dhcp/fnet_dhcp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/dhcp/fnet_dhcp_cln.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/dhcp/fnet_dhcp_srv.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/dns/fnet_dns.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/flash/fnet_flash.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/fnet_service.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/fs/fnet_fs.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/fs/fnet_fs_rom.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/fs/fnet_fs_root.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_cln.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_srv.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_srv_auth.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_srv_cgi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_srv_get.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_srv_post.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/http/fnet_http_srv_ssi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/link/fnet_link.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/llmnr/fnet_llmnr.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/mdns/fnet_mdns.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/ping/fnet_ping.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/serial/fnet_serial.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/shell/fnet_shell.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/sntp/fnet_sntp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/telnet/fnet_telnet.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/tftp/fnet_tftp_cln.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/tftp/fnet_tftp_srv.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/service/tls/fnet_tls.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_arp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_checksum.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_error.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_eth.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_icmp4.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_icmp6.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_igmp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_inet.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_ip.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_ip4.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_ip6.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_isr.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_loop.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_mempool.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_mld.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_nd6.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_netbuf.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_netif.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_prot.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_raw.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_socket.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_stack.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_stdlib.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_tcp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_timer.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_udp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/stack/fnet_wifi.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/aes.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/aesni.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/arc4.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/aria.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/asn1parse.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/asn1write.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/base64.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/bignum.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/blowfish.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/camellia.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ccm.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/certs.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/chacha20.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/chachapoly.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/cipher.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/cipher_wrap.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/cmac.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ctr_drbg.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/debug.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/des.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/dhm.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ecdh.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ecdsa.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ecjpake.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ecp.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ecp_curves.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/entropy.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/entropy_poll.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/error.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/gcm.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/havege.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/hkdf.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/hmac_drbg.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/md.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/md2.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/md4.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/md5.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/md_wrap.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/memory_buffer_alloc.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/net_sockets.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/nist_kw.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/oid.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/padlock.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pem.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pk.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pk_wrap.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pkcs11.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pkcs12.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pkcs5.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pkparse.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/pkwrite.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/platform.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/platform_util.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/poly1305.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ripemd160.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/rsa.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/rsa_internal.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/sha1.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/sha256.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/sha512.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_cache.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_ciphersuites.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_cli.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_cookie.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_srv.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_ticket.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/ssl_tls.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/threading.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/timing.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/version.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/version_features.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509_create.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509_crl.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509_crt.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509_csr.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509write_crt.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/x509write_csr.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/FNET/src/third_party/mbedtls-2.12.0/src/xtea.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/TeensyID/TeensyID.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/FastLED.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/bitswap.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/cled_controller.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/colorpalettes.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/crgb.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/allocator.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/async.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/audio.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/audio_reactive.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/bitset.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/blur.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/bytestreammemory.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/colorutils.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/corkscrew.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/crgb_hsv16.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/downscale.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/ease.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/engine_events.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/fetch.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/fft.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/fft_impl.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/file_system.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/fill.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/gamma.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/gradient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/hsv16.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/id_tracker.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/io.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/istream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/json.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/leds.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/line_simplification.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/noise_woryley.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/ostream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/ptr.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/random.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/raster_sparse.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/rectangular_draw_buffer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/referent.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/rgbw.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/screenmap.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/sin32.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/splat.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/str.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/str_ui.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/strstream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/stub_main.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/task.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/tile2x2.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/time.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/time_alpha.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/transform.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/type_traits.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/ui.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/upscale.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/wave_simulation.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/wave_simulation_real.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/xmap.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/xymap.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/xypath.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/xypath_impls.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fl/xypath_renderer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/2d/blend.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/2d/luminova.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/2d/noisepalette.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/2d/scale_up.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/2d/wave.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/detail/fx_layer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/frame.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/fx_engine.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/time.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/video/frame_interpolator.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/video/frame_tracker.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/video/pixel_stream.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/video/video_impl.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/fx/video.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/hsv2rgb.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/lib8tion.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/noise.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/adafruit/clockless.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/arm/k20/clockless_objectfled.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/avr/avr_millis_timer_source.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/compile_test.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/clockless_i2s_esp32s3.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/i2s/i2s_esp32dev.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/rmt_4/idf4_rmt.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/rmt_4/idf4_rmt_impl.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/rmt_5/idf5_rmt.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/rmt_5/strip_rmt.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/esp/32/spi_ws2812/strip_spi.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/posix/socket_posix.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/active_strip_data/active_strip_data.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/audio.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/audio_internal.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/button.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/checkbox.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/description.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/dropdown.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/help.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/json_console.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/number_field.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/slider.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/title.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/ui.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/ui_internal.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/shared/ui/json/ui_manager.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/stub/Arduino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/stub/led_sysdefs_stub.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/stub/time_stub.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/active_strip_data.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/active_strip_data2.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/compiler/Arduino.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/engine_listener.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/entry_point.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/fastspi_wasm.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/fs_wasm.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/js.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/js_bindings.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/js_fetch.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/timer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/audio.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/button.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/checkbox.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/description.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/number_field.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/slider.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/title.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/ui_internal.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui/ui_manager.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/wasm/ui.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms/win/socket_win.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/platforms.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/power_mgt.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/sensors/button.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/sensors/digital_pin.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/sensors/pir.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/simplex.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/cq_kernel/cq_kernel.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/cq_kernel/kiss_fft.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/cq_kernel/kiss_fftr.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/espressif/led_strip/src/led_strip_api.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/espressif/led_strip/src/led_strip_rmt_dev.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/espressif/led_strip/src/led_strip_rmt_encoder.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/espressif/led_strip/src/led_strip_spi_dev.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/third_party/object_fled/src/OjectFLED.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/transpose8x1_noinline.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Documents/Arduino/libraries/FastLED/src/wiring.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "/Users/aaron/Library/Arduino15/packages/teensy/hardware/avr/1.59.0/libraries/SPI/SPI.cpp",
+    "Include": "",
+    "Includepath": null
+  }
+]

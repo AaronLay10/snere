@@ -1,0 +1,7 @@
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/LeverRiddle/arduino.json"
+{
+  "sketch": "LeverRiddle.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

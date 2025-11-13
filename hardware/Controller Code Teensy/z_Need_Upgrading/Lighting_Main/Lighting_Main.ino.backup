@@ -1,0 +1,198 @@
+#include <FastLED.h>
+#include <TeensyID.h>
+#include <ParagonMQTT.h>
+
+const char *deviceID = "MainLights"; // Change to the desired device ID
+const char *roomID = "Clockwork";
+
+int previousMillisMqtt = 0;
+
+// New Parsing Variables
+char **split(char *string, char *seperators, int *count);
+char *substring1;
+char *substring2;
+char *substring3;
+char *substring4;
+
+#define MQTTDELAY 500
+
+// Pins for LED Strips
+#define GRATE_1 2
+#define GRATE_2 0
+#define GRATE_3 9
+#define CEILING_SQUARE_A 4
+#define CEILING_SQUARE_B 3
+#define CEILING_SQUARE_C 5
+#define CEILING_SQUARE_D 6
+#define CEILING_SQUARE_E 1
+#define CEILING_SQUARE_F 8
+#define CEILING_SQUARE_G 7
+#define CEILING_SQUARE_H 10
+#define SCONCES 12
+#define STUDYLIGHTS A1
+#define BOILERLIGHTS A4
+#define POWER_LED 13
+#define CRAWLSPACE_LIGHTS 11
+
+
+#define NUMPINS_S 8
+#define NUMPINS_G 3
+
+#define NUM_LEDS_PER_STRIP 300
+CRGB leds_SA[NUM_LEDS_PER_STRIP];
+CRGB leds_SB[NUM_LEDS_PER_STRIP];
+CRGB leds_SC[NUM_LEDS_PER_STRIP];
+CRGB leds_SD[NUM_LEDS_PER_STRIP];
+CRGB leds_SE[NUM_LEDS_PER_STRIP];
+CRGB leds_SF[NUM_LEDS_PER_STRIP];
+CRGB leds_SG[NUM_LEDS_PER_STRIP];
+CRGB leds_SH[NUM_LEDS_PER_STRIP];
+CRGB leds_G1[NUM_LEDS_PER_STRIP];
+CRGB leds_G2[NUM_LEDS_PER_STRIP];
+CRGB leds_G3[NUM_LEDS_PER_STRIP];
+
+int previousMillis = 0;
+bool activateLabLights = false;
+int studyDimmer = 0;
+int boilerDimmer = 0;
+
+void setup()
+{
+  Serial.begin(115200);
+
+  FastLED.addLeds<WS2812, CEILING_SQUARE_A, GRB>(leds_SA, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_B, GRB>(leds_SB, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_C, GRB>(leds_SC, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_D, GRB>(leds_SD, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_E, GRB>(leds_SE, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_F, GRB>(leds_SF, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_G, GRB>(leds_SG, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, CEILING_SQUARE_H, GRB>(leds_SH, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, GRATE_1, GRB>(leds_G1, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, GRATE_2, GRB>(leds_G2, NUM_LEDS_PER_STRIP);
+  FastLED.addLeds<WS2812, GRATE_3, GRB>(leds_G3, NUM_LEDS_PER_STRIP);
+
+  pinMode(STUDYLIGHTS, OUTPUT);
+  pinMode(BOILERLIGHTS, OUTPUT);
+  pinMode(POWER_LED, OUTPUT);
+  pinMode(SCONCES, OUTPUT);
+  pinMode(CRAWLSPACE_LIGHTS, OUTPUT);
+
+  digitalWrite(POWER_LED, HIGH);
+  digitalWrite(SCONCES, LOW);
+  digitalWrite(CRAWLSPACE_LIGHTS, LOW);
+  analogWrite(STUDYLIGHTS, 0);
+  analogWrite(BOILERLIGHTS, 0);
+
+  FastLED.setBrightness(255);
+  fill_solid(leds_SA, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SB, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SC, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SD, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SE, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SF, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SG, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_SH, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_G1, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_G2, NUM_LEDS_PER_STRIP, CRGB::Black);
+  fill_solid(leds_G3, NUM_LEDS_PER_STRIP, CRGB::Black);
+
+  FastLED.show();
+
+  networkSetup();
+  mqttSetup();
+
+  FastLED.show();
+  Serial.println("Initial Power Off");
+
+  registerAction("study", studyLights);
+  registerAction("boiler", boilerLights);
+  registerAction("lab", labLights);
+  registerAction("crawlspace", crawlspaceLights);
+}
+
+void loop()
+{
+  sendDataMQTT();
+}
+
+void crawlspaceLights(const char *value)
+{
+  if (strcmp(value, "1") == 0 || strcmp(value, "on") == 0)
+  {
+    digitalWrite(CRAWLSPACE_LIGHTS, HIGH);
+    Serial.println("Crawlspace Lights On");
+    sprintf(publishDetail, "crawlspace_lights_on");
+  }
+  else if (strcmp(value, "0") == 0 || strcmp(value, "off") == 0)
+  {
+    digitalWrite(CRAWLSPACE_LIGHTS, LOW);
+    Serial.println("Crawlspace Lights Off");
+    sprintf(publishDetail, "crawlspace_lights_off");
+  }
+  else
+  {
+    Serial.println("Invalid Crawlspace Lights Command - use 'on' or 'off'");
+  }
+}
+
+void labLights(const char *value)
+{
+  Serial.println("LabLights control received");
+  Serial.print("labLightsValue: ");
+  Serial.println(value);
+
+  if (strcmp(value, "off") == 0)
+  {
+    fill_solid(leds_SA, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SB, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SC, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SD, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SE, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SF, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SG, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_SH, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_G1, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_G2, NUM_LEDS_PER_STRIP, CRGB::Black);
+    fill_solid(leds_G3, NUM_LEDS_PER_STRIP, CRGB::Black);
+    FastLED.show();
+    Serial.println("LabLights Off");
+ 
+    digitalWrite(SCONCES, LOW);
+  }
+  else if (strcmp(value, "on") == 0)
+  {
+    FastLED.setBrightness(255);
+    fill_solid(leds_SA, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SB, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SC, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SD, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SE, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SF, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SG, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_SH, NUM_LEDS_PER_STRIP, CRGB::Yellow);
+    fill_solid(leds_G1, NUM_LEDS_PER_STRIP, CRGB::Blue);
+    fill_solid(leds_G2, NUM_LEDS_PER_STRIP, CRGB::Blue);
+    fill_solid(leds_G3, NUM_LEDS_PER_STRIP, CRGB::Blue);
+    FastLED.show();
+    Serial.println("LabLights On");
+
+    digitalWrite(SCONCES, HIGH);
+  }
+  else
+  {
+    Serial.println("Invalid LabLights Command - use 'on' or 'off'");
+  }
+}
+
+void studyLights(const char *value)
+{
+  int studyLightsValue = atoi(value);
+  analogWrite(STUDYLIGHTS, studyLightsValue);
+}
+
+void boilerLights(const char *value)
+{
+  int boilerLightsValue = atoi(value);
+  analogWrite(BOILERLIGHTS, boilerLightsValue);
+}

@@ -1,0 +1,180 @@
+
+
+// ------------------>DO NOT EDIT BELOW < -- -- -- -- -- -----------//
+#include <Arduino.h>
+#include <map>
+#include <string>
+#include <EthernetMQTT.h>
+#define POWERLED 13
+int previousMillisMQTT = 0;
+#define MQTTDELAY 500
+typedef void (*ActionHandler)(const char *);
+std::map<std::string, ActionHandler> actionMap;
+char **split(char *string, const char *separators, int *count);
+char *trim(char *str);
+void registerAction(const char *action, ActionHandler handler);
+//------------------>DO NOT EDIT ABOVE<---------------------//
+
+const char *deviceID = "Gear"; // CHANGE deviceID TO THE NAME YOU WANT THIS TEENSY TO BE IDENTIFIED
+
+// This variable will increase or decrease depending on the rotation of encoder
+volatile long x, counterA = 0;
+volatile long y, counterB = 0;
+
+// MQTT & Ethernet Setup
+#define MQTTDELAY 200
+
+#define ENCODER_A_WHITE 33
+#define ENCODER_A_GREEN 34
+#define ENCODER_B_WHITE 35
+#define ENCODER_B_GREEN 36
+
+long previousMillisMqtt = 0;
+int state = 0;
+
+String sensorDetail;
+char publishDetail[50] = {0};
+
+void setup()
+{
+
+  // On board led for power status
+  pinMode(POWERLED, OUTPUT);
+  digitalWrite(POWERLED, HIGH);
+
+  Serial.begin(115400);
+  pinMode(ENCODER_A_WHITE, INPUT_PULLUP); // White
+  pinMode(ENCODER_A_GREEN, INPUT_PULLUP); // Green
+  pinMode(ENCODER_B_WHITE, INPUT_PULLUP); // White
+  pinMode(ENCODER_B_GREEN, INPUT_PULLUP); // Green
+
+  attachInterrupt(ENCODER_A_WHITE, CounterA, RISING); // Green Wire
+  attachInterrupt(ENCODER_A_GREEN, CounterB, RISING); // White Wire
+  attachInterrupt(ENCODER_B_WHITE, CounterC, RISING); // Green Wire
+  attachInterrupt(ENCODER_B_GREEN, CounterD, RISING); // White Wire
+
+  // Setup the ethernet network connection
+  ethernetSetup();
+  // Setup the MQTT service
+  mqttSetup();
+
+  // Register action handlers - Customize to fit your needs
+  registerAction("lab", action1Handler);
+  registerAction("study", studyHandler);
+  registerAction("boiler", boilerHandler);
+}
+
+void loop()
+{
+
+  // Send the value of counter
+  if (counterA != x)
+  {
+    x = counterA;
+  }
+
+  if (counterB != y)
+  {
+    x = counterB;
+  }
+
+  unsigned long currentMillisMqtt = millis();
+  if (currentMillisMqtt - previousMillisMqtt > MQTTDELAY)
+  {
+    previousMillisMqtt = currentMillisMqtt;
+    publish(publishDetail);
+    mqttLoop();
+
+    sprintf(publishDetail, "%d:%d", counterA, counterB);
+
+    Serial.println(publishDetail);
+  }
+}
+
+// Example action handlers
+void action1Handler(const char *value)
+{
+  Serial.println("Action 1 identified!");
+  int action1Value = atoi(value);
+  // Perform actions related to "lab"
+  action1Function(action1Value);
+}
+
+void studyHandler(const char *value)
+{
+  Serial.println("Study action identified!");
+  int brightValueStudy = atoi(value);
+  // Perform actions related to "study"
+  studyLights(brightValueStudy);
+}
+
+void boilerHandler(const char *value)
+{
+  Serial.println("Boiler action identified!");
+  int brightValueBoiler = atoi(value);
+  // Perform actions related to "boiler"
+  boilerLights(brightValueBoiler);
+}
+
+void action1Function(int value)
+{
+  Serial.println("Action 1 Function");
+}
+
+void studyLights(int value)
+{
+  Serial.println("StudyLights Function");
+}
+
+void boilerLights(int value)
+{
+  Serial.println("BoilerLights Function");
+}
+
+void CounterA()
+{
+  if (digitalRead(ENCODER_A_GREEN) == LOW)
+  {
+    counterA++;
+  }
+  else
+  {
+    counterA--;
+  }
+}
+
+void CounterB()
+{
+  if (digitalRead(ENCODER_A_WHITE) == LOW)
+  {
+    counterA--;
+  }
+  else
+  {
+    counterA++;
+  }
+}
+
+void CounterC()
+{
+  if (digitalRead(ENCODER_B_GREEN) == LOW)
+  {
+    counterB++;
+  }
+  else
+  {
+    counterB--;
+  }
+}
+
+void CounterD()
+{
+  if (digitalRead(ENCODER_B_WHITE) == LOW)
+  {
+    counterB--;
+  }
+  else
+  {
+    counterB++;
+  }
+}

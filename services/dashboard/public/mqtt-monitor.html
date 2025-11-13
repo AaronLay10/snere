@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paragon MQTT Dashboard - Technical View</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2d2d2d;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --border: #444;
+            --green: #4caf50;
+            --yellow: #ffc107;
+            --red: #f44336;
+            --blue: #2196f3;
+            --orange: #ff9800;
+        }
+
+        body {
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 2px solid var(--border);
+            padding: 12px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--blue);
+            margin: 0;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 12px;
+        }
+
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .status-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-connected { background: var(--green); }
+        .status-disconnected { background: var(--red); }
+        .status-connecting { background: var(--yellow); animation: pulse 1s infinite; }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--bg-secondary);
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .controls input,
+        .controls select,
+        .controls button {
+            padding: 6px 12px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            border-radius: 3px;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .controls input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .controls button {
+            cursor: pointer;
+            background: var(--blue);
+            border-color: var(--blue);
+            font-weight: bold;
+        }
+
+        .controls button:hover {
+            opacity: 0.9;
+        }
+
+        .controls button:active {
+            transform: scale(0.98);
+        }
+
+        /* Main Content */
+        .main {
+            padding: 20px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Device Groups */
+        .device-group {
+            margin-bottom: 15px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .group-header {
+            padding: 10px 15px;
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .group-header:hover {
+            background: #454545;
+        }
+
+        .group-title {
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .group-icon {
+            font-size: 16px;
+        }
+
+        .group-stats {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .group-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .group-content.expanded {
+            max-height: 5000px;
+        }
+
+        /* Device List */
+        .device-list {
+            display: grid;
+            gap: 1px;
+            background: var(--border);
+        }
+
+        .device-item {
+            background: var(--bg-secondary);
+            padding: 8px 15px;
+            display: grid;
+            grid-template-columns: auto 1fr auto auto auto;
+            gap: 15px;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .device-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .device-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        .device-status.warning { background: var(--yellow); }
+        .device-status.error { background: var(--red); }
+
+        .device-name {
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+
+        .device-data {
+            color: var(--text-secondary);
+            font-size: 11px;
+            font-family: 'Courier New', monospace;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .device-messages {
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .device-messages.high {
+            color: var(--orange);
+            font-weight: bold;
+        }
+
+        .device-timestamp {
+            color: var(--text-secondary);
+            font-size: 10px;
+        }
+
+        /* Message Count Badge */
+        .msg-badge {
+            background: var(--bg-tertiary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            border: 1px solid var(--border);
+        }
+
+        .msg-badge.high {
+            background: var(--orange);
+            color: #000;
+            border-color: var(--orange);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .controls input,
+            .controls select,
+            .controls button {
+                width: 100%;
+            }
+
+            .device-item {
+                grid-template-columns: auto 1fr auto;
+                gap: 10px;
+            }
+
+            .device-data {
+                grid-column: 2 / -1;
+            }
+        }
+
+        /* Connection Status Banner */
+        .connection-banner {
+            background: var(--red);
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+
+        .connection-banner.show {
+            display: block;
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--blue);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            z-index: 999;
+        }
+
+        .scroll-top.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Connection Status Banner -->
+    <div class="connection-banner" id="connectionBanner">
+        ⚠️ Disconnected from MQTT Broker - Attempting to reconnect...
+    </div>
+
+    <!-- Header -->
+    <div class="header">
+        <h1>⚙️ PARAGON MQTT DASHBOARD</h1>
+        <div class="header-stats">
+            <div class="stat">
+                <span class="stat-label">Broker:</span>
+                <span class="status-indicator" id="brokerStatus"></span>
+                <span class="stat-value" id="brokerText">Connecting...</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Devices:</span>
+                <span class="stat-value" id="deviceCount">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Messages/30s:</span>
+                <span class="stat-value" id="messageRate">0</span>
+            </div>
+            <div class="stat">
+                <span class="stat-label">Last Update:</span>
+                <span class="stat-value" id="lastUpdate">--:--:--</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="🔍 Search devices... (e.g., 'lever', 'gauge', 'clock')" />
+        <select id="filterSelect">
+            <option value="all">Show All</option>
+            <option value="puzzles">Puzzles Only</option>
+            <option value="system">System Only</option>
+            <option value="gauges">Gauges Only</option>
+            <option value="levers">Levers Only</option>
+            <option value="high-traffic">High Traffic (>20 msgs)</option>
+        </select>
+        <button id="expandAll">Expand All</button>
+        <button id="collapseAll">Collapse All</button>
+        <button id="clearCounters">Clear Counters</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+        <div id="deviceGroups"></div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <h2>No devices found</h2>
+            <p>Waiting for MQTT messages from Teensy devices...</p>
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+        ↑
+    </button>
+
+    <script>
+        // Configuration
+        const MQTT_BROKER = '192.168.20.3';
+        const MQTT_PORT = 9001; // WebSocket port (usually 9001 for MQTT over WebSocket)
+        const MQTT_TOPIC = 'paragon/#';
+
+        // State
+        let devices = {};
+        let messageCounts = {};
+        let messageCountInterval = null;
+        let mqttClient = null;
+        let isConnected = false;
+
+        // Device categorization
+        const deviceCategories = {
+            puzzles: ['Keys', 'Riddle', 'Clock', 'Kraken', 'Fuse', 'Syringe', 'Chemical', 'Music', 'Crank', 'Pilaster', 'Floor', 'Vault', 'Gear'],
+            system: ['System', 'StudyD', 'VideoManager', 'BoilerRmA', 'GunDrawers', 'PictureFrameLEDs', 'PilotLight', 'LabRmDoorsHoist', 'LabRmCageA', 'Vern'],
+            gauges: ['Gauge', 'Gauge_1-3-4', 'Gauge_2-5-7', 'Gauge_6-Leds'],
+            levers: ['LeverFanSafe', 'LeverRiddle', 'LeverBoiler']
+        };
+
+        // Initialize MQTT Connection
+        function connectMQTT() {
+            console.log('Connecting to MQTT broker...');
+            updateConnectionStatus('connecting', 'Connecting...');
+
+            // Try WebSocket connection
+            mqttClient = mqtt.connect(`ws://${MQTT_BROKER}:${MQTT_PORT}/mqtt`, {
+                clientId: `mqtt-dashboard-${Math.random().toString(16).substr(2, 8)}`,
+                clean: true,
+                connectTimeout: 4000,
+                reconnectPeriod: 5000
+            });
+
+            mqttClient.on('connect', () => {
+                console.log('Connected to MQTT broker');
+                isConnected = true;
+                updateConnectionStatus('connected', 'Connected');
+                document.getElementById('connectionBanner').classList.remove('show');
+
+                // Subscribe to all topics
+                mqttClient.subscribe(MQTT_TOPIC, (err) => {
+                    if (err) {
+                        console.error('Subscription error:', err);
+                    } else {
+                        console.log(`Subscribed to ${MQTT_TOPIC}`);
+                    }
+                });
+            });
+
+            mqttClient.on('message', (topic, message) => {
+                handleMessage(topic, message.toString());
+            });
+
+            mqttClient.on('error', (err) => {
+                console.error('MQTT Error:', err);
+                updateConnectionStatus('disconnected', 'Error');
+            });
+
+            mqttClient.on('close', () => {
+                console.log('MQTT connection closed');
+                isConnected = false;
+                updateConnectionStatus('disconnected', 'Disconnected');
+                document.getElementById('connectionBanner').classList.add('show');
+            });
+
+            mqttClient.on('reconnect', () => {
+                console.log('Reconnecting to MQTT broker...');
+                updateConnectionStatus('connecting', 'Reconnecting...');
+            });
+        }
+
+        // Update connection status
+        function updateConnectionStatus(status, text) {
+            const indicator = document.getElementById('brokerStatus');
+            const textEl = document.getElementById('brokerText');
+
+            indicator.className = 'status-indicator';
+            indicator.classList.add(`status-${status}`);
+            textEl.textContent = text;
+        }
+
+        // Handle incoming MQTT message
+        function handleMessage(topic, message) {
+            // Parse topic: paragon/Clockwork/DeviceName/Type/SubType
+            const parts = topic.split('/');
+            if (parts.length < 3) return;
+
+            const deviceName = parts[2];
+
+            // Initialize device if not exists
+            if (!devices[deviceName]) {
+                devices[deviceName] = {
+                    name: deviceName,
+                    lastData: {},
+                    lastUpdate: Date.now(),
+                    category: getDeviceCategory(deviceName)
+                };
+            }
+
+            // Update device data
+            devices[deviceName].lastData[parts.slice(3).join('/')] = message;
+            devices[deviceName].lastUpdate = Date.now();
+
+            // Count messages
+            if (!messageCounts[deviceName]) {
+                messageCounts[deviceName] = 0;
+            }
+            messageCounts[deviceName]++;
+
+            // Update display
+            updateDisplay();
+        }
+
+        // Get device category
+        function getDeviceCategory(deviceName) {
+            for (const [category, devices] of Object.entries(deviceCategories)) {
+                if (devices.some(d => deviceName.includes(d) || d.includes(deviceName))) {
+                    return category;
+                }
+            }
+            return 'other';
+        }
+
+        // Update display
+        function updateDisplay() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filter = document.getElementById('filterSelect').value;
+
+            // Group devices by category
+            const grouped = {
+                puzzles: [],
+                system: [],
+                gauges: [],
+                levers: [],
+                other: []
+            };
+
+            for (const [name, device] of Object.entries(devices)) {
+                // Apply search filter
+                if (searchTerm && !name.toLowerCase().includes(searchTerm)) {
+                    continue;
+                }
+
+                // Apply category filter
+                if (filter !== 'all') {
+                    if (filter === 'high-traffic' && (messageCounts[name] || 0) <= 20) {
+                        continue;
+                    } else if (filter !== 'high-traffic' && device.category !== filter) {
+                        continue;
+                    }
+                }
+
+                grouped[device.category].push(device);
+            }
+
+            // Render groups
+            const container = document.getElementById('deviceGroups');
+            let html = '';
+
+            const groupTitles = {
+                puzzles: '🎮 Puzzles',
+                system: '🔧 System Devices',
+                gauges: '📊 Pressure Gauges',
+                levers: '🎚️ Lever Controls',
+                other: '📦 Other Devices'
+            };
+
+            for (const [category, categoryDevices] of Object.entries(grouped)) {
+                if (categoryDevices.length === 0) continue;
+
+                const totalMessages = categoryDevices.reduce((sum, d) => sum + (messageCounts[d.name] || 0), 0);
+
+                html += `
+                    <div class="device-group">
+                        <div class="group-header" onclick="toggleGroup('${category}')">
+                            <div class="group-title">
+                                <span class="group-icon">${groupTitles[category]}</span>
+                                <span>(${categoryDevices.length} devices)</span>
+                            </div>
+                            <div class="group-stats">
+                                ${totalMessages} messages
+                            </div>
+                        </div>
+                        <div class="group-content expanded" id="group-${category}">
+                            <div class="device-list">
+                                ${categoryDevices.map(device => renderDevice(device)).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+
+            // Update stats
+            document.getElementById('deviceCount').textContent = Object.keys(devices).length;
+            const totalMessages = Object.values(messageCounts).reduce((sum, count) => sum + count, 0);
+            document.getElementById('messageRate').textContent = totalMessages;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+            // Show/hide empty state
+            document.getElementById('emptyState').style.display = Object.keys(devices).length === 0 ? 'block' : 'none';
+        }
+
+        // Render single device
+        function renderDevice(device) {
+            const messageCount = messageCounts[device.name] || 0;
+            const statusClass = messageCount > 50 ? 'error' : messageCount > 20 ? 'warning' : '';
+            const badgeClass = messageCount > 20 ? 'high' : '';
+
+            // Get most relevant data to display
+            let dataDisplay = '';
+            if (device.lastData['Telemetry/data']) {
+                dataDisplay = device.lastData['Telemetry/data'];
+            } else if (device.lastData['Telemetry/counters']) {
+                dataDisplay = device.lastData['Telemetry/counters'];
+            } else if (device.lastData['Telemetry/encoders']) {
+                dataDisplay = device.lastData['Telemetry/encoders'];
+            } else {
+                dataDisplay = Object.values(device.lastData)[0] || 'No data';
+            }
+
+            const timeSince = Math.floor((Date.now() - device.lastUpdate) / 1000);
+            const timeDisplay = timeSince < 60 ? `${timeSince}s ago` : `${Math.floor(timeSince / 60)}m ago`;
+
+            return `
+                <div class="device-item">
+                    <div class="device-status ${statusClass}"></div>
+                    <div>
+                        <div class="device-name">${device.name}</div>
+                        <div class="device-data">${dataDisplay}</div>
+                    </div>
+                    <div class="device-messages">
+                        <span class="msg-badge ${badgeClass}">${messageCount} msgs</span>
+                    </div>
+                    <div class="device-timestamp">${timeDisplay}</div>
+                </div>
+            `;
+        }
+
+        // Toggle group expansion
+        function toggleGroup(category) {
+            const content = document.getElementById(`group-${category}`);
+            content.classList.toggle('expanded');
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', updateDisplay);
+        document.getElementById('filterSelect').addEventListener('change', updateDisplay);
+
+        document.getElementById('expandAll').addEventListener('click', () => {
+            document.querySelectorAll('.group-content').forEach(el => el.classList.add('expanded'));
+        });
+
+        document.getElementById('collapseAll').addEventListener('click', () => {
+            document.querySelectorAll('.group-content').forEach(el => el.classList.remove('expanded'));
+        });
+
+        document.getElementById('clearCounters').addEventListener('click', () => {
+            messageCounts = {};
+            updateDisplay();
+        });
+
+        // Scroll to top button visibility
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('show');
+            } else {
+                scrollTop.classList.remove('show');
+            }
+        });
+
+        // Auto-refresh display every 2 seconds
+        setInterval(() => {
+            if (Object.keys(devices).length > 0) {
+                updateDisplay();
+            }
+        }, 2000);
+
+        // Initialize
+        connectMQTT();
+    </script>
+</body>
+</html>

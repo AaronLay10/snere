@@ -1,0 +1,20 @@
+# Scene Executor Development Dockerfile
+
+FROM node:20-alpine
+
+# Install development tools
+RUN apk add --no-cache git curl
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json tsconfig.json ./
+
+# Install all dependencies
+RUN npm install
+
+# Expose port and debug port
+EXPOSE 3004 9230
+
+# Start with ts-node-dev for hot-reload
+CMD ["npm", "run", "dev"]

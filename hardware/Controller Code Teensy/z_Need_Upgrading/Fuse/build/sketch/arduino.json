@@ -1,0 +1,7 @@
+#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Fuse/arduino.json"
+{
+  "sketch": "Fuse.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

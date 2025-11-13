@@ -1,0 +1,409 @@
+{
+  "$schema": "../emergency-stop-schema.json",
+  "schemaVersion": "1.0.0",
+  "lastUpdated": "2025-10-14",
+
+  "room": {
+    "id": "clockwork",
+    "name": "Clockwork Corridor"
+  },
+
+  "emergencyStopSystem": {
+    "enabled": true,
+    "globalEmergencyStopAvailable": true,
+    "gameMasterControlRequired": true,
+    "physicalButtonsRequired": true,
+    "responseTimeRequirement": "< 500ms"
+  },
+
+  "devices": [
+    {
+      "deviceId": "gauge_1_3_4",
+      "deviceName": "Gauges 1, 3, 4",
+      "deviceCategory": "mechanical_movement",
+      "emergencyStopRequired": true,
+      "emergencyStopType": "mqtt_command_with_hardware_relay",
+
+      "emergencyStopMethods": [
+        {
+          "method": "mythra_interface",
+          "priority": 1,
+          "description": "Game master clicks emergency stop button in Mythra",
+          "action": "send_mqtt_emergency_stop_command",
+          "mqttTopic": "sentient/paragon/clockwork/gauge/gauge_1-3-4/emergency",
+          "mqttPayload": {"command": "EmergencyStop", "immediate": true}
+        },
+        {
+          "method": "mqtt_broadcast",
+          "priority": 2,
+          "description": "Global emergency stop broadcast to all devices",
+          "mqttTopic": "sentient/paragon/clockwork/emergency/stop_all",
+          "mqttPayload": {"command": "EmergencyStopAll", "timestamp": "auto"}
+        },
+        {
+          "method": "hardware_relay",
+          "priority": 3,
+          "description": "Physical relay cuts power to stepper drivers",
+          "relayControlPin": "GPIO_25",
+          "normalState": "closed",
+          "emergencyState": "open"
+        }
+      ],
+
+      "affectedActuators": [
+        "stepper_1",
+        "stepper_3",
+        "stepper_4"
+      ],
+
+      "stopBehavior": {
+        "action": "immediate_hold_position",
+        "motorPowerCut": true,
+        "brakingEnabled": false,
+        "publishStatus": true,
+        "statusTopic": "sentient/paragon/clockwork/gauge/gauge_1-3-4/status"
+      },
+
+      "recoveryProcedure": {
+        "requiresManualReset": true,
+        "resetMethod": "mythra_interface_or_device_reboot",
+        "inspectionRequired": true,
+        "recalibrationRequired": false,
+        "notes": "Game master must verify gauges are safe before reset"
+      }
+    },
+
+    {
+      "deviceId": "gauge_2_5_7",
+      "deviceName": "Gauges 2, 5, 7",
+      "deviceCategory": "mechanical_movement",
+      "emergencyStopRequired": true,
+      "emergencyStopType": "mqtt_command_with_hardware_relay",
+
+      "emergencyStopMethods": [
+        {
+          "method": "mythra_interface",
+          "priority": 1,
+          "mqttTopic": "sentient/paragon/clockwork/gauge/gauge_2-5-7/emergency",
+          "mqttPayload": {"command": "EmergencyStop", "immediate": true}
+        },
+        {
+          "method": "mqtt_broadcast",
+          "priority": 2,
+          "mqttTopic": "sentient/paragon/clockwork/emergency/stop_all"
+        },
+        {
+          "method": "hardware_relay",
+          "priority": 3,
+          "relayControlPin": "GPIO_26",
+          "normalState": "closed",
+          "emergencyState": "open"
+        }
+      ],
+
+      "affectedActuators": [
+        "stepper_2",
+        "stepper_5",
+        "stepper_7"
+      ],
+
+      "stopBehavior": {
+        "action": "immediate_hold_position",
+        "motorPowerCut": true,
+        "publishStatus": true,
+        "statusTopic": "sentient/paragon/clockwork/gauge/gauge_2-5-7/status"
+      },
+
+      "recoveryProcedure": {
+        "requiresManualReset": true,
+        "resetMethod": "mythra_interface_or_device_reboot",
+        "inspectionRequired": true,
+        "recalibrationRequired": false
+      }
+    },
+
+    {
+      "deviceId": "kraken",
+      "deviceName": "Kraken Controller",
+      "deviceCategory": "mechanical_movement",
+      "emergencyStopRequired": true,
+      "emergencyStopType": "hardware_relay_pneumatic_shutoff",
+      "criticalitylevel": "high",
+
+      "emergencyStopMethods": [
+        {
+          "method": "mythra_interface",
+          "priority": 1,
+          "description": "Game master emergency stop from Mythra",
+          "mqttTopic": "sentient/paragon/clockwork/kraken/emergency",
+          "mqttPayload": {"command": "EmergencyStop", "lowerTentacles": true}
+        },
+        {
+          "method": "physical_button",
+          "priority": 1,
+          "description": "Red emergency stop button near kraken platform",
+          "location": "Kraken Chamber - Platform Wall",
+          "buttonType": "mushroom_head_red",
+          "wiring": "directly_wired_to_relay"
+        },
+        {
+          "method": "mqtt_broadcast",
+          "priority": 2,
+          "mqttTopic": "sentient/paragon/clockwork/emergency/stop_all"
+        },
+        {
+          "method": "hardware_relay",
+          "priority": 3,
+          "description": "Relay closes all pneumatic valves",
+          "relayControlPin": "GPIO_27",
+          "normalState": "closed",
+          "emergencyState": "open",
+          "pneumaticAction": "close_all_valves_lower_tentacles"
+        }
+      ],
+
+      "affectedActuators": [
+        "tentacle_1",
+        "tentacle_2",
+        "tentacle_3"
+      ],
+
+      "stopBehavior": {
+        "action": "close_pneumatic_valves_and_lower",
+        "motorPowerCut": false,
+        "valvesClose": true,
+        "tentaclesLower": true,
+        "loweringTimeMs": 3000,
+        "publishStatus": true,
+        "statusTopic": "sentient/paragon/clockwork/kraken/status"
+      },
+
+      "recoveryProcedure": {
+        "requiresManualReset": true,
+        "resetMethod": "physical_inspection_required",
+        "inspectionRequired": true,
+        "inspectionChecklist": [
+          "Verify all tentacles in lowered position",
+          "Check pneumatic lines for damage",
+          "Inspect limit switches",
+          "Test individual tentacle movement",
+          "Verify no players near kraken",
+          "Check air pressure levels"
+        ],
+        "recalibrationRequired": false,
+        "notes": "CRITICAL: Physical inspection mandatory before reset. Kraken has highest injury potential."
+      }
+    },
+
+    {
+      "deviceId": "lab_door_system",
+      "deviceName": "Lab Door System",
+      "deviceCategory": "mechanical_movement",
+      "emergencyStopRequired": true,
+      "emergencyStopType": "hardware_relay_with_redundancy",
+      "criticalityLevel": "critical",
+
+      "emergencyStopMethods": [
+        {
+          "method": "mythra_interface",
+          "priority": 1,
+          "description": "Game master emergency stop from Mythra",
+          "mqttTopic": "sentient/paragon/clockwork/lab/door-system/emergency",
+          "mqttPayload": {"command": "EmergencyStop", "immediate": true}
+        },
+        {
+          "method": "physical_button",
+          "priority": 1,
+          "description": "Red emergency stop button at lab entry",
+          "location": "Lab Entry Wall",
+          "buttonType": "mushroom_head_red",
+          "wiring": "directly_wired_to_dual_relay"
+        },
+        {
+          "method": "mqtt_broadcast",
+          "priority": 2,
+          "mqttTopic": "sentient/paragon/clockwork/emergency/stop_all"
+        },
+        {
+          "method": "hardware_relay_primary",
+          "priority": 3,
+          "description": "Primary relay cuts power to left motor",
+          "relayControlPin": "GPIO_28",
+          "normalState": "closed",
+          "emergencyState": "open"
+        },
+        {
+          "method": "hardware_relay_secondary",
+          "priority": 3,
+          "description": "Secondary relay cuts power to right motor",
+          "relayControlPin": "GPIO_29",
+          "normalState": "closed",
+          "emergencyState": "open"
+        },
+        {
+          "method": "obstruction_sensor_auto",
+          "priority": 4,
+          "description": "Automatic stop if obstruction detected",
+          "sensor": "obstruction_sensor",
+          "action": "stop_and_reverse"
+        }
+      ],
+
+      "affectedActuators": [
+        "lab_door_motor_left",
+        "lab_door_motor_right"
+      ],
+
+      "stopBehavior": {
+        "action": "immediate_hold_current_position",
+        "motorPowerCut": true,
+        "dualRelay": true,
+        "bothMotorsStop": true,
+        "publishStatus": true,
+        "statusTopic": "sentient/paragon/clockwork/lab/door-system/status"
+      },
+
+      "recoveryProcedure": {
+        "requiresManualReset": true,
+        "resetMethod": "physical_inspection_and_mythra_reset",
+        "inspectionRequired": true,
+        "inspectionChecklist": [
+          "Verify no players in door path",
+          "Check door alignment (both sides)",
+          "Test limit switches (all 8 switches)",
+          "Verify redundant sensors agree",
+          "Check obstruction sensor",
+          "Inspect door tracks for obstructions",
+          "Verify motor synchronization",
+          "Test manual door movement"
+        ],
+        "recalibrationRequired": true,
+        "calibrationProcedure": "Run full open-close cycle with position verification",
+        "notes": "CRITICAL SAFETY DEVICE: Most thorough inspection required. Large moving parts with pinch points."
+      }
+    }
+  ],
+
+  "globalEmergencyStop": {
+    "enabled": true,
+    "description": "Master emergency stop that affects ALL mechanical movement devices simultaneously",
+
+    "triggers": [
+      {
+        "method": "mythra_interface",
+        "description": "Large red EMERGENCY STOP button in Mythra interface",
+        "uiLocation": "top_right_always_visible",
+        "requiresConfirmation": false,
+        "mqttTopic": "sentient/paragon/clockwork/emergency/stop_all",
+        "mqttPayload": {"command": "GlobalEmergencyStop", "timestamp": "auto", "source": "gamemaster"}
+      },
+      {
+        "method": "physical_button_main",
+        "description": "Physical emergency stop button in control room",
+        "location": "Control Room - Main Panel",
+        "buttonType": "large_mushroom_head_red",
+        "wiring": "hardwired_to_mqtt_publisher_and_relay_board"
+      }
+    ],
+
+    "affectedDevices": [
+      "gauge_1_3_4",
+      "gauge_2_5_7",
+      "kraken",
+      "lab_door_system"
+    ],
+
+    "behavior": {
+      "action": "broadcast_emergency_stop_to_all_devices",
+      "cutPowerToAll": true,
+      "publishAlert": true,
+      "alertLevel": "critical",
+      "alertRecipients": ["game_master", "technical_lead", "safety_monitor"],
+      "logIncident": true
+    },
+
+    "recoveryProcedure": {
+      "requiresIndividualDeviceReset": true,
+      "globalResetNotAllowed": true,
+      "inspectionRequired": true,
+      "inspectionBy": "technical_lead_or_designated_technician",
+      "notes": "Each device must be individually inspected and reset. Global reset intentionally NOT provided to force thorough safety check."
+    }
+  },
+
+  "mythra Integration": {
+    "emergencyStopButton": {
+      "uiLocation": "top_right_corner",
+      "alwaysVisible": true,
+      "size": "large",
+      "color": "red",
+      "label": "EMERGENCY STOP",
+      "requiresConfirmation": false,
+      "action": "immediate"
+    },
+
+    "deviceControls": {
+      "individualEmergencyStops": true,
+      "perDeviceButtons": true,
+      "deviceStatusIndicators": true,
+      "resetControls": true,
+      "resetRequiresRolePermission": ["game_master", "technician", "admin"]
+    },
+
+    "alertSystem": {
+      "displayEmergencyAlerts": true,
+      "alertPriority": "critical",
+      "audioAlert": true,
+      "visualAlert": "red_flashing_banner",
+      "blockNormalOperationDuringEmergency": true
+    }
+  },
+
+  "testingRequirements": {
+    "frequency": "before_each_session",
+    "testProcedure": [
+      "Test global emergency stop button in Mythra",
+      "Test individual device emergency stops",
+      "Test physical emergency stop buttons",
+      "Verify all devices respond within 500ms",
+      "Verify status reporting to Mythra",
+      "Verify recovery procedures work",
+      "Log all test results"
+    ],
+    "testLog": []
+  },
+
+  "training": {
+    "requiredForRoles": ["game_master", "technician", "admin"],
+    "trainingTopics": [
+      "When to use emergency stop (safety threats, malfunctions)",
+      "How to trigger emergency stop (Mythra button, physical buttons)",
+      "What happens when emergency stop activated",
+      "Recovery procedures for each device",
+      "Inspection checklists",
+      "Incident reporting requirements"
+    ],
+    "certificationRequired": true,
+    "refresherInterval": "quarterly"
+  },
+
+  "documentation": {
+    "emergencyProceduresManual": "/docs/emergency-procedures.pdf",
+    "deviceSafetyGuides": "/docs/device-safety/",
+    "incidentReportForm": "/docs/incident-report-template.pdf",
+    "trainingMaterials": "/docs/training/emergency-stop-training.pdf"
+  },
+
+  "notes": [
+    "Emergency stop system is CRITICAL SAFETY FEATURE",
+    "Response time must be < 500ms for all devices",
+    "Physical inspection required after EVERY emergency stop event",
+    "Game masters must be trained and certified on emergency procedures",
+    "Test emergency stop system before EVERY game session",
+    "Log all emergency stop events and resolutions",
+    "Kraken and Lab Door are highest priority due to injury potential",
+    "Global emergency stop button always visible in Mythra",
+    "Recovery procedures intentionally require individual device inspection",
+    "Regular training refreshers required quarterly"
+  ]
+}

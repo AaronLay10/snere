@@ -1,0 +1,59 @@
+{
+  "id": "1a6ee092-c2d2-4b03-9500-ad1bc4dabfe1",
+  "name": "Intro Movie by Finneas Sterling",
+  "type": "scene",
+  "roomId": "clockwork",
+  "description": "",
+  "devices": [
+    "boiler_room_fog_machine",
+    "intro_tv",
+    "intro_tv_control"
+  ],
+  "timeline": [
+    {
+      "delayMs": 0,
+      "action": "fog_power_on",
+      "target": "boiler_room_fog_machine"
+    },
+    {
+      "delayMs": 0,
+      "action": "play_loop",
+      "target": "intro_tv"
+    },
+    {
+      "delayMs": 0,
+      "action": "power_on",
+      "target": "intro_tv_control"
+    },
+    {
+      "delayMs": 7000,
+      "action": "lower_down",
+      "target": "intro_tv_control"
+    },
+    {
+      "delayMs": 10000,
+      "action": "play_intro",
+      "target": "intro_tv"
+    },
+    {
+      "delayMs": 10000,
+      "action": "lift_up",
+      "target": "intro_tv_control"
+    },
+    {
+      "delayMs": 20000,
+      "action": "power_off",
+      "target": "intro_tv_control"
+    }
+  ],
+  "estimatedDurationMs": 20000,
+  "prerequisites": [],
+  "metadata": {
+    "exported_from_ui": true,
+    "exported_at": "2025-11-05T18:23:24.527Z",
+    "original_database_room_id": "5bce5ca2-6088-4830-86a9-539aaaba97f3",
+    "scene_number": 1,
+    "slug": "intro_movie_by_finneas_sterling",
+    "puzzle_files": []
+  }
+}

@@ -1,0 +1,6 @@
+{
+  "sketch": "Picture_FrameLEDs.ino",
+  "board": "teensy:avr:teensy41",
+  "port": "",
+  "output": "build"
+}

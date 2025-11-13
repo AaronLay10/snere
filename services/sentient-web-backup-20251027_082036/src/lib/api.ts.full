@@ -1,0 +1,787 @@
+/**
+ * API Client for Sentient Web Application
+ * Handles all communication with the backend REST API
+ */
+
+import axios, { AxiosInstance, AxiosError } from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+// Create axios instance
+const apiClient: AxiosInstance = axios.create({
+  baseURL: API_URL,
+  timeout: 30000,
+  headers: {
+    'Content-Type': 'application/json',
+    'X-Interface': 'sentient',
+  },
+});
+
+// Request interceptor - add auth token
+apiClient.interceptors.request.use(
+  (config) => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('sentient_auth_token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+// Response interceptor - handle errors
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error: AxiosError) => {
+    if (error.response?.status === 401) {
+      // Unauthorized - clear token and redirect to login
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('sentient_auth_token');
+        localStorage.removeItem('sentient_user');
+        localStorage.removeItem('sentient-auth-storage'); // Clear zustand persisted state
+
+        // Only redirect if not already on login page (prevent redirect loop)
+        if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+        }
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+// Types
+export interface LoginCredentials {
+  email: string;
+  password: string;
+  interface?: 'sentient' | 'mythra';
+}
+
+export interface User {
+  id: string;
+  email: string;
+  username: string;
+  role: string;
+  clientId: string;
+  clientName: string;
+  clientSlug: string;
+  client_id?: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  is_active?: boolean;
+  email_verified?: boolean;
+  last_login?: string;
+  created_at?: string;
+  updated_at?: string;
+  created_by?: string;
+  updated_by?: string;
+}
+
+export interface Client {
+  id: string;
+  name: string;
+  slug: string;
+  description?: string;
+  mqtt_namespace: string;
+  contact_email?: string;
+  contact_phone?: string;
+  status?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+}
+
+export interface Room {
+  id: string;
+  client_id: string;
+  name: string;
+  slug: string;
+  short_name?: string;
+  theme?: string;
+  description?: string;
+  narrative?: string;
+  objective?: string;
+  min_players?: number;
+  max_players?: number;
+  recommended_players?: number;
+  duration_minutes?: number;
+  difficulty_level?: string;
+  difficulty_rating?: number;
+  physical_difficulty?: string;
+  age_recommendation?: string;
+  wheelchair_accessible?: boolean;
+  hearing_impaired_friendly?: boolean;
+  vision_impaired_friendly?: boolean;
+  accessibility_notes?: string;
+  scene_count?: number;
+  puzzle_count?: number;
+  device_count?: number;
+  mqtt_topic_base?: string;
+  network_segment?: string;
+  status: 'draft' | 'testing' | 'active' | 'maintenance' | 'archived';
+  version?: string;
+  development_start_date?: string;
+  testing_start_date?: string;
+  expected_launch_date?: string;
+  soft_launch_date?: string;
+  public_launch_date?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+
+  // Legacy compatibility
+  capacity?: number;
+  duration?: number;
+  difficulty?: 'easy' | 'medium' | 'hard' | 'expert';
+  config?: any;
+}
+
+export interface Device {
+  id: string;
+  room_id: string;
+  device_id: string;
+  puzzle_id?: string;
+  friendly_name?: string;
+  device_type: string;
+  device_category: 'mechanical_movement' | 'sensor' | 'switchable_on_off' | 'variable_control' | 'media_playback' | 'output' | 'input' | 'bidirectional';
+  device_command_name?: string; // Registered command from device registry
+  physical_location?: string;
+  mqtt_topic: string;
+  ip_address?: string;
+  mac_address?: string;
+  hardware_type?: string;
+  hardware_version?: string;
+  firmware_version?: string;
+  controller_id?: string;
+  serial_number?: string;
+  network_segment?: string;
+  capabilities?: any;
+  emergency_stop_required?: boolean;
+  emergency_stop_config?: any;
+  safety_classification?: string;
+  config?: any;
+  state?: any;
+  status?: string;
+  last_seen?: string;
+  last_heartbeat?: string;
+  uptime_seconds?: number;
+  error_count?: number;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+}
+
+export interface Scene {
+  id: string;
+  room_id: string;
+  scene_number: number;
+  name: string;
+  slug: string;
+  description?: string;
+  scene_type?: string;
+  estimated_duration_seconds?: number;
+  min_duration_seconds?: number;
+  max_duration_seconds?: number;
+  transition_type?: string;
+  auto_advance?: boolean;
+  auto_advance_delay_ms?: number;
+  prerequisites?: any;
+  config?: any;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+
+  // Legacy compatibility
+  scene_id?: string;
+  type?: 'puzzle' | 'cutscene' | 'transition';
+  sequence?: number;
+  duration?: number;
+}
+
+export interface Puzzle {
+  id: string;
+  room_id: string;
+  scene_id?: string;
+  step_id?: string;
+  puzzle_id: string;
+  name: string;
+  puzzle_type?: string;
+  description?: string;
+  solve_conditions?: any;
+  solve_actions?: any;
+  fail_conditions?: any;
+  fail_actions?: any;
+  time_limit_seconds?: number;
+  hint_delay_seconds?: number;
+  config?: any;
+  depends_on_puzzles?: any;
+  unlocks_puzzles?: any;
+  difficulty_rating?: number;
+  status?: string;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+}
+
+export interface AuditLog {
+  id: string;
+  user_id: string;
+  username: string;
+  client_id: string;
+  action_type: string;
+  resource_type: string;
+  resource_id?: string;
+  method?: string;
+  path?: string;
+  status_code?: number;
+  success: boolean;
+  ip_address?: string;
+  created_at: string;
+}
+
+// API Functions
+
+// Authentication
+export const auth = {
+  login: async (credentials: LoginCredentials) => {
+    const response = await apiClient.post('/api/auth/login', credentials);
+    return response.data;
+  },
+
+  logout: async () => {
+    const response = await apiClient.post('/api/auth/logout');
+    return response.data;
+  },
+
+  getCurrentUser: async () => {
+    const response = await apiClient.get('/api/auth/me');
+    return response.data.user as User;
+  },
+
+  changePassword: async (currentPassword: string, newPassword: string) => {
+    const response = await apiClient.post('/api/auth/change-password', {
+      currentPassword,
+      newPassword,
+    });
+    return response.data;
+  },
+
+  refreshToken: async () => {
+    const response = await apiClient.post('/api/auth/refresh');
+    return response.data;
+  },
+};
+
+// Clients
+export const clients = {
+  getAll: async (params?: { limit?: number; offset?: number; active?: boolean }) => {
+    const response = await apiClient.get('/api/sentient/clients', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/clients/${id}`);
+    return response.data.client as Client;
+  },
+
+  create: async (data: Partial<Client>) => {
+    const response = await apiClient.post('/api/sentient/clients', data);
+    return response.data.client as Client;
+  },
+
+  update: async (id: string, data: Partial<Client>) => {
+    const response = await apiClient.put(`/api/sentient/clients/${id}`, data);
+    return response.data.client as Client;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/clients/${id}`);
+    return response.data;
+  },
+};
+
+// Rooms
+export const rooms = {
+  getAll: async (params?: { clientId?: string; status?: string; limit?: number; offset?: number }) => {
+    const response = await apiClient.get('/api/sentient/rooms', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/rooms/${id}`);
+    return response.data.room as Room;
+  },
+
+  create: async (data: Partial<Room>) => {
+    const response = await apiClient.post('/api/sentient/rooms', data);
+    return response.data.room as Room;
+  },
+
+  update: async (id: string, data: Partial<Room>) => {
+    const response = await apiClient.put(`/api/sentient/rooms/${id}`, data);
+    return response.data.room as Room;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/rooms/${id}`);
+    return response.data;
+  },
+};
+
+// Devices
+export const devices = {
+  getAll: async (params?: { roomId?: string; category?: string; emergencyStopRequired?: boolean }) => {
+    const response = await apiClient.get('/api/sentient/devices', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/devices/${id}`);
+    return response.data.device as Device;
+  },
+
+  create: async (data: Partial<Device>) => {
+    const response = await apiClient.post('/api/sentient/devices', data);
+    return response.data.device as Device;
+  },
+
+  update: async (id: string, data: Partial<Device>) => {
+    const response = await apiClient.put(`/api/sentient/devices/${id}`, data);
+    return response.data.device as Device;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/devices/${id}`);
+    return response.data;
+  },
+
+  // Device testing commands
+  test: async (id: string, action: string, parameters?: any, confirm_safety?: boolean) => {
+    const response = await apiClient.post(`/api/sentient/device-commands/${id}/test`, {
+      action,
+      parameters,
+      confirm_safety
+    });
+    return response.data;
+  },
+
+  sendRawCommand: async (id: string, topic: string, payload: any, qos?: number) => {
+    const response = await apiClient.post(`/api/sentient/device-commands/${id}/command/raw`, {
+      topic,
+      payload,
+      qos
+    });
+    return response.data;
+  },
+
+  // Get recent sensor data for a device
+  getSensorData: async (id: string, limit: number = 50) => {
+    const response = await apiClient.get(`/api/sentient/devices/${id}/sensor-data`, {
+      params: { limit }
+    });
+    return response.data;
+  },
+};
+
+// Scenes
+export const scenes = {
+  getAll: async (params?: { roomId?: string }) => {
+    const response = await apiClient.get('/api/sentient/scenes', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/scenes/${id}`);
+    return response.data.scene as Scene;
+  },
+
+  create: async (data: Partial<Scene>) => {
+    const response = await apiClient.post('/api/sentient/scenes', data);
+    return response.data.scene as Scene;
+  },
+
+  update: async (id: string, data: Partial<Scene>) => {
+    const response = await apiClient.put(`/api/sentient/scenes/${id}`, data);
+    return response.data.scene as Scene;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/scenes/${id}`);
+    return response.data;
+  },
+
+  exportToJson: async (id: string) => {
+    const response = await apiClient.post(`/api/sentient/scenes/${id}/export-to-json`);
+    return response.data;
+  },
+
+  executeScene: async (id: string, skipSafety: boolean = false) => {
+    const response = await apiClient.post(`/api/sentient/scenes/${id}/execute`, { skipSafety });
+    return response.data;
+  },
+
+  // Ask API to instruct executor to reload runtime registry from JSON
+  reloadExecutor: async () => {
+    const response = await apiClient.post(`/api/sentient/scenes/executor/reload`);
+    return response.data;
+  },
+};
+
+// Puzzles
+export const puzzles = {
+  getAll: async (params?: { roomId?: string }) => {
+    const response = await apiClient.get('/api/sentient/puzzles', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/puzzles/${id}`);
+    return response.data.puzzle as Puzzle;
+  },
+
+  create: async (data: Partial<Puzzle>) => {
+    const response = await apiClient.post('/api/sentient/puzzles', data);
+    return response.data.puzzle as Puzzle;
+  },
+
+  update: async (id: string, data: Partial<Puzzle>) => {
+    const response = await apiClient.put(`/api/sentient/puzzles/${id}`, data);
+    return response.data.puzzle as Puzzle;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/puzzles/${id}`);
+    return response.data;
+  },
+};
+
+// Users
+export const users = {
+  getAll: async (params?: { clientId?: string; role?: string; active?: boolean }) => {
+    const response = await apiClient.get('/api/sentient/users', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/users/${id}`);
+    return response.data.user as User;
+  },
+
+  create: async (data: any) => {
+    const response = await apiClient.post('/api/sentient/users', data);
+    return response.data.user as User;
+  },
+
+  update: async (id: string, data: any) => {
+    const response = await apiClient.put(`/api/sentient/users/${id}`, data);
+    return response.data.user as User;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/users/${id}`);
+    return response.data;
+  },
+};
+
+// Audit Logs
+export const audit = {
+  getLogs: async (params?: any) => {
+    const response = await apiClient.get('/api/audit/logs', { params });
+    return response.data;
+  },
+
+  getStats: async (params?: { startDate?: string; endDate?: string }) => {
+    const response = await apiClient.get('/api/audit/stats', { params });
+    return response.data;
+  },
+
+  getRecent: async (limit?: number) => {
+    const response = await apiClient.get('/api/audit/recent', { params: { limit } });
+    return response.data;
+  },
+
+  getUserLogs: async (userId: string, params?: { limit?: number; offset?: number }) => {
+    const response = await apiClient.get(`/api/audit/user/${userId}`, { params });
+    return response.data;
+  },
+
+  getResourceLogs: async (resourceType: string, resourceId: string, params?: any) => {
+    const response = await apiClient.get(`/api/audit/resource/${resourceType}/${resourceId}`, { params });
+    return response.data;
+  },
+};
+
+// Health check
+export const health = {
+  check: async () => {
+    const response = await apiClient.get('/health');
+    return response.data;
+  },
+};
+
+export default apiClient;
+
+// Scene Steps (Timeline)
+export interface SceneStep {
+  id: string;
+  scene_id: string;
+  step_number: number;
+  step_type: 'puzzle' | 'video' | 'audio' | 'effect' | 'wait' | 'stopLoop';
+  name: string;
+  description?: string;
+  config: any;
+  timing_config?: any;
+  required: boolean;
+  repeatable: boolean;
+  max_attempts?: number;
+  execution_mode?: 'once' | 'loop';
+  execution_interval?: number | null;
+  loop_id?: string | null;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+}
+
+export const sceneSteps = {
+  getAll: async (params?: { sceneId?: string }) => {
+    const response = await apiClient.get('/api/sentient/scene-steps', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/scene-steps/${id}`);
+    return response.data.step as SceneStep;
+  },
+
+  create: async (data: Partial<SceneStep>) => {
+    const response = await apiClient.post('/api/sentient/scene-steps', data);
+    return response.data.step as SceneStep;
+  },
+
+  update: async (id: string, data: Partial<SceneStep>) => {
+    const response = await apiClient.put(`/api/sentient/scene-steps/${id}`, data);
+    return response.data.step as SceneStep;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/scene-steps/${id}`);
+    return response.data;
+  },
+
+  test: async (id: string) => {
+    const response = await apiClient.post(`/api/sentient/scene-steps/${id}/test`);
+    return response.data;
+  },
+
+  reorder: async (sceneId: string, steps: { id: string; step_number: number }[]) => {
+    const response = await apiClient.post('/api/sentient/scene-steps/reorder', {
+      sceneId,
+      steps,
+    });
+    return response.data;
+  },
+};
+
+// Capability Manifest Types
+export interface ManifestDevice {
+  device_id: string;
+  device_type: string;
+  friendly_name: string;
+  pin?: number | string;
+  pin_type?: string;
+  properties?: Record<string, any>;
+}
+
+export interface ManifestParameter {
+  name: string;
+  type: string;
+  required?: boolean;
+  min?: number;
+  max?: number;
+  default?: any;
+  description?: string;
+}
+
+export interface ManifestPublishTopic {
+  topic: string;
+  message_type: string;
+  publish_interval_ms?: number;
+  schema?: Record<string, string>;
+}
+
+export interface ManifestSubscribeTopic {
+  topic: string;
+  message_type?: string;
+  description?: string;
+  parameters?: ManifestParameter[];
+  safety_critical?: boolean;
+  example?: Record<string, any>;
+}
+
+export interface ManifestAction {
+  action_id: string;
+  friendly_name: string;
+  description?: string;
+  parameters?: ManifestParameter[];
+  mqtt_topic?: string;
+  duration_ms?: number;
+  can_interrupt?: boolean;
+  safety_critical?: boolean;
+}
+
+export interface CapabilityManifest {
+  devices?: ManifestDevice[];
+  mqtt_topics_publish?: ManifestPublishTopic[];
+  mqtt_topics_subscribe?: ManifestSubscribeTopic[];
+  actions?: ManifestAction[];
+}
+
+// Controllers (Teensy 4.1 Microcontrollers)
+export interface Controller {
+  id: string;
+  room_id: string;
+  controller_id: string;
+  friendly_name?: string;
+  description?: string;
+  hardware_type?: string;
+  hardware_version?: string;
+  mcu_model?: string;
+  clock_speed_mhz?: number;
+  ip_address?: string;
+  mac_address?: string;
+  mqtt_client_id?: string;
+  mqtt_base_topic?: string;
+  firmware_version?: string;
+  firmware_upload_date?: string;
+  sketch_name?: string;
+  sketch_checksum?: string;
+  physical_location?: string;
+  mounting_type?: string;
+  enclosure_type?: string;
+  digital_pins_total?: number;
+  analog_pins_total?: number;
+  pwm_pins_total?: number;
+  i2c_buses?: number;
+  spi_buses?: number;
+  serial_ports?: number;
+  pin_assignments?: any;
+  power_supply_voltage?: number;
+  power_consumption_watts?: number;
+  backup_power?: boolean;
+  has_watchdog?: boolean;
+  watchdog_timeout_ms?: number;
+  emergency_stop_capable?: boolean;
+  safety_classification?: string;
+  status?: string;
+  last_boot?: string;
+  uptime_seconds?: number;
+  last_heartbeat?: string;
+  heartbeat_interval_ms?: number;
+  flash_size_kb?: number;
+  ram_size_kb?: number;
+  free_ram_kb?: number;
+  cpu_temperature_celsius?: number;
+  capability_manifest?: CapabilityManifest;
+  config?: any;
+  created_at: string;
+  updated_at: string;
+  created_by?: string;
+  updated_by?: string;
+  room_name?: string;
+  device_count?: number;
+  devices?: Device[];
+}
+
+export const controllers = {
+  getAll: async (params?: { roomId?: string; status?: string; hardwareType?: string }) => {
+    const response = await apiClient.get('/api/sentient/controllers', { params });
+    return response.data;
+  },
+
+  getById: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/controllers/${id}`);
+    return response.data.controller as Controller;
+  },
+
+  create: async (data: Partial<Controller>) => {
+    const response = await apiClient.post('/api/sentient/controllers', data);
+    return response.data.controller as Controller;
+  },
+
+  update: async (id: string, data: Partial<Controller>) => {
+    const response = await apiClient.put(`/api/sentient/controllers/${id}`, data);
+    return response.data.controller as Controller;
+  },
+
+  delete: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/controllers/${id}`);
+    return response.data;
+  },
+
+  getDevices: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/controllers/${id}/devices`);
+    return response.data;
+  },
+
+  getManifest: async (id: string) => {
+    const response = await apiClient.get(`/api/sentient/controllers/${id}/manifest`);
+    return response.data.manifest as CapabilityManifest;
+  },
+
+  validateCommand: async (id: string, topic: string, payload: Record<string, any>) => {
+    const response = await apiClient.post(`/api/sentient/controllers/${id}/validate-command`, {
+      topic,
+      payload,
+    });
+    return response.data;
+  },
+
+  executeAction: async (id: string, actionId: string, parameters?: Record<string, any>) => {
+    const response = await apiClient.post(`/api/sentient/controllers/${id}/execute-action`, {
+      action_id: actionId,
+      parameters,
+    });
+    return response.data;
+  },
+
+  testAction: async (id: string, action_id: string, parameters?: any, confirm_safety?: boolean) => {
+    const response = await apiClient.post(`/api/sentient/device-commands/${id}/test-action`, {
+      action_id,
+      parameters,
+      confirm_safety
+    });
+    return response.data;
+  },
+
+  registerDevice: async (id: string, deviceData: {
+    device_id: string;
+    device_type: string;
+    friendly_name?: string;
+    pin?: number | string;
+    pin_type?: string;
+    properties?: Record<string, any>;
+  }) => {
+    const response = await apiClient.post(`/api/sentient/controllers/${id}/register-device`, deviceData);
+    return response.data;
+  },
+};
+
+// MQTT
+export const mqtt = {
+  publish: async (topic: string, payload: any) => {
+    const response = await apiClient.post('/api/mqtt/publish', {
+      topic,
+      payload,
+    });
+    return response.data;
+  },
+};

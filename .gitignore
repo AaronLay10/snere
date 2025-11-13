@@ -1,0 +1,47 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Docker volumes
+volumes/
+
+# Database backups
+backups/
+
+# SSL certificates (private keys)
+config/nginx/ssl/*.pem
+config/nginx/ssl/*.key
+
+# Temporary files
+*.tmp
+*.temp
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+
+# Test coverage
+coverage/
+
+# Hardware build artifacts
+hardware/**/*.hex
+hardware/**/*.elf
+hardware/logs/

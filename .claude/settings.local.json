@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(./scripts/start-development.sh:*)",
+      "Bash(docker compose ps:*)",
+      "Bash(docker compose:*)",
+      "Bash(curl:*)",
+      "Bash(/dev/null)",
+      "Bash(docker inspect:*)",
+      "Bash(docker-compose ps:*)",
+      "Bash(docker-compose config:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

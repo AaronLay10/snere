@@ -1,0 +1,122 @@
+{
+  "$schema": "../room-schema.json",
+  "schemaVersion": "1.0.0",
+  "lastUpdated": "2025-10-14",
+
+  "client": {
+    "id": "paragon",
+    "name": "Paragon Escape Games",
+    "slug": "paragon"
+  },
+
+  "room": {
+    "id": "clockwork",
+    "slug": "clockwork",
+    "name": "Clockwork Corridor",
+    "shortName": "Clockwork",
+    "status": "testing",
+    "version": "1.0.0"
+  },
+
+  "theme": {
+    "primary": "Steampunk",
+    "secondary": ["Victorian", "Industrial", "Mystery"],
+    "mood": "Suspenseful, Mechanical, Adventure"
+  },
+
+  "narrative": {
+    "title": "Clockwork Corridor",
+    "tagline": "A heist in the heart of steam-powered chaos",
+    "description": "In the realm of steampunk chaos, Lord Phineas Sterling has hired your gang to retrieve his magical Æther from the infamous \"Clockwork Corridor.\" The \"Clockwork Corridor\" is run by Vincent Vondæther, an ominous alchemist. Because of Vincent's power-hungry nature, he has stolen Phineas Sterling's prized Æther to use in his twisted inventions.\n\nThe retrieval plan was simple. Get in. Get out. Get paid. However, Vincent is more clever than you originally intended. Now you and your renegade team of thieves must outsmart Vincent and his menacing \"Clockwork Corridor.\" Are you up to the task?\n\nSet in an alternate timeline, \"Clockwork Corridor,\" is immersed in Victorian Steampunk culture and sophistication. Retro-futuristic inventions dominate this industrial steam-powered society and the race for power keeps man driven. The science of alchemy, which uses rare chemicals to create elixirs, can empower these mechanized gadgets. This is the root of Vincent Vondæther's distorted success.",
+
+    "characters": [
+      {
+        "name": "Lord Phineas Sterling",
+        "role": "Client",
+        "description": "Wealthy industrialist whose Æther was stolen"
+      },
+      {
+        "name": "Vincent Vondæther",
+        "role": "Antagonist",
+        "description": "Power-hungry alchemist who runs the Clockwork Corridor"
+      },
+      {
+        "name": "The Players",
+        "role": "Protagonists",
+        "description": "A gang of thieves hired to retrieve the Æther"
+      }
+    ],
+
+    "objective": "Infiltrate Vincent Vondæther's Clockwork Corridor, navigate through steampunk puzzles and mechanical challenges, retrieve Lord Phineas Sterling's magical Æther, and escape before being caught."
+  },
+
+  "operational": {
+    "minPlayers": 2,
+    "maxPlayers": 8,
+    "recommendedPlayers": 6,
+    "durationMinutes": 60,
+    "difficultyLevel": "Medium-Hard",
+    "difficultyRating": 4,
+    "physicalDifficulty": "Low",
+    "ageRecommendation": "12+",
+    "accessibility": {
+      "wheelchairAccessible": false,
+      "hearingImpairedFriendly": true,
+      "visionImpairedFriendly": false,
+      "notes": "Room requires ability to manipulate small objects and read clues. Some physical movement between rooms required."
+    }
+  },
+
+  "technical": {
+    "sceneCount": 8,
+    "puzzleCount": 12,
+    "deviceCount": 7,
+    "teensyControllers": 7,
+    "mechanicalMovementDevices": 3,
+    "emergencyStopsRequired": true,
+    "mqttTopicBase": "sentient/paragon/clockwork",
+    "networkSegment": "192.168.20.0/24"
+  },
+
+  "scenes": [
+    {"id": 1, "name": "Intro & Boiler Room", "slug": "intro-boiler"},
+    {"id": 2, "name": "The Betrayal", "slug": "betrayal"},
+    {"id": 3, "name": "The Study", "slug": "study"},
+    {"id": 4, "name": "The Kraken", "slug": "kraken"},
+    {"id": 5, "name": "The Lab", "slug": "lab"},
+    {"id": 6, "name": "The Plan", "slug": "plan"},
+    {"id": 7, "name": "The Clock", "slug": "clock"},
+    {"id": 8, "name": "Sacrifice & Escape", "slug": "escape"}
+  ],
+
+  "configuration": {
+    "devicesFile": "../../devices/clockwork-devices-enhanced.json",
+    "scenesFile": "./scenes-enhanced.json",
+    "emergencyStopsFile": "./emergency-stops.json",
+    "mediaAssetsPath": "/assets/rooms/clockwork/",
+    "audioAssetsPath": "/assets/rooms/clockwork/audio/",
+    "videoAssetsPath": "/assets/rooms/clockwork/video/"
+  },
+
+  "contacts": {
+    "creativeDirector": "TBD",
+    "technicalLead": "TBD",
+    "primaryGameMaster": "TBD"
+  },
+
+  "launchInfo": {
+    "developmentStartDate": "2024-01-01",
+    "testingStartDate": "2024-09-01",
+    "expectedLaunchDate": "2025-01-15",
+    "softLaunchDate": null,
+    "publicLaunchDate": null
+  },
+
+  "notes": [
+    "Room features sophisticated stepper motor gauge puzzle requiring careful calibration",
+    "Kraken pneumatic tentacles require regular maintenance and safety checks",
+    "Lab door system (when installed) will be composite device with multiple safety sensors",
+    "Fog machine requires 30-second warmup before each use",
+    "Emergency stop procedures must be reviewed with all game masters before certification"
+  ]
+}

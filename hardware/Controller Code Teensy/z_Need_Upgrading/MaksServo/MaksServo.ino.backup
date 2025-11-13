@@ -1,0 +1,73 @@
+#include <PWMServo.h>
+#include <ParagonMQTT.h>
+
+PWMServo myservo; // create servo object to control a servo
+
+const int POWERLED = 13;
+
+const int SERVOPIN = 1;
+int pos = 0;                          // variable to store the servo position
+const int OPEN_POSITION = 60;         // degrees for open position
+const int CLOSED_POSITION = 0;        // degrees for closed position
+int targetPosition = CLOSED_POSITION; // current target position
+
+// Required by ParagonMQTT library
+const char *deviceID = "MaksServo";
+const char *roomID = "Clockwork";
+
+void setup()
+{
+    Serial.begin(115200);
+
+    pinMode(POWERLED, OUTPUT);
+    digitalWrite(POWERLED, HIGH);
+
+    myservo.attach(SERVOPIN); // attaches the servo on pin 2 to the servo object
+                              // myservo.attach(SERVO_PIN_A, 1000, 2000); // some motors need min/max setting
+
+    // Setup network and MQTT
+    networkSetup();
+    mqttSetup();
+
+    // Register MQTT action handlers
+    registerAction("open", handleOpen);
+    registerAction("close", handleClose);
+
+    Serial.println("Servo MQTT Controller Ready");
+}
+
+void loop()
+{
+    // Handle MQTT communication
+    sendDataMQTT();
+
+    // Move to target position if different from current
+    if (pos != targetPosition)
+    {
+        pos = targetPosition;
+        myservo.write(pos);
+
+        // Report position change via MQTT
+        snprintf(publishDetail, sizeof(publishDetail), "position,%d", pos);
+
+        Serial.print("Servo moved to: ");
+        Serial.println(pos);
+    }
+
+    delay(100); // Small delay between checks
+}
+
+// MQTT Action Handlers
+void handleOpen(const char *value)
+{
+    targetPosition = OPEN_POSITION;
+    snprintf(publishDetail, sizeof(publishDetail), "open_ack,%d", OPEN_POSITION);
+    Serial.println("Opening servo");
+}
+
+void handleClose(const char *value)
+{
+    targetPosition = CLOSED_POSITION;
+    snprintf(publishDetail, sizeof(publishDetail), "close_ack,%d", CLOSED_POSITION);
+    Serial.println("Closing servo");
+}

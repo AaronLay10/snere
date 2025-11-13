@@ -1,0 +1,14 @@
+#line 1 "/opt/sentient/hardware/Controller Code Teensy/boiler_room_subpanel_v2/FirmwareMetadata.h"
+#ifndef FIRMWARE_METADATA_H
+#define FIRMWARE_METADATA_H
+
+namespace firmware
+{
+  constexpr const char *VERSION = "2.2.8";
+  constexpr const char *BUILD_DATE = "2025-10-28";
+  // UNIQUE_ID must equal controller_id and be globally unique per controller
+  constexpr const char *UNIQUE_ID = "boiler_room_subpanel";
+  constexpr const char *DESCRIPTION = "Add device-scoped command routing, command acknowledgments, and controller power_off sequence.";
+}
+
+#endif // FIRMWARE_METADATA_H

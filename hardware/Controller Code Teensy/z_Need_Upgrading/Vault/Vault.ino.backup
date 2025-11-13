@@ -1,0 +1,130 @@
+#include <ParagonMQTT.h>
+#include <SoftwareSerial.h>
+#include <SerialRFID.h>
+#include <FastLED.h>
+
+const byte POWERLED = 13;
+
+// Make sure SIZE_TAG_ID is correct for your tags (often 13 bytes including null terminator)
+#define SIZE_TAG_ID 13
+
+const char *deviceID = "Vault";
+const char *roomID = "Clockwork";
+
+const byte RX_PIN = 15;
+const byte TX_PIN = 14;
+const byte TIR = 19;
+const byte LED_NUMBER = 21;
+const byte LED_BOTTOM_L = 23;
+const byte LED_BOTTOM_R = 22;
+const byte NUM_LEDS_STRIP = 10;
+
+CRGB ledsNumbers[NUM_LEDS_STRIP];
+CRGB ledsBottomR[NUM_LEDS_STRIP];
+CRGB ledsBottomL[NUM_LEDS_STRIP];
+
+SoftwareSerial sSerial(RX_PIN, TX_PIN);
+SerialRFID rfid(sSerial);
+
+// Create an array of known tags in the order of their vault numbers
+char tagList[][SIZE_TAG_ID] = {
+    "0C007DAE1DC2", // Tag1
+    "3C0088C9CFB2", // Tag2
+    "3C008923A630", // Tag3
+    "0C007E25A9FE", // Tag4
+    "0A005A9CF438", // Tag5
+    "3C00D64911B2", // Tag6
+    "3C00D58E96F1", // Tag7
+    "3C00D633459C", // Tag8
+    "3C00D5EDF6F2", // Tag9
+    "3C00D5C16C44", // Tag10
+    "3C00D63C61B7", // Tag11
+    "3C00D5B2F4AF", // Tag12
+    "3C00892935A9", // Tag13
+    "3C00891AB11E", // Tag14
+    "3C0088EA237D", // Tag15
+    "0C007DCE47F8", // Tag16
+    "3C0088A0DFCB", // Tag17
+    "3C00D5E96666", // Tag18
+    "3C008900EB5E", // Tag19
+    "3C00D6359C43", // Tag20
+    "0C007D1B7D17", // Tag21
+    "0C007E107E1C", // Tag22
+    "3C0088804470", // Tag23
+    "3C0088E695C7", // Tag24
+    "3C00D5E3FEF4", // Tag25
+    "0C007DF174F4", // Tag26
+    "0C007DF2FF7C", // Tag27
+    "0C007DEAE873", // Tag28
+    "3C0089199539", // Tag29
+    "0C007DC9BE06", // Tag30
+    "3C0088BFDAD1", // Tag31
+    "3C00D5CCEBCE", // Tag32
+    "0C007D5CDFF2", // Tag33
+    "3C0089198F23", // Tag34
+    "3C00892541D1", // Tag35
+    "0C007DD9832B"  // Tag36
+};
+
+char tag[SIZE_TAG_ID];
+bool tagInRange = false;
+
+void setup()
+{
+  pinMode(TIR, INPUT);
+  Serial.begin(115200);
+  sSerial.begin(9600);
+
+  FastLED.addLeds<WS2812, LED_NUMBER, GRB>(ledsNumbers, NUM_LEDS_STRIP);
+  FastLED.addLeds<WS2812, LED_BOTTOM_R, GRB>(ledsBottomR, NUM_LEDS_STRIP);
+  FastLED.addLeds<WS2812, LED_BOTTOM_L, GRB>(ledsBottomL, NUM_LEDS_STRIP);
+
+  pinMode(POWERLED, OUTPUT);
+  digitalWrite(POWERLED, HIGH); // Power LED ON
+  delay(1000);                  // Allow time for the RFID reader to initialize
+  fill_solid(ledsNumbers, NUM_LEDS_STRIP, CRGB::Blue);
+  fill_solid(ledsBottomR, NUM_LEDS_STRIP, CRGB::Blue);
+  fill_solid(ledsBottomL, NUM_LEDS_STRIP, CRGB::Blue);
+  FastLED.show();
+  delay(1000); // Allow time for the LEDs to show
+  networkSetup();
+  mqttSetup();
+}
+
+void loop()
+{
+  sendDataMQTT();
+
+  // Set tagInRange based on digital input
+  tagInRange = (digitalRead(TIR) == HIGH);
+
+  // If a tag is read successfully
+  if (rfid.readTag(tag, sizeof(tag)))
+  {
+    Serial.print("Tag: ");
+    Serial.print(tag);
+    Serial.print("  Tag in Range = ");
+    Serial.print(tagInRange);
+    Serial.print("  Vault Number = ");
+
+    // Compare this tag against each in our array
+    bool found = false;
+    for (int i = 0; i < 36; i++)
+    {
+      if (strcmp(tag, tagList[i]) == 0)
+      {
+        // Found a match: print index+1 as the vault number
+        Serial.println(i + 1);
+        found = true;
+        sprintf(publishDetail, "%d", i + 1);
+        break;
+      }
+    }
+
+    // If no match was found in the list, handle it here
+    if (!found)
+    {
+      Serial.println("Unknown!");
+    }
+  }
+}

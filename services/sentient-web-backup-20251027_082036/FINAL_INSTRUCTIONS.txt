@@ -1,0 +1,159 @@
+===============================================
+VITE FRONTEND - FINAL SETUP INSTRUCTIONS
+===============================================
+
+STATUS: Server is running on port 3002
+URL: http://192.168.20.3:3002
+
+===============================================
+CRITICAL: CLEAR YOUR BROWSER CACHE
+===============================================
+
+The site is working on the server, but your browser
+is caching the OLD version. You MUST clear the cache!
+
+METHOD 1 - Incognito/Private Mode (EASIEST):
+--------------------------------------------
+1. Open Incognito/Private window
+   - Chrome: Ctrl+Shift+N (Windows) or Cmd+Shift+N (Mac)
+   - Firefox: Ctrl+Shift+P (Windows) or Cmd+Shift+P (Mac)
+   - Safari: Cmd+Shift+N (Mac)
+
+2. Navigate to: http://192.168.20.3:3002
+
+3. Login with your credentials
+
+4. You should see:
+   - Sidebar on the left with "VITE ⚡" in green
+   - Rooms button in navigation
+   - Full dashboard with stats
+
+METHOD 2 - Hard Refresh with DevTools:
+---------------------------------------
+1. Open your current browser tab at http://192.168.20.3:3002
+
+2. Press F12 to open DevTools
+
+3. RIGHT-CLICK the reload button (next to address bar)
+
+4. Select "Empty Cache and Hard Reload"
+
+5. Login and check if you see the sidebar
+
+METHOD 3 - Manual Cache Clear:
+-------------------------------
+1. Press Ctrl+Shift+Delete (Windows/Linux)
+   or Cmd+Shift+Delete (Mac)
+
+2. Select "Cached images and files"
+
+3. Select "All time" for time range
+
+4. Click "Clear data"
+
+5. Close browser completely
+
+6. Reopen and go to http://192.168.20.3:3002
+
+===============================================
+WHAT YOU SHOULD SEE:
+===============================================
+
+After clearing cache, you should see:
+
+✓ Login page with neural theme
+✓ After login: Dashboard with LEFT SIDEBAR
+✓ Green "VITE ⚡" label in sidebar header
+✓ Navigation menu with these items:
+  - Dashboard
+  - Rooms  <-- This should work!
+  - Devices
+  - Controllers
+  - Settings
+  etc.
+✓ User profile at bottom of sidebar
+✓ Main content area with stats cards
+✓ "Your Rooms" section showing Clockwork Corridor
+
+===============================================
+WHAT'S DIFFERENT FROM OLD SITE:
+===============================================
+
+OLD Next.js Site (port 443):
+- No sidebar
+- Just basic header and content
+- "Disconnect" button in top right
+- Rooms button doesn't work
+
+NEW Vite Site (port 3002):
+- FULL sidebar on left
+- "VITE ⚡" green label
+- Working Rooms navigation
+- Instant hot reload
+- No caching issues
+
+===============================================
+IF STILL SEEING OLD BASIC DASHBOARD:
+===============================================
+
+This means your browser is STILL using cached files.
+
+Try these in order:
+1. Use Incognito mode (METHOD 1 above)
+2. Try a different browser entirely
+3. Clear ALL browser data (not just cache)
+4. Disable browser extensions temporarily
+
+===============================================
+SERVER INFORMATION:
+===============================================
+
+The Vite dev server is running with:
+- Clean cache (node_modules/.vite cleared)
+- All fixes applied
+- DashboardLayout with sidebar
+- Working navigation
+- No errors
+
+You can verify server is running:
+$ curl http://192.168.20.3:3002
+(Should return HTML with "sentient-web-vite")
+
+===============================================
+KEY FILES THAT WERE FIXED:
+===============================================
+
+✓ Dashboard.tsx - Now uses DashboardLayout wrapper
+✓ DashboardLayout.tsx - Fixed Next.js → React Router
+✓ App.tsx - Routes match /dashboard/* pattern
+✓ All pages - useRouter → useNavigate
+✓ LoginScreen.tsx - Fixed auth redirect loop
+✓ All @ imports → relative paths
+✓ All dependencies installed
+
+===============================================
+IF YOU NEED TO RESTART SERVER:
+===============================================
+
+$ cd /opt/sentient/services/sentient-web-vite
+$ npm run dev
+
+Server will start on port 3002
+
+===============================================
+NEXT STEPS AFTER YOU SEE THE SIDEBAR:
+===============================================
+
+1. Click "Rooms" in the sidebar
+2. You should see the Rooms list page
+3. Click on "Clockwork Corridor"
+4. Navigate to Scenes
+5. Click on a scene's Timeline
+6. Verify "Delay after Execution" field is visible
+
+===============================================
+
+The migration is COMPLETE. The only issue is
+browser caching. Please use Incognito mode!
+
+===============================================

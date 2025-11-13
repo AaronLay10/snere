@@ -1,0 +1,422 @@
+{
+  "roomId": "clockwork",
+  "roomName": "Clockwork Corridor",
+  "scenes": [
+    {
+      "id": "gauge_puzzle",
+      "type": "puzzle",
+      "name": "Gauge Puzzle",
+  "roomId": "clockwork",
+      "description": "Players must adjust pressure gauges to correct levels",
+      "prerequisites": [],
+      "devices": [
+        "gauge_controller_1",
+        "gauge_controller_2",
+        "gauge_sensor"
+      ],
+      "outputs": [
+        "gauge_solve_sfx",
+        "gauge_above_box_sfx"
+      ],
+      "timeLimitMs": 600000,
+      "metadata": {
+        "difficulty": "medium",
+        "location": "boiler_room"
+      }
+    },
+    {
+      "id": "gear_puzzle",
+      "type": "puzzle",
+      "name": "Gear Puzzle (Opens Crawlspace)",
+  "roomId": "clockwork",
+      "description": "Align gears to unlock the crawlspace door",
+      "prerequisites": [],
+      "devices": [
+        "gear_mechanism",
+        "crawlspace_actuator"
+      ],
+      "outputs": [
+        "gear_solve_sfx",
+        "crawlspace_open"
+      ],
+      "safetyChecks": [
+        {
+          "id": "crawlspace_clear",
+          "description": "Ensure crawlspace area is clear of players",
+          "deviceId": "crawlspace_proximity_sensor",
+          "expectedValue": {
+            "clear": true
+          }
+        }
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "riddle_puzzle",
+      "type": "puzzle",
+      "name": "Riddle Puzzle",
+  "roomId": "clockwork",
+      "description": "Solve riddle to open secret panel",
+      "prerequisites": [],
+      "devices": [
+        "riddle_input_panel"
+      ],
+      "outputs": [
+        "riddle_doorbell_sfx",
+        "riddle_solve_sfx",
+        "riddle_door_open"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "fuse_puzzle",
+      "type": "puzzle",
+      "name": "Fuse Puzzle",
+  "roomId": "clockwork",
+      "description": "Insert correct fuses to restore power to sections",
+      "prerequisites": [],
+      "devices": [
+        "fuse_box_controller"
+      ],
+      "outputs": [
+        "fuse_solve_sfx"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "music_puzzle",
+      "type": "puzzle",
+      "name": "Music Puzzle",
+  "roomId": "clockwork",
+      "description": "Play correct musical sequence",
+      "prerequisites": [],
+      "devices": [
+        "music_input_panel"
+      ],
+      "outputs": [
+        "music_input_sfx",
+        "music_background_fade"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "pilaster_puzzle",
+      "type": "puzzle",
+      "name": "Pilaster Puzzle",
+  "roomId": "clockwork",
+      "description": "Activate pilasters to reveal hidden passage",
+      "prerequisites": [],
+      "devices": [
+        "pilaster_1",
+        "pilaster_2",
+        "pilaster_3"
+      ],
+      "outputs": [
+        "pilaster_drop_panels_1",
+        "pilaster_drop_panels_2",
+        "pilaster_drop_panels_3"
+      ],
+      "safetyChecks": [
+        {
+          "id": "pilaster_safe",
+          "description": "Ensure no players near pilaster drop zones",
+          "deviceId": "pilaster_proximity_sensors"
+        }
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "floor_puzzle",
+      "type": "puzzle",
+      "name": "Floor Puzzle",
+  "roomId": "clockwork",
+      "description": "Step on floor panels in correct sequence",
+      "prerequisites": [],
+      "devices": [
+        "floor_sensor_array"
+      ],
+      "outputs": [
+        "floor_beat_sfx"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "kraken_puzzle",
+      "type": "puzzle",
+      "name": "Kraken Puzzle",
+  "roomId": "clockwork",
+      "description": "Defeat the mechanical kraken",
+      "prerequisites": [],
+      "devices": [
+        "kraken_tentacles",
+        "kraken_controller",
+        "port_holes"
+      ],
+      "outputs": [
+        "kraken_sfx",
+        "kraken_breach_sound",
+        "tentacles_down",
+        "open_port_holes"
+      ],
+      "safetyChecks": [
+        {
+          "id": "tentacles_safe",
+          "description": "Tentacle movement safe"
+        }
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "shooting_puzzle",
+      "type": "puzzle",
+      "name": "Shooting Puzzle (Gun Puzzle)",
+  "roomId": "clockwork",
+      "description": "Find ceiling guns and shoot targets",
+      "prerequisites": [],
+      "devices": [
+        "ceiling_guns",
+        "ir_sensors",
+        "shooting_locations",
+        "fog_machine_main"
+      ],
+      "outputs": [
+        "ceiling_guns_found",
+        "fog_power_on",
+        "guns_reload_sfx",
+        "shooting_locations_open",
+        "ir_sensors_activate"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "key_puzzle",
+      "type": "puzzle",
+      "name": "Key Puzzle",
+  "roomId": "clockwork",
+      "description": "Find and use correct keys",
+      "prerequisites": [],
+      "devices": [
+        "key_locks"
+      ],
+      "outputs": [
+        "key_sfx"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "chemical_puzzle",
+      "type": "puzzle",
+      "name": "Chemical Puzzle",
+  "roomId": "clockwork",
+      "description": "Mix correct chemical compounds",
+      "prerequisites": [],
+      "devices": [
+        "chemical_apparatus",
+        "chemical_actuator",
+        "chest_actuator",
+        "lab_shelves"
+      ],
+      "outputs": [
+        "chemical_sfx",
+        "chemicals_go_down",
+        "chest_raises",
+        "lab_shelves_open"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "syringe_puzzle",
+      "type": "puzzle",
+      "name": "Syringe Puzzle",
+  "roomId": "clockwork",
+      "description": "Inject correct serum combination",
+      "prerequisites": [
+        "chemical_puzzle"
+      ],
+      "devices": [
+        "syringe_controller",
+        "small_crawlspace_actuator",
+        "tentacles"
+      ],
+      "outputs": [
+        "syringe_sfx",
+        "small_crawlspace_opens",
+        "tentacles_back_up",
+        "music_fade_in"
+      ],
+      "safetyChecks": [
+        {
+          "id": "small_crawlspace_clear",
+          "description": "Small crawlspace area clear"
+        }
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "crank_puzzle",
+      "type": "puzzle",
+      "name": "Crank Puzzle (Opens Door to Hall)",
+  "roomId": "clockwork",
+      "description": "Turn crank to open hallway door",
+      "prerequisites": [
+        "syringe_puzzle"
+      ],
+      "devices": [
+        "crank_mechanism",
+        "hall_door_actuator"
+      ],
+      "outputs": [
+        "crank_sfx",
+        "hall_door_opens",
+        "music_fade_out",
+        "vern_cue_crank"
+      ],
+      "safetyChecks": [
+        {
+          "id": "hall_door_clear",
+          "description": "Hall door path clear"
+        }
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "operator_puzzle",
+      "type": "puzzle",
+      "name": "Operator Puzzle",
+  "roomId": "clockwork",
+      "description": "Reveal and solve operator puzzle",
+      "prerequisites": [],
+      "devices": [
+        "operator_panel",
+        "chicken_coop_lightbox"
+      ],
+      "outputs": [
+        "operator_puzzle_reveal",
+        "chicken_coop_light",
+        "operator_sfx"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "lightbox_paper_puzzle",
+      "type": "puzzle",
+      "name": "Lightbox Paper Puzzle",
+  "roomId": "clockwork",
+      "description": "Decode papers from lightbox frame",
+      "prerequisites": [
+        "operator_puzzle"
+      ],
+      "devices": [
+        "lightbox_frame"
+      ],
+      "outputs": [
+        "papers_fall_out"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "password_puzzle",
+      "type": "puzzle",
+      "name": "Password Puzzle",
+  "roomId": "clockwork",
+      "description": "Enter decoded password",
+      "prerequisites": [
+        "lightbox_paper_puzzle"
+      ],
+      "devices": [
+        "password_input"
+      ],
+      "outputs": [
+        "password_sfx"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "aether_power_puzzle",
+      "type": "puzzle",
+      "name": "Aether Power Source Puzzle",
+  "roomId": "clockwork",
+      "description": "Insert Aether into Newel Post",
+      "prerequisites": [],
+      "devices": [
+        "newel_post",
+        "aether_sensor"
+      ],
+      "outputs": [
+        "newel_post_raises",
+        "vern_cue_aether"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "cube_puzzle",
+      "type": "puzzle",
+      "name": "Cube Puzzle",
+  "roomId": "clockwork",
+      "description": "Solve cube configuration",
+      "prerequisites": [],
+      "devices": [
+        "cube_mechanism",
+        "study_door"
+      ],
+      "outputs": [
+        "cube_sfx",
+        "study_door_open",
+        "close_clock_door"
+      ],
+      "timeLimitMs": 600000
+    },
+    {
+      "id": "intro_boiler",
+      "type": "cutscene",
+      "name": "Scene 1 - Intro & Boiler",
+      "description": "Introduction to the room by Finneas Sterling and then Boiler Room Puzzles.",
+      "devices": [
+        "tv_power",
+        "fog_power",
+        "tv_lift",
+        "intro_trigger"
+      ],
+      "sequence": [
+        {
+          "delayMs": 0,
+          "action": "powerOn",
+          "target": "tv_power"
+        },
+        {
+          "delayMs": 100,
+          "action": "powerOn",
+          "target": "fog_power"
+        },
+        {
+          "delayMs": 10200,
+          "action": "effect.trigger",
+          "target": "tv_lift",
+          "params": {
+            "value": "down"
+          }
+        },
+        {
+          "delayMs": 15300,
+          "action": "audio.play",
+          "target": "cue 1"
+        },
+        {
+          "delayMs": 15400,
+          "action": "video.play",
+          "target": "001.intro.mp4",
+          "duration": 150000
+        }
+      ],
+      "estimatedDurationMs": 165400,
+      "prerequisites": [],
+      "metadata": {
+        "exported_from_ui": true,
+        "exported_at": "2025-10-22T17:25:34.979Z",
+        "original_scene_id": "scene_1_intro_boiler",
+        "scene_number": 1,
+        "slug": "intro-boiler"
+      }
+    }
+  ]
+}

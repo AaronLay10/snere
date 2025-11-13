@@ -1,0 +1,24 @@
+{
+  "id": "betrayal",
+  "name": "Scene 2 - Betrayal",
+  "type": "scene",
+  "roomId": "clockwork",
+  "description": "Betrayal scene with Vern and critical story moments",
+  "timeline": [
+    {
+      "delayMs": 0,
+      "action": "lock",
+      "target": "barrel_maglock"
+    }
+  ],
+  "estimatedDurationMs": 0,
+  "prerequisites": [],
+  "metadata": {
+    "exported_from_ui": true,
+    "exported_at": "2025-10-22T22:10:38.816Z",
+    "original_database_room_id": "clockwork-corridor",
+    "scene_number": 2,
+    "slug": "betrayal",
+    "puzzle_files": []
+  }
+}

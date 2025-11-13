@@ -1,0 +1,8 @@
+node_modules
+dist
+src/**/*.test.ts
+src/**/*.spec.ts
+*.log
+.env
+coverage
+README.md

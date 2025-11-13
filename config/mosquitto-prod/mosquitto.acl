@@ -1,0 +1,31 @@
+# Mosquitto ACL Configuration
+# Sentient Engine Multi-Tenant Access Control
+
+# Admin user - full access
+user admin
+topic readwrite #
+
+# Sentient services - full access for all clients
+user sentient_api
+topic readwrite #
+
+user sentient_executor
+topic readwrite #
+
+user sentient_monitor
+topic readwrite #
+
+# Paragon client devices - restricted to paragon topics
+user paragon_devices
+topic readwrite paragon/#
+topic read $SYS/#
+
+# Template for additional clients:
+# user {client_name}_devices
+# topic readwrite {client_name}/#
+# topic read $SYS/#
+
+# Example for additional client "acme":
+# user acme_devices
+# topic readwrite acme/#
+# topic read $SYS/#
