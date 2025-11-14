@@ -153,8 +153,8 @@ router.post('/', authenticate, requireCapability('manage_users'), async (req, re
 
     const { email, username, password, role, client_id, is_active = true } = value;
 
-    // Auto-generate username from email if not provided
-    const final_username = username || email.split('@')[0];
+    // Auto-generate username from full email if not provided (ensures uniqueness)
+    const final_username = username || email.toLowerCase().replace(/[@\.]/g, '_');
 
     // Check if actor can create this role
     if (!canManageRole(req.user.role, role)) {
@@ -243,16 +243,9 @@ router.put('/:id', authenticate, async (req, res) => {
     }
 
     // Build update allowed fields based on permissions
-    const updateSchema = isSelfUpdate
+    // Admins can update all fields, even when editing themselves
+    const updateSchema = isAdmin
       ? Joi.object({
-          username: Joi.string().min(3).max(50).optional(),
-          email: Joi.string().email().optional(),
-          first_name: Joi.string().max(100).allow('', null).optional(),
-          last_name: Joi.string().max(100).allow('', null).optional(),
-          phone: Joi.string().max(50).allow('', null).optional(),
-          password: Joi.string().min(8).optional()
-        }).unknown(false)
-      : Joi.object({
           email: Joi.string().email().optional(),
           username: Joi.string().min(3).max(50).optional(),
           password: Joi.string().min(8).optional(),
@@ -263,6 +256,14 @@ router.put('/:id', authenticate, async (req, res) => {
           phone: Joi.string().max(50).allow('', null).optional(),
           is_active: Joi.boolean().optional(),
           email_verified: Joi.boolean().optional()
+        }).unknown(false)
+      : Joi.object({
+          username: Joi.string().min(3).max(50).optional(),
+          email: Joi.string().email().optional(),
+          first_name: Joi.string().max(100).allow('', null).optional(),
+          last_name: Joi.string().max(100).allow('', null).optional(),
+          phone: Joi.string().max(50).allow('', null).optional(),
+          password: Joi.string().min(8).optional()
         }).unknown(false);
 
     const { error, value } = updateSchema.validate(req.body);

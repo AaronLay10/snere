@@ -20,6 +20,7 @@ import {
 import { clients, type Client } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import ClientLogoUpload from '../components/ClientLogoUpload';
 import toast from 'react-hot-toast';
 
 interface ClientFormData {
@@ -339,6 +340,21 @@ export default function ClientsList() {
                   <X className="w-5 h-5" />
                 </button>
               </div>
+
+              {/* Client Logo Upload - Only show when editing existing client */}
+              {editingClient && (
+                <div className="flex justify-center mb-6">
+                  <ClientLogoUpload
+                    clientId={editingClient.id}
+                    currentLogoUrl={editingClient.logo_url}
+                    onLogoUpdated={(logoUrl) => {
+                      // Update the client in the list
+                      loadClients();
+                    }}
+                    size="md"
+                  />
+                </div>
+              )}
 
               <div className="space-y-4">
                 {/* Name */}

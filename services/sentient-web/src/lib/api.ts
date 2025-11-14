@@ -101,6 +101,7 @@ export interface Client {
 export interface Room {
   id: string;
   client_id: string;
+  client_name?: string;
   name: string;
   slug: string;
   short_name?: string;

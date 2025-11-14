@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { rooms, scenes, devices, puzzles, type Room } from '../lib/api';
+import { rooms, clients, scenes, devices, puzzles, type Room, type Client } from '../lib/api';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Breadcrumbs from '../components/navigation/Breadcrumbs';
 import RoomControlPanel from '../components/RoomControlPanel';
@@ -28,6 +28,7 @@ import {
   List,
   Play,
   Settings,
+  X,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -44,11 +45,13 @@ export default function RoomDetailPage() {
     puzzles: 0,
   });
   const [scenesList, setScenesList] = useState<any[]>([]);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [clientsList, setClientsList] = useState<Client[]>([]);
+  const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
-    // Redirect to rooms list if trying to create/edit rooms (not yet implemented)
-    if (roomId === 'new' || roomId === 'edit') {
-      toast.error('Room creation/editing is not yet implemented via this UI. Please use the API or contact support.');
+    if (roomId === 'new') {
+      toast.error('Room creation is not yet implemented. Please use the API.');
       navigate('/dashboard/rooms');
       return;
     }
@@ -58,6 +61,12 @@ export default function RoomDetailPage() {
       loadStats();
     }
   }, [roomId, navigate]);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      loadClients();
+    }
+  }, [user]);
 
   const loadRoom = async () => {
     if (!roomId) return;
@@ -93,6 +102,47 @@ export default function RoomDetailPage() {
       setScenesList(scenesData.scenes || []);
     } catch (error) {
       console.error('Failed to load stats:', error);
+    }
+  };
+
+  const loadClients = async () => {
+    try {
+      const data = await clients.getAll();
+      setClientsList(data.clients || []);
+    } catch (error: any) {
+      console.error('Failed to load clients:', error);
+    }
+  };
+
+  const handleEdit = () => {
+    if (!room) return;
+    setFormData({
+      name: room.name,
+      slug: room.slug,
+      short_name: room.short_name || '',
+      description: room.description || '',
+      client_id: room.client_id,
+      status: room.status,
+      min_players: room.min_players || 2,
+      max_players: room.max_players || 8,
+      duration_minutes: room.duration_minutes || 60,
+      difficulty_level: room.difficulty_level || '',
+      theme: room.theme || '',
+    });
+    setShowEditModal(true);
+  };
+
+  const handleSaveRoom = async () => {
+    if (!room || !roomId) return;
+
+    try {
+      await rooms.update(roomId, formData);
+      toast.success('Room updated successfully');
+      setShowEditModal(false);
+      loadRoom();
+    } catch (error: any) {
+      console.error('Failed to update room:', error);
+      toast.error(error.response?.data?.message || 'Failed to update room');
     }
   };
 
@@ -161,7 +211,15 @@ export default function RoomDetailPage() {
             </button>
             <div>
               <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">{room.name}</h1>
-              <p className="text-gray-500">/{room.slug}</p>
+              <div className="flex items-center gap-3">
+                <p className="text-gray-500">/{room.slug}</p>
+                {user?.role === 'admin' && room.client_name && (
+                  <>
+                    <span className="text-gray-600">•</span>
+                    <p className="text-cyan-400/70">{room.client_name}</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -169,16 +227,13 @@ export default function RoomDetailPage() {
             <div className={`status-badge status-${room.status}`}>{room.status}</div>
             {['admin', 'editor'].includes(user?.role || '') && (
               <>
-                {/* Edit not yet implemented in UI */}
-                {false && (
-                  <button
-                    onClick={() => navigate(`/dashboard/rooms/${roomId}/edit`)}
-                    className="btn-secondary flex items-center gap-2"
-                  >
-                    <Edit className="w-5 h-5" />
-                    <span>Edit</span>
-                  </button>
-                )}
+                <button
+                  onClick={handleEdit}
+                  className="btn-secondary flex items-center gap-2"
+                >
+                  <Edit className="w-5 h-5" />
+                  <span>Edit</span>
+                </button>
                 <button
                   onClick={handleDelete}
                   className="btn-secondary flex items-center gap-2 !bg-red-500/10 !text-red-400 hover:!bg-red-500/20"
@@ -517,6 +572,217 @@ export default function RoomDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Edit Room Modal */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-900 rounded-xl border border-cyan-500/30 w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          >
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-semibold text-white">Edit Room</h2>
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="text-gray-400 hover:text-white transition-colors"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                {/* Basic Info */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Room Name *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.name || ''}
+                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      className="input-neural"
+                      placeholder="Escape Room Name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Slug *
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.slug || ''}
+                      onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '-') })}
+                      className="input-neural"
+                      placeholder="room-slug"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Short Name
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.short_name || ''}
+                      onChange={(e) => setFormData({ ...formData, short_name: e.target.value })}
+                      className="input-neural"
+                      placeholder="Short display name"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Theme
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.theme || ''}
+                      onChange={(e) => setFormData({ ...formData, theme: e.target.value })}
+                      className="input-neural"
+                      placeholder="e.g., Steampunk, Horror"
+                    />
+                  </div>
+                </div>
+
+                {/* Client (Admin only) */}
+                {user?.role === 'admin' && clientsList.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Client *
+                    </label>
+                    <select
+                      value={formData.client_id || ''}
+                      onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                      className="input-neural"
+                    >
+                      <option value="">Select Client</option>
+                      {clientsList.map((client) => (
+                        <option key={client.id} value={client.id}>
+                          {client.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Description
+                  </label>
+                  <textarea
+                    value={formData.description || ''}
+                    onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                    className="input-neural"
+                    rows={3}
+                    placeholder="Brief description of the room..."
+                  />
+                </div>
+
+                {/* Players & Duration */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Min Players
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.min_players || 2}
+                      onChange={(e) => setFormData({ ...formData, min_players: parseInt(e.target.value) })}
+                      className="input-neural"
+                      min="1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Max Players
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.max_players || 8}
+                      onChange={(e) => setFormData({ ...formData, max_players: parseInt(e.target.value) })}
+                      className="input-neural"
+                      min="1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Duration (min)
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.duration_minutes || 60}
+                      onChange={(e) => setFormData({ ...formData, duration_minutes: parseInt(e.target.value) })}
+                      className="input-neural"
+                      min="15"
+                      step="15"
+                    />
+                  </div>
+                </div>
+
+                {/* Difficulty & Status */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Difficulty Level
+                    </label>
+                    <select
+                      value={formData.difficulty_level || ''}
+                      onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value })}
+                      className="input-neural"
+                    >
+                      <option value="">Not Set</option>
+                      <option value="beginner">Beginner</option>
+                      <option value="intermediate">Intermediate</option>
+                      <option value="advanced">Advanced</option>
+                      <option value="expert">Expert</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Status
+                    </label>
+                    <select
+                      value={formData.status || 'draft'}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                      className="input-neural"
+                    >
+                      <option value="draft">Draft</option>
+                      <option value="testing">Testing</option>
+                      <option value="active">Active</option>
+                      <option value="maintenance">Maintenance</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3 mt-6">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSaveRoom}
+                  className="flex-1 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
+                >
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

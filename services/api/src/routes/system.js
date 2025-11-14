@@ -9,10 +9,16 @@ const axios = require('axios');
 const { authenticate } = require('../middleware/auth');
 
 // Service URLs (internal Docker network)
+// Use environment variable to determine dev vs prod services
+const ENV_SUFFIX = process.env.NODE_ENV === 'development' || process.env.ENVIRONMENT === 'development' ? '-dev' : '';
+const API_PORT = ENV_SUFFIX ? '4000' : '3000';
+const MONITOR_PORT = ENV_SUFFIX ? '4003' : '3003';
+const EXECUTOR_PORT = ENV_SUFFIX ? '4004' : '3004';
+
 const SERVICES = {
-  api: { url: 'http://localhost:3000/health', name: 'API' },
-  deviceMonitor: { url: 'http://device-monitor:3003/health', name: 'Device Monitor' },
-  sceneExecutor: { url: 'http://scene-executor:3004/health', name: 'Scene Executor' },
+  api: { url: `http://localhost:${API_PORT}/health`, name: 'API' },
+  deviceMonitor: { url: `http://sentient-monitor${ENV_SUFFIX}:${MONITOR_PORT}/health`, name: 'Device Monitor' },
+  sceneExecutor: { url: `http://sentient-executor${ENV_SUFFIX}:${EXECUTOR_PORT}/health`, name: 'Scene Executor' },
 };
 
 /**

@@ -98,7 +98,7 @@ static const size_t metadata_json_capacity = 1024;
 // ──────────────────────────────────────────────────────────────────────────────
 // MQTT Configuration
 // ──────────────────────────────────────────────────────────────────────────────
-const IPAddress mqtt_broker_ip(192, 168, 20, 3);
+const IPAddress mqtt_broker_ip(192, 168, 2, 3); // Dev environment
 const char *mqtt_host = "sentientengine.ai";
 const int mqtt_port = 1883;
 
@@ -724,7 +724,8 @@ void set_relay_state(int pin, bool state, bool &state_var, const char *device_na
     Serial.println(state ? F("ON") : F("OFF"));
 
     // Publish individual relay state to MQTT for real-time UI updates
-    if (mqtt.isConnected()) {
+    if (mqtt.isConnected())
+    {
         publish_relay_state(device_id, state);
     }
 }
@@ -846,7 +847,8 @@ void emergency_power_off()
     vault_5v_state = false;
 
     // Publish individual relay OFF states for real-time UI updates
-    if (mqtt.isConnected()) {
+    if (mqtt.isConnected())
+    {
         publish_relay_state(naming::DEV_MAIN_LIGHTING_24V, false);
         publish_relay_state(naming::DEV_MAIN_LIGHTING_12V, false);
         publish_relay_state(naming::DEV_MAIN_LIGHTING_5V, false);

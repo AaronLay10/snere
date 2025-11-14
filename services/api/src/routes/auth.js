@@ -144,8 +144,8 @@ router.post('/login', async (req, res) => {
         username: user.username,
         role: user.role,
         client_id: user.client_id,
-        clientName: user.client_name,
-        clientSlug: user.client_slug
+        client_name: user.client_name,
+        client_slug: user.client_slug
       },
       interface: interfaceType || 'unknown'
     });
@@ -220,11 +220,11 @@ router.get('/me', authenticate, async (req, res) => {
         username: user.username,
         role: user.role,
         client_id: user.client_id,
-        clientName: user.client_name,
-        clientSlug: user.client_slug,
-        isActive: user.is_active,
-        createdAt: user.created_at,
-        lastLogin: user.last_login
+        client_name: user.client_name,
+        client_slug: user.client_slug,
+        is_active: user.is_active,
+        created_at: user.created_at,
+        last_login: user.last_login
       }
     });
   } catch (error) {

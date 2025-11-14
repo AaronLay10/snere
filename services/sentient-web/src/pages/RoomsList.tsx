@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { rooms, type Room } from '../lib/api';
+import { rooms, clients, type Room, type Client } from '../lib/api';
 import { motion } from 'framer-motion';
 import {
   DoorOpen,
@@ -26,10 +26,18 @@ export default function RoomsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [clientFilter, setClientFilter] = useState<string>('all');
+  const [clientsList, setClientsList] = useState<Client[]>([]);
 
   useEffect(() => {
     loadRooms();
-  }, [statusFilter]);
+  }, [statusFilter, clientFilter]);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      loadClients();
+    }
+  }, [user]);
 
   const loadRooms = async () => {
     try {
@@ -38,6 +46,8 @@ export default function RoomsPage() {
 
       if (user?.role !== 'admin') {
         params.client_id = user?.client_id;
+      } else if (clientFilter !== 'all') {
+        params.client_id = clientFilter;
       }
 
       if (statusFilter !== 'all') {
@@ -51,6 +61,15 @@ export default function RoomsPage() {
       toast.error(error.response?.data?.message || 'Failed to load rooms');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadClients = async () => {
+    try {
+      const data = await clients.getAll();
+      setClientsList(data.clients || []);
+    } catch (error: any) {
+      console.error('Failed to load clients:', error);
     }
   };
 
@@ -111,6 +130,25 @@ export default function RoomsPage() {
                 className="input-neural !pl-11"
               />
             </div>
+
+            {/* Client Filter (Admin only) */}
+            {user?.role === 'admin' && clientsList.length > 0 && (
+              <div className="flex items-center gap-2">
+                <Filter className="w-5 h-5 text-gray-500" />
+                <select
+                  value={clientFilter}
+                  onChange={(e) => setClientFilter(e.target.value)}
+                  className="input-neural w-full md:w-48"
+                >
+                  <option value="all">All Clients</option>
+                  {clientsList.map((client) => (
+                    <option key={client.id} value={client.id}>
+                      {client.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
 
             {/* Status Filter */}
             <div className="flex items-center gap-2">
@@ -178,6 +216,11 @@ export default function RoomsPage() {
                         {room.name}
                       </h3>
                       <p className="text-xs text-gray-500">/{room.slug}</p>
+                      {user?.role === 'admin' && room.client_name && (
+                        <p className="text-xs text-cyan-400/60 mt-0.5">
+                          {room.client_name}
+                        </p>
+                      )}
                     </div>
                   </div>
 

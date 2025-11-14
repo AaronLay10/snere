@@ -345,7 +345,11 @@ export default function UsersList() {
               </div>
 
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-white">{user.username}</h3>
+                <h3 className="text-lg font-semibold text-white">
+                  {user.first_name && user.last_name 
+                    ? `${user.first_name} ${user.last_name}`
+                    : user.username}
+                </h3>
                 <div className="flex items-center gap-2 text-sm text-cyan-400 capitalize">
                   <Shield className="w-4 h-4" />
                   {user.role.replace('_', ' ')}
@@ -359,13 +363,6 @@ export default function UsersList() {
                 <Mail className="w-4 h-4" />
                 {user.email}
               </div>
-
-              {user.first_name && user.last_name && (
-                <div className="flex items-center gap-2 text-gray-400">
-                  <UserIcon className="w-4 h-4" />
-                  {user.first_name} {user.last_name}
-                </div>
-              )}
 
               {user.phone && (
                 <div className="flex items-center gap-2 text-gray-400">
@@ -422,6 +419,21 @@ export default function UsersList() {
             </div>
 
             <div className="p-6 space-y-4">
+              {/* Profile Photo Upload - Only show when editing existing user */}
+              {editingUser && (
+                <div className="flex justify-center mb-6">
+                  <ProfilePhotoUpload
+                    userId={editingUser.id}
+                    currentPhotoUrl={editingUser.profile_photo_url}
+                    onPhotoUpdated={(photoUrl) => {
+                      // Update the user in the list
+                      loadUsers();
+                    }}
+                    size="md"
+                  />
+                </div>
+              )}
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Email */}
                 <div>
