@@ -86,8 +86,7 @@ export default function RoomsPage() {
             </p>
           </div>
 
-          {/* Room creation not yet implemented in UI */}
-          {false && ['admin', 'editor'].includes(user?.role || '') && (
+          {['admin', 'editor'].includes(user?.role || '') && (
             <button
               onClick={() => navigate('/dashboard/rooms/new')}
               className="btn-primary flex items-center gap-2"
@@ -148,8 +147,7 @@ export default function RoomsPage() {
             <p className="text-gray-600 mb-6">
               {searchTerm ? 'Try adjusting your search' : 'Create your first escape room to get started'}
             </p>
-            {/* Room creation not yet implemented in UI */}
-            {false && !searchTerm && ['admin', 'editor'].includes(user?.role || '') && (
+            {!searchTerm && ['admin', 'editor'].includes(user?.role || '') && (
               <button
                 onClick={() => navigate('/dashboard/rooms/new')}
                 className="btn-primary inline-flex items-center gap-2"

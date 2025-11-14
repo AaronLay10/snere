@@ -168,27 +168,37 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               })}
             </nav>
 
-            {/* User Info */}
+            {/* Client Info */}
             <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-cyan-500/20 bg-black/50">
-              <div className="flex items-center gap-3">
-                {user?.profile_photo_url ? (
-                  <img
-                    src={user.profile_photo_url}
-                    alt={user.username || 'User'}
-                    className="w-10 h-10 rounded-full object-cover border-2 border-cyan-500/30"
-                  />
-                ) : (
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                    <span className="text-sm font-bold text-black">
-                      {user?.username?.charAt(0).toUpperCase() || 'U'}
-                    </span>
+              {user?.client_name ? (
+                <div className="flex items-center gap-3">
+                  {user?.client_logo_url ? (
+                    <img
+                      src={user.client_logo_url}
+                      alt={user.client_name}
+                      className="w-10 h-10 rounded-full object-cover border-2 border-cyan-500/30"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-magenta-600 flex items-center justify-center">
+                      <Building2 className="w-5 h-5 text-white" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-white truncate">{user.client_name}</p>
+                    <p className="text-xs text-gray-500">Client Organization</p>
                   </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate">{user?.username || 'User'}</p>
-                  <p className="text-xs text-gray-500 uppercase">{user?.role || 'guest'}</p>
                 </div>
-              </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center">
+                    <Building2 className="w-5 h-5 text-gray-500" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-400">No Client</p>
+                    <p className="text-xs text-gray-600">Not assigned</p>
+                  </div>
+                </div>
+              )}
             </div>
           </motion.aside>
         )}
@@ -225,30 +235,38 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
             {/* Right Side */}
             <div className="flex items-center gap-3">
-              {/* Client Badge */}
-              {user?.client_name && (
-                <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-cyan-500/10 border border-cyan-500/20 rounded-xl">
-                  <Building2 className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm text-cyan-400">{user.client_name}</span>
-                </div>
-              )}
-
               {/* Notifications */}
               <button className="relative p-2 rounded-xl bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-colors">
                 <Bell className="w-5 h-5" />
                 <span className="absolute top-1 right-1 w-2 h-2 bg-magenta-500 rounded-full animate-pulse" />
               </button>
 
-              {/* User Menu */}
+              {/* User Menu with Profile Photo */}
               <div className="relative">
                 <button
                   onClick={() => setUserMenuOpen(!userMenuOpen)}
                   className="flex items-center gap-2 px-3 py-2 rounded-xl bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 transition-colors"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
-                    <span className="text-xs font-bold text-black">
-                      {user?.username?.charAt(0).toUpperCase() || 'U'}
+                  {user?.profile_photo_url ? (
+                    <img
+                      src={user.profile_photo_url}
+                      alt={user.first_name || user.username || 'User'}
+                      className="w-8 h-8 rounded-full object-cover border-2 border-cyan-500/30"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                      <span className="text-xs font-bold text-black">
+                        {user?.first_name ? user.first_name.charAt(0).toUpperCase() : user?.username?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                  )}
+                  <div className="hidden md:flex flex-col items-start">
+                    <span className="text-sm font-medium text-white">
+                      {user?.first_name && user?.last_name 
+                        ? `${user.first_name} ${user.last_name}`
+                        : user?.username || 'User'}
                     </span>
+                    <span className="text-xs text-gray-500 capitalize">{user?.role || 'guest'}</span>
                   </div>
                   <ChevronDown className="w-4 h-4" />
                 </button>
@@ -263,10 +281,31 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                       className="absolute right-0 mt-2 w-56 bg-neural-bg backdrop-blur-2xl border border-cyan-500/20 rounded-2xl shadow-neural-strong overflow-hidden"
                     >
                       <div className="p-4 border-b border-cyan-500/20">
-                        <p className="text-sm font-medium text-white">{user?.username || 'User'}</p>
-                        <p className="text-xs text-gray-500">{user?.email || ''}</p>
-                        <div className="mt-2 inline-flex px-2 py-1 bg-cyan-500/20 rounded text-[10px] text-cyan-400 uppercase">
-                          {user?.role || 'guest'}
+                        <div className="flex items-center gap-3 mb-3">
+                          {user?.profile_photo_url ? (
+                            <img
+                              src={user.profile_photo_url}
+                              alt={user.first_name || user.username || 'User'}
+                              className="w-12 h-12 rounded-full object-cover border-2 border-cyan-500/30"
+                            />
+                          ) : (
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center">
+                              <span className="text-lg font-bold text-black">
+                                {user?.first_name ? user.first_name.charAt(0).toUpperCase() : user?.username?.charAt(0).toUpperCase() || 'U'}
+                              </span>
+                            </div>
+                          )}
+                          <div>
+                            <p className="text-sm font-medium text-white">
+                              {user?.first_name && user?.last_name 
+                                ? `${user.first_name} ${user.last_name}`
+                                : user?.username || 'User'}
+                            </p>
+                            <p className="text-xs text-gray-500">{user?.email || ''}</p>
+                          </div>
+                        </div>
+                        <div className="inline-flex px-2 py-1 bg-cyan-500/20 rounded text-[10px] text-cyan-400 capitalize">
+                          {user?.role?.replace('_', ' ') || 'guest'}
                         </div>
                       </div>
                       <div className="p-2">

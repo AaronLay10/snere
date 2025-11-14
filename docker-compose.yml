@@ -199,8 +199,8 @@ services:
     ports:
       - "192.168.7.3:80:80"      # Production (sentientengine.ai)
       - "192.168.7.3:443:443"    # Production (sentientengine.ai)
-      - "192.168.2.3:4080:80"    # Development (dev.sentientengine.ai)
-      - "192.168.2.3:4443:443"   # Development (dev.sentientengine.ai)
+      - "192.168.2.3:80:80"      # Development (dev.sentientengine.ai)
+      - "192.168.2.3:443:443"    # Development (dev.sentientengine.ai)
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./config/nginx/conf.d:/etc/nginx/conf.d:ro

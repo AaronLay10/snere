@@ -309,6 +309,22 @@ export const clients = {
     const response = await apiClient.delete(`/api/sentient/clients/${id}`);
     return response.data;
   },
+
+  uploadLogo: async (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append('logo', file);
+    const response = await apiClient.post(`/api/sentient/clients/${id}/logo`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  deleteLogo: async (id: string) => {
+    const response = await apiClient.delete(`/api/sentient/clients/${id}/logo`);
+    return response.data;
+  },
 };
 
 // Rooms

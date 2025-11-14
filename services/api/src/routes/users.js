@@ -251,11 +251,29 @@ router.put('/:id', authenticate, async (req, res) => {
           last_name: Joi.string().max(100).allow('', null).optional(),
           phone: Joi.string().max(50).allow('', null).optional(),
           password: Joi.string().min(8).optional()
-        })
-      : userSchema.fork(['email', 'username', 'password', 'role', 'client_id', 'first_name', 'last_name', 'phone', 'is_active', 'email_verified'], (schema) => schema.optional());
+        }).unknown(false)
+      : Joi.object({
+          email: Joi.string().email().optional(),
+          username: Joi.string().min(3).max(50).optional(),
+          password: Joi.string().min(8).optional(),
+          role: Joi.string().valid('admin', 'editor', 'viewer', 'game_master', 'creative_director', 'technician').optional(),
+          client_id: Joi.string().uuid().allow('', null).optional(),
+          first_name: Joi.string().max(100).allow('', null).optional(),
+          last_name: Joi.string().max(100).allow('', null).optional(),
+          phone: Joi.string().max(50).allow('', null).optional(),
+          is_active: Joi.boolean().optional(),
+          email_verified: Joi.boolean().optional()
+        }).unknown(false);
 
     const { error, value } = updateSchema.validate(req.body);
     if (error) {
+      console.log('Validation error:', {
+        isSelfUpdate,
+        userId: id,
+        requestUserId: req.user.id,
+        body: req.body,
+        error: error.details[0]
+      });
       return res.status(400).json({
         error: 'Validation error',
         message: error.details[0].message

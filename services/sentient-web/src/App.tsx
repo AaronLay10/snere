@@ -18,6 +18,7 @@ import ControllerDetail from './pages/ControllerDetail';
 import PowerControl from './pages/PowerControl';
 import Profile from './pages/Profile';
 import UsersList from './pages/UsersList';
+import ClientsList from './pages/ClientsList';
 import TouchscreenLighting from './pages/TouchscreenLighting';
 import PuzzlesList from './pages/PuzzlesList';
 import PuzzleEditor from './pages/PuzzleEditor';
@@ -194,6 +195,14 @@ function App() {
           element={
             <ProtectedRoute>
               <UsersList />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/clients"
+          element={
+            <ProtectedRoute>
+              <ClientsList />
             </ProtectedRoute>
           }
         />

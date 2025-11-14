@@ -18,7 +18,7 @@ import {
   Search,
   Filter
 } from 'lucide-react';
-import { users, type User } from '../lib/api';
+import { users, clients, type User } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 import ProfilePhotoUpload from '../components/ProfilePhotoUpload';
 import DashboardLayout from '../components/layout/DashboardLayout';
@@ -30,12 +30,14 @@ interface UserFormData {
   first_name: string;
   last_name: string;
   phone: string;
+  client_id: string;
   is_active: boolean;
 }
 
 export default function UsersList() {
   const { user: currentUser } = useAuthStore();
   const [usersList, setUsersList] = useState<User[]>([]);
+  const [clientsList, setClientsList] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -53,6 +55,7 @@ export default function UsersList() {
     first_name: '',
     last_name: '',
     phone: '',
+    client_id: '',
     is_active: true
   });
 
@@ -60,7 +63,17 @@ export default function UsersList() {
 
   useEffect(() => {
     loadUsers();
+    loadClients();
   }, [filterRole, filterActive]);
+
+  const loadClients = async () => {
+    try {
+      const response = await clients.getAll();
+      setClientsList(response.clients || []);
+    } catch (err: any) {
+      console.error('Load clients error:', err);
+    }
+  };
 
   const loadUsers = async () => {
     try {
@@ -90,6 +103,7 @@ export default function UsersList() {
       first_name: '',
       last_name: '',
       phone: '',
+      client_id: '',
       is_active: true
     });
     setShowModal(true);
@@ -104,6 +118,7 @@ export default function UsersList() {
       first_name: user.first_name || '',
       last_name: user.last_name || '',
       phone: user.phone || '',
+      client_id: user.client_id || '',
       is_active: user.is_active !== false
     });
     setShowModal(true);
@@ -122,6 +137,7 @@ export default function UsersList() {
           first_name: formData.first_name,
           last_name: formData.last_name,
           phone: formData.phone,
+          client_id: formData.client_id || null,
           is_active: formData.is_active
         };
 
@@ -490,6 +506,25 @@ export default function UsersList() {
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
                   />
+                </div>
+
+                {/* Client Assignment */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    Client Organization
+                  </label>
+                  <select
+                    value={formData.client_id}
+                    onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
+                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                  >
+                    <option value="">No Client</option>
+                    {clientsList.map((client) => (
+                      <option key={client.id} value={client.id}>
+                        {client.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 {/* Active Status */}

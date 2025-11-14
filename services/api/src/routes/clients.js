@@ -16,13 +16,18 @@ const { requireRole, requireCapability, requireClientAccess } = require('../midd
  */
 const clientSchema = Joi.object({
   name: Joi.string().min(1).max(255).required(),
-  slug: Joi.string().min(1).max(100).pattern(/^[a-z0-9-]+$/).required(),
-  mqttNamespace: Joi.string().min(1).max(100).pattern(/^[a-z0-9_]+$/).optional(),
-  contactEmail: Joi.string().email().optional(),
-  contactPhone: Joi.string().optional(),
-  address: Joi.string().optional(),
+  slug: Joi.string().min(1).max(100).pattern(/^[a-z0-9_-]+$/).optional().allow('', null),
+  description: Joi.string().max(1000).optional().allow('', null),
+  mqttNamespace: Joi.string().min(1).max(100).pattern(/^[a-z0-9_]+$/).optional().allow('', null),
+  mqtt_namespace: Joi.string().min(1).max(100).pattern(/^[a-z0-9_]+$/).optional().allow('', null),
+  contactEmail: Joi.string().email().optional().allow('', null),
+  contact_email: Joi.string().email().optional().allow('', null),
+  contactPhone: Joi.string().optional().allow('', null),
+  contact_phone: Joi.string().optional().allow('', null),
+  address: Joi.string().optional().allow('', null),
   timezone: Joi.string().optional(),
   settings: Joi.object().optional(),
+  status: Joi.string().valid('active', 'inactive', 'suspended').optional(),
   isActive: Joi.boolean().optional()
 });
 
@@ -150,19 +155,30 @@ router.post('/', authenticate, requireRole('admin'), async (req, res) => {
     const {
       name,
       slug,
+      description,
       mqttNamespace,
+      mqtt_namespace,
       contactEmail,
+      contact_email,
       contactPhone,
+      contact_phone,
       address,
       timezone,
       settings,
+      status,
       isActive = true
     } = value;
+
+    // Auto-generate slug from name if not provided
+    const finalSlug = slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    
+    // Auto-generate mqtt_namespace from slug if not provided
+    const finalMqttNamespace = mqttNamespace || mqtt_namespace || finalSlug.replace(/-/g, '_');
 
     // Check if slug already exists
     const existingClient = await db.query(
       'SELECT id FROM clients WHERE slug = $1',
-      [slug]
+      [finalSlug]
     );
 
     if (existingClient.rows.length > 0) {
@@ -176,21 +192,18 @@ router.post('/', authenticate, requireRole('admin'), async (req, res) => {
     const id = uuidv4();
     const result = await db.query(
       `INSERT INTO clients (
-        id, name, slug, mqtt_namespace, contact_email, contact_phone,
-        address, timezone, settings, is_active
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        id, name, slug, description, mqtt_namespace, contact_email, contact_phone, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING *`,
       [
         id,
         name,
-        slug,
-        mqttNamespace || slug,
-        contactEmail,
-        contactPhone,
-        address,
-        timezone || 'America/New_York',
-        JSON.stringify(settings || {}),
-        isActive
+        finalSlug,
+        description || null,
+        finalMqttNamespace,
+        contactEmail || contact_email || null,
+        contactPhone || contact_phone || null,
+        status || 'active'
       ]
     );
 

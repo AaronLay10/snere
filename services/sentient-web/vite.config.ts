@@ -15,8 +15,15 @@ export default defineConfig({
       'localhost',
       'dev.sentientengine.ai',
       'sentientengine.ai',
+      '192.168.2.3',
     ],
-    hmr: false, // Disable HMR to prevent WebSocket connection issues through nginx SSL
+    hmr: {
+      clientPort: 443,
+    },
+    watch: {
+      usePolling: true, // Required for Docker
+      interval: 1000,
+    },
   },
   preview: {
     port,
