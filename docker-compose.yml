@@ -1,132 +1,29 @@
 ################################################################################
-# SENTIENT ENGINE - DUAL-ENVIRONMENT DOCKER COMPOSE
+# SENTIENT ENGINE - LOCAL DEVELOPMENT DOCKER COMPOSE
 ################################################################################
 #
-# This file supports both production and development environments using Docker
-# Compose profiles. Services are separated into dedicated networks to provide
-# isolation while allowing shared infrastructure (postgres, mosquitto, nginx).
-#
-# USAGE:
-#   Production:  docker-compose --profile production up -d
-#   Development: docker-compose --profile development up -d
-#   Both:        docker-compose --profile production --profile development up -d
-#
-# NETWORKS:
-#   - sentient-shared: Shared infrastructure (postgres, mosquitto, nginx)
-#   - sentient-production: Production services only (172.20.0.0/16)
-#   - sentient-development: Development services only (172.21.0.0/16)
-#
-# PORT MAPPING:
-#   - Production: 3000-3004, 3200, 9090, 3100
-#   - Development: 4000-4004, 4200, 9190, 4100 (offset +1000)
-#
-# DATABASES:
-#   - Production: sentient (user: sentient_prod)
+# This file defines the local development environment for Sentient Engine.
+# All services run as a single stack on your machine; there is no separate
+# production profile or dual-environment support.
 #   - Development: sentient_dev (user: sentient_dev)
 #
 ################################################################################
 
 services:
-  ################################################################################
-  # PRODUCTION INFRASTRUCTURE
-  ################################################################################
-
-  # PostgreSQL Database - Production only
-  postgres-prod:
+  # PostgreSQL Database - Local development
+  postgres:
     image: postgres:16-alpine
-    container_name: sentient-postgres-prod
+    container_name: sentient-postgres
     restart: unless-stopped
-    profiles: ["production"]
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-sentient_prod}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      PGDATA: /var/lib/postgresql/data/pgdata
-    volumes:
-      - ./volumes/postgres-data-prod:/var/lib/postgresql/data
-      - ./config/postgres-prod/init:/docker-entrypoint-initdb.d:ro
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sentient_prod}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=postgres-prod"
-
-  # Mosquitto MQTT Broker - Production only
-  mosquitto-prod:
-    image: eclipse-mosquitto:2
-    container_name: sentient-mosquitto-prod
-    restart: unless-stopped
-    profiles: ["production"]
-    environment:
-      MQTT_USER: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    volumes:
-      - ./config/mosquitto-prod/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - ./config/mosquitto-prod/mosquitto_passwd:/mosquitto/config/mosquitto_passwd:ro
-      - ./config/mosquitto-prod/mosquitto.acl:/mosquitto/config/mosquitto.acl:ro
-      - ./volumes/mosquitto-data-prod:/mosquitto/data
-      - ./volumes/mosquitto-logs:/mosquitto/log
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "mosquitto_sub -h localhost -p 1883 -u $${MQTT_USER} -P $${MQTT_PASSWORD} -t '$$SYS/#' -C 1 -W 3 || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 32M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=mosquitto-prod"
-
-  ################################################################################
-  # DEVELOPMENT INFRASTRUCTURE
-  ################################################################################
-
-  # PostgreSQL Database - Development only
-  postgres-dev:
-    image: postgres:16-alpine
-    container_name: sentient-postgres-dev
-    restart: unless-stopped
-    profiles: ["development"]
     environment:
       POSTGRES_USER: sentient_dev
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       PGDATA: /var/lib/postgresql/data/pgdata
-    ports:
-      - "5433:5432"  # Different host port for dev
     volumes:
       - ./volumes/postgres-data-dev:/var/lib/postgresql/data
       - ./config/postgres-dev/init:/docker-entrypoint-initdb.d:ro
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U sentient_dev"]
       interval: 10s
@@ -147,18 +44,17 @@ services:
         max-file: "3"
         labels: "service=postgres-dev"
 
-  # Mosquitto MQTT Broker - Development only
-  mosquitto-dev:
+  # Mosquitto MQTT Broker - Local development
+  mosquitto:
     image: eclipse-mosquitto:2
-    container_name: sentient-mosquitto-dev
+    container_name: sentient-mosquitto
     restart: unless-stopped
-    profiles: ["development"]
     environment:
-      MQTT_USER: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_USER: sentient_monitor
+      MQTT_PASSWORD: ${MQTT_SENTIENT_MONITOR_PASSWORD}
     ports:
-      - "1884:1883"  # Different host port for dev
-      - "9002:9001"  # Different host port for dev WebSocket
+      - "1883:1883"
+      - "9001:9001"
     volumes:
       - ./config/mosquitto-dev/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
       - ./config/mosquitto-dev/mosquitto_passwd:/mosquitto/config/mosquitto_passwd:ro
@@ -166,9 +62,9 @@ services:
       - ./volumes/mosquitto-data-dev:/mosquitto/data
       - ./volumes/mosquitto-logs:/mosquitto/log
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
-      test: ["CMD-SHELL", "mosquitto_sub -h localhost -p 1883 -u $${MQTT_USER} -P $${MQTT_PASSWORD} -t '$$SYS/#' -C 1 -W 3 || exit 1"]
+      test: ["CMD-SHELL", "mosquitto_pub -h localhost -p 1883 -u $${MQTT_USER} -P $${MQTT_PASSWORD} -t 'healthcheck/ping' -m 'ping' || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -191,25 +87,21 @@ services:
   # SHARED INFRASTRUCTURE (Nginx only)
   ################################################################################
 
-  # Nginx Reverse Proxy - Routes traffic to production or development services
+  # Nginx Reverse Proxy - Optional local reverse proxy
   nginx:
     image: nginx:1.25-alpine
     container_name: sentient-nginx
     restart: unless-stopped
     ports:
-      - "192.168.7.3:80:80"      # Production (sentientengine.ai)
-      - "192.168.7.3:443:443"    # Production (sentientengine.ai)
-      - "192.168.2.3:80:80"      # Development (dev.sentientengine.ai)
-      - "192.168.2.3:443:443"    # Development (dev.sentientengine.ai)
+      - "80:80"
+      - "443:443"
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./config/nginx/ssl:/etc/nginx/ssl:ro
       - ./volumes/nginx-logs:/var/log/nginx
     networks:
-      - sentient-shared
-      - sentient-production
-      - sentient-development
+      - sentient-local
     healthcheck:
       disable: true
     deploy:
@@ -227,432 +119,45 @@ services:
         max-file: "3"
         labels: "service=nginx"
 
-  ################################################################################
-  # PRODUCTION SERVICES (Profile: production)
-  ################################################################################
-
-  # Production API - Instance 1 (Port 3000)
-  sentient-api-prod-1:
-    build:
-      context: ./services/api
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: production
-    container_name: sentient-api-prod-1
-    profiles: ["production"]
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sentient_prod}:${POSTGRES_PASSWORD}@postgres-prod:5432/sentient
-      DB_HOST: postgres-prod
-      DB_PORT: 5432
-      DB_NAME: sentient
-      DB_USER: ${POSTGRES_USER:-sentient_prod}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MQTT_URL: mqtt://mosquitto-prod:1883
-      MQTT_USERNAME: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET_PROD}
-      SESSION_SECRET: ${SESSION_SECRET_PROD}
-    depends_on:
-      postgres-prod:
-        condition: service_healthy
-      mosquitto-prod:
-        condition: service_healthy
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=sentient-api-prod,instance=1"
-
-  # Production API - Instance 2 (Port 3000)
-  sentient-api-prod-2:
-    build:
-      context: ./services/api
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: production
-    container_name: sentient-api-prod-2
-    profiles: ["production"]
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sentient_prod}:${POSTGRES_PASSWORD}@postgres-prod:5432/sentient
-      DB_HOST: postgres-prod
-      DB_PORT: 5432
-      DB_NAME: sentient
-      DB_USER: ${POSTGRES_USER:-sentient_prod}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MQTT_URL: mqtt://mosquitto-prod:1883
-      MQTT_USERNAME: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET_PROD}
-      SESSION_SECRET: ${SESSION_SECRET_PROD}
-    depends_on:
-      postgres-prod:
-        condition: service_healthy
-      mosquitto-prod:
-        condition: service_healthy
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=sentient-api-prod,instance=2"
-
-  # Production Scene Executor (Port 3004)
-  sentient-executor-prod:
-    build:
-      context: ./services/executor-engine
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: production
-    container_name: sentient-executor-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      SERVICE_PORT: 3004
-      CONFIG_PATH: /opt/sentient/config
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sentient_prod}:${POSTGRES_PASSWORD}@postgres-prod:5432/sentient
-      MQTT_URL: mqtt://mosquitto-prod:1883
-      MQTT_USERNAME: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-    ports:
-      - "3004:3004"
-    volumes:
-      - ./config:/opt/sentient/config:ro
-    depends_on:
-      postgres-prod:
-        condition: service_healthy
-      mosquitto-prod:
-        condition: service_healthy
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3004/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=scene-executor-prod"
-
-  # Production Device Monitor (Port 3003)
-  sentient-monitor-prod:
-    build:
-      context: ./services/device-monitor
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: production
-    container_name: sentient-monitor-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      SERVICE_PORT: 3003
-      DATABASE_URL: postgresql://${POSTGRES_USER:-sentient_prod}:${POSTGRES_PASSWORD}@postgres-prod:5432/sentient
-      MQTT_URL: mqtt://mosquitto-prod:1883
-      MQTT_USERNAME: sentient_monitor
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-    ports:
-      - "3003:3003"
-    depends_on:
-      postgres-prod:
-        condition: service_healthy
-      mosquitto-prod:
-        condition: service_healthy
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3003/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=device-monitor-prod"
-
-  # Production Web Frontend (Port 3002)
-  sentient-web-prod:
-    build:
-      context: ./services/sentient-web
-      dockerfile: Dockerfile.production
-      args:
-        NODE_ENV: production
-        VITE_API_URL: ${API_URL:-https://sentientengine.ai}
-    container_name: sentient-web-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    environment:
-      NODE_ENV: production
-      PORT: 3002
-    ports:
-      - "3002:3002"
-    networks:
-      - sentient-production
-    healthcheck:
-      disable: true
-    deploy:
-      resources:
-        limits:
-          cpus: '0.25'
-          memory: 128M
-        reservations:
-          cpus: '0.05'
-          memory: 32M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=sentient-web-prod"
-
-  # Prometheus - Production
-  sentient-prometheus-prod:
-    image: prom/prometheus:latest
-    container_name: sentient-prometheus-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    ports:
-      - "9090:9090"
-    volumes:
-      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - ./config/prometheus/alerts:/etc/prometheus/alerts:ro
-      - ./volumes/prometheus-data:/prometheus
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
-      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
-      - '--web.console.templates=/usr/share/prometheus/consoles'
-      - '--storage.tsdb.retention.time=30d'
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.1'
-          memory: 128M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=prometheus-prod"
-
-  # Production Grafana (Port 3200)
-  sentient-grafana-prod:
-    image: grafana/grafana:latest
-    container_name: sentient-grafana-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    ports:
-      - "3200:3000"
-    environment:
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-      GF_SERVER_ROOT_URL: https://sentientengine.ai/grafana
-      GF_INSTALL_PLUGINS: ""
-    volumes:
-      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
-      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
-      - ./volumes/grafana-data:/var/lib/grafana
-    depends_on:
-      - sentient-prometheus-prod
-      - sentient-loki-prod
-    networks:
-      - sentient-production
-    healthcheck:
-      disable: true
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
-        reservations:
-          cpus: '0.1'
-          memory: 256M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=grafana-prod"
-
-  # Production Loki (Port 3100)
-  sentient-loki-prod:
-    image: grafana/loki:latest
-    container_name: sentient-loki-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    ports:
-      - "3100:3100"
-    volumes:
-      - ./config/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
-      - ./volumes/loki-data:/loki
-    command: -config.file=/etc/loki/loki-config.yml
-    networks:
-      - sentient-production
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '1.0'
-          memory: 512M
-        reservations:
-          cpus: '0.25'
-          memory: 128M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=loki-prod"
-
-  # Production Promtail (No exposed port)
-  sentient-promtail-prod:
-    image: grafana/promtail:latest
-    container_name: sentient-promtail-prod
-    profiles: ["production"]
-    restart: unless-stopped
-    volumes:
-      - ./config/promtail/promtail-config.yml:/etc/promtail/promtail-config.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/promtail/promtail-config.yml
-    depends_on:
-      - sentient-loki-prod
-    networks:
-      - sentient-production
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=promtail-prod"
-
-  ################################################################################
-  # DEVELOPMENT SERVICES (Profile: development)
-  ################################################################################
-
-  # Development API - Instance 1 (Port 4000)
-  sentient-api-dev-1:
+  # API - Local development (Port 3000)
+  sentient-api:
     build:
       context: ./services/api
       dockerfile: Dockerfile.dev
       args:
         NODE_ENV: development
-    container_name: sentient-api-dev-1
-    profiles: ["development"]
+    container_name: sentient-api
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      PORT: 4000
+      PORT: 3000
       CORS_ORIGIN: https://dev.sentientengine.ai,https://192.168.2.3:4443,http://192.168.2.3:4080,http://localhost:4002,http://localhost:3002
-      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres-dev:5432/sentient_dev
-      DB_HOST: postgres-dev
+      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres:5432/sentient_dev
+      DB_HOST: postgres
       DB_PORT: 5432
       DB_NAME: sentient_dev
       DB_USER: sentient_dev
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MQTT_URL: mqtt://mosquitto-dev:1883
-      MQTT_USERNAME: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_URL: mqtt://mosquitto:1883
+      MQTT_USERNAME: sentient_api
+      MQTT_PASSWORD: ${MQTT_SENTIENT_API_PASSWORD}
       JWT_SECRET: ${JWT_SECRET_DEV}
       SESSION_SECRET: ${SESSION_SECRET_DEV}
     ports:
-      - "4000:4000"
+      - "3000:3000"
       - "9229:9229"  # Debug port
     volumes:
       - ./services/api:/app
       - /app/node_modules
     depends_on:
-      postgres-dev:
+      postgres:
         condition: service_healthy
-      mosquitto-dev:
+      mosquitto:
         condition: service_healthy
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:4000/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      disable: true
     deploy:
       resources:
         limits:
@@ -668,101 +173,39 @@ services:
         max-file: "3"
         labels: "service=sentient-api-dev,instance=1"
 
-  # Development API - Instance 2 (Port 4001)
-  sentient-api-dev-2:
-    build:
-      context: ./services/api
-      dockerfile: Dockerfile.dev
-      args:
-        NODE_ENV: development
-    container_name: sentient-api-dev-2
-    profiles: ["development"]
-    restart: unless-stopped
-    environment:
-      NODE_ENV: development
-      PORT: 4001
-      CORS_ORIGIN: https://dev.sentientengine.ai,https://192.168.2.3:4443,http://192.168.2.3:4080,http://localhost:4002,http://localhost:3002
-      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres-dev:5432/sentient_dev
-      DB_HOST: postgres-dev
-      DB_PORT: 5432
-      DB_NAME: sentient_dev
-      DB_USER: sentient_dev
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MQTT_URL: mqtt://mosquitto-dev:1883
-      MQTT_USERNAME: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
-      JWT_SECRET: ${JWT_SECRET_DEV}
-      SESSION_SECRET: ${SESSION_SECRET_DEV}
-    ports:
-      - "4001:4001"
-      - "9230:9229"  # Debug port
-    volumes:
-      - ./services/api:/app
-      - /app/node_modules
-    depends_on:
-      postgres-dev:
-        condition: service_healthy
-      mosquitto-dev:
-        condition: service_healthy
-    networks:
-      - sentient-development
-    healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:4001/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 256M
-        reservations:
-          cpus: '0.1'
-          memory: 64M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=sentient-api-dev,instance=2"
-
-  # Development Scene Executor (Port 4004)
-  sentient-executor-dev:
+  # Scene Executor - Local development (Port 3004)
+  executor-engine:
     build:
       context: ./services/executor-engine
       dockerfile: Dockerfile.dev
       args:
         NODE_ENV: development
-    container_name: sentient-executor-dev
-    profiles: ["development"]
+    container_name: executor-engine
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      SERVICE_PORT: 4004
+      SERVICE_PORT: 3004
       CONFIG_PATH: /opt/sentient/config
-      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres-dev:5432/sentient_dev
-      MQTT_URL: mqtt://mosquitto-dev:1883
-      MQTT_USERNAME: ${MQTT_USER}
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres:5432/sentient_dev
+      MQTT_URL: mqtt://mosquitto:1883
+      MQTT_USERNAME: sentient_executor
+      MQTT_PASSWORD: ${MQTT_SENTIENT_EXECUTOR_PASSWORD}
     ports:
-      - "4004:4004"
+      - "3004:3004"
       - "9231:9229"  # Debug port
     volumes:
       - ./services/executor-engine:/app
       - /app/node_modules
       - ./config:/opt/sentient/config:ro
     depends_on:
-      postgres-dev:
+      postgres:
         condition: service_healthy
-      mosquitto-dev:
+      mosquitto:
         condition: service_healthy
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4004/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      disable: true
     logging:
       driver: "json-file"
       options:
@@ -770,41 +213,37 @@ services:
         max-file: "3"
         labels: "service=scene-executor-dev"
 
-  # Development Device Monitor (Port 4003)
-  sentient-monitor-dev:
+  # Device Monitor - Local development (Port 3003)
+  device-monitor:
     build:
       context: ./services/device-monitor
       dockerfile: Dockerfile.dev
       args:
         NODE_ENV: development
-    container_name: sentient-monitor-dev
-    profiles: ["development"]
+    container_name: device-monitor
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      SERVICE_PORT: 4003
-      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres-dev:5432/sentient_dev
-      MQTT_URL: mqtt://mosquitto-dev:1883
+      SERVICE_PORT: 3003
+      DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres:5432/sentient_dev
+      MQTT_URL: mqtt://mosquitto:1883
       MQTT_USERNAME: sentient_monitor
-      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_PASSWORD: ${MQTT_SENTIENT_MONITOR_PASSWORD}
     ports:
-      - "4003:4003"
+      - "3003:3003"
       - "9232:9229"  # Debug port
     volumes:
       - ./services/device-monitor:/app
       - /app/node_modules
     depends_on:
-      postgres-dev:
+      postgres:
         condition: service_healthy
-      mosquitto-dev:
+      mosquitto:
         condition: service_healthy
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
-      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:4003/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      disable: true
     deploy:
       resources:
         limits:
@@ -820,27 +259,26 @@ services:
         max-file: "3"
         labels: "service=device-monitor-dev"
 
-  # Development Web Frontend (Port 4002)
-  sentient-web-dev:
+  # Web Frontend - Local development (Port 3002)
+  sentient-web:
     build:
       context: ./services/sentient-web
       dockerfile: Dockerfile.dev
       args:
         NODE_ENV: development
-        VITE_API_URL: http://localhost:4000
-    container_name: sentient-web-dev
-    profiles: ["development"]
+        VITE_API_URL: http://localhost:3000
+    container_name: sentient-web
     restart: unless-stopped
     environment:
       NODE_ENV: development
-      PORT: 4002
+      PORT: 3002
     ports:
-      - "4002:4002"
+      - "3002:3002"
     volumes:
       - ./services/sentient-web:/app
       - /app/node_modules
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
       disable: true
     deploy:
@@ -858,14 +296,13 @@ services:
         max-file: "3"
         labels: "service=sentient-web-dev"
 
-  # Development Prometheus (Port 9190)
-  sentient-prometheus-dev:
+  # Prometheus - Local development (Port 9090)
+  prometheus:
     image: prom/prometheus:latest
-    container_name: sentient-prometheus-dev
-    profiles: ["development"]
+    container_name: sentient-prometheus
     restart: unless-stopped
     ports:
-      - "9190:9090"
+      - "9090:9090"
     volumes:
       - ./config/prometheus/prometheus-dev.yml:/etc/prometheus/prometheus.yml:ro
       - ./config/prometheus/alerts:/etc/prometheus/alerts:ro
@@ -877,7 +314,7 @@ services:
       - '--web.console.templates=/usr/share/prometheus/consoles'
       - '--storage.tsdb.retention.time=7d'
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
       interval: 30s
@@ -898,28 +335,27 @@ services:
         max-file: "3"
         labels: "service=prometheus-dev"
 
-  # Development Grafana (Port 4200)
-  sentient-grafana-dev:
+  # Grafana - Local development (Port 3200)
+  grafana:
     image: grafana/grafana:latest
-    container_name: sentient-grafana-dev
-    profiles: ["development"]
+    container_name: sentient-grafana
     restart: unless-stopped
     ports:
-      - "4200:3000"
+      - "3200:3000"
     environment:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
       GF_USERS_ALLOW_SIGN_UP: "false"
-      GF_SERVER_ROOT_URL: http://localhost:4200
+      GF_SERVER_ROOT_URL: http://localhost:3200
       GF_INSTALL_PLUGINS: ""
     volumes:
       - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
       - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
       - ./volumes/grafana-data-dev:/var/lib/grafana
     depends_on:
-      - sentient-prometheus-dev
-      - sentient-loki-dev
+      - prometheus
+      - loki
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/health || exit 1"]
       interval: 30s
@@ -940,20 +376,19 @@ services:
         max-file: "3"
         labels: "service=grafana-dev"
 
-  # Development Loki (Port 4100)
-  sentient-loki-dev:
+  # Loki - Local development (Port 3100)
+  loki:
     image: grafana/loki:latest
-    container_name: sentient-loki-dev
-    profiles: ["development"]
+    container_name: sentient-loki
     restart: unless-stopped
     ports:
-      - "4100:3100"
+      - "3100:3100"
     volumes:
       - ./config/loki/loki-config-dev.yml:/etc/loki/loki-config.yml:ro
       - ./volumes/loki-data-dev:/loki
     command: -config.file=/etc/loki/loki-config.yml
     networks:
-      - sentient-development
+      - sentient-local
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
       interval: 30s
@@ -974,11 +409,10 @@ services:
         max-file: "3"
         labels: "service=loki-dev"
 
-  # Development Promtail (Port 9080)
-  sentient-promtail-dev:
+  # Promtail - Local development (Port 9080)
+  promtail:
     image: grafana/promtail:latest
-    container_name: sentient-promtail-dev
-    profiles: ["development"]
+    container_name: sentient-promtail
     restart: unless-stopped
     ports:
       - "9080:9080"
@@ -988,9 +422,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     command: -config.file=/etc/promtail/promtail-config.yml
     depends_on:
-      - sentient-loki-dev
+      - loki
     networks:
-      - sentient-development
+      - sentient-local
     deploy:
       resources:
         limits:
@@ -1011,47 +445,19 @@ services:
 ################################################################################
 
 networks:
-  # Shared infrastructure network - postgres, mosquitto, nginx
-  sentient-shared:
+  # Single local development network
+  sentient-local:
     driver: bridge
-    name: sentient-shared
-
-  # Production network (172.20.0.0/16)
-  sentient-production:
-    driver: bridge
-    name: sentient-production
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
-
-  # Development network (172.21.0.0/16)
-  sentient-development:
-    driver: bridge
-    name: sentient-development
-    ipam:
-      config:
-        - subnet: 172.21.0.0/16
 
 ################################################################################
 # VOLUMES
 ################################################################################
 
 volumes:
-  # Shared volumes (used by both environments)
-  postgres-data:
+  postgres-data-dev:
     driver: local
-  mosquitto-data:
+  mosquitto-data-dev:
     driver: local
-
-  # Production-specific volumes
-  prometheus-data:
-    driver: local
-  grafana-data:
-    driver: local
-  loki-data:
-    driver: local
-
-  # Development-specific volumes
   prometheus-data-dev:
     driver: local
   grafana-data-dev:

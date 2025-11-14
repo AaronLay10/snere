@@ -29,12 +29,14 @@ cp .env.example .env
 ```
 
 Edit `.env` and set:
+
 - `JWT_SECRET` - Generate a secure random string (32+ characters)
 - `SESSION_SECRET` - Generate another secure random string
 - `DB_PASSWORD` - Your PostgreSQL password
 - `CORS_ORIGIN` - Your frontend URLs
 
 To generate secure secrets:
+
 ```bash
 openssl rand -hex 32
 ```
@@ -48,16 +50,12 @@ cd ../../database
 
 Follow the prompts to create the database and load seed data.
 
-### 4. Start API Server
+### 4. Start API Server (Local)
 
 Development mode (with auto-reload):
+
 ```bash
 npm run dev
-```
-
-Production mode:
-```bash
-npm start
 ```
 
 The API will start on `http://localhost:3000` (or the PORT specified in .env).
@@ -69,6 +67,7 @@ curl http://localhost:3000/health
 ```
 
 Expected response:
+
 ```json
 {
   "status": "ok",
@@ -85,6 +84,7 @@ Expected response:
 ### Authentication
 
 #### Login
+
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -97,6 +97,7 @@ Content-Type: application/json
 ```
 
 Response:
+
 ```json
 {
   "success": true,
@@ -113,12 +114,14 @@ Response:
 ```
 
 #### Get Current User
+
 ```http
 GET /api/auth/me
 Authorization: Bearer {token}
 ```
 
 #### Change Password
+
 ```http
 POST /api/auth/change-password
 Authorization: Bearer {token}
@@ -131,6 +134,7 @@ Content-Type: application/json
 ```
 
 #### Refresh Token
+
 ```http
 POST /api/auth/refresh
 Authorization: Bearer {token}
@@ -161,6 +165,7 @@ DELETE /api/sentient/rooms/:id
 ```
 
 Query parameters:
+
 - `clientId` - Filter by client
 - `status` - Filter by status (draft, testing, active, maintenance, archived)
 
@@ -175,6 +180,7 @@ DELETE /api/sentient/scenes/:id
 ```
 
 Query parameters:
+
 - `roomId` - Filter by room
 
 #### Devices
@@ -188,6 +194,7 @@ DELETE /api/sentient/devices/:id
 ```
 
 Query parameters:
+
 - `roomId` - Filter by room
 - `category` - Filter by device category
 - `emergencyStopRequired` - Filter by emergency stop requirement (true/false)
@@ -203,6 +210,7 @@ DELETE /api/sentient/puzzles/:id
 ```
 
 Query parameters:
+
 - `roomId` - Filter by room
 
 #### Users
@@ -216,6 +224,7 @@ DELETE /api/sentient/users/:id
 ```
 
 Query parameters:
+
 - `clientId` - Filter by client (admin only)
 - `role` - Filter by role
 - `active` - Filter by active status (true/false)
@@ -225,24 +234,28 @@ Query parameters:
 All Mythra endpoints require `game_master` or `admin` role.
 
 #### List Available Rooms
+
 ```http
 GET /api/mythra/rooms
 Authorization: Bearer {token}
 ```
 
 #### Get Room Status
+
 ```http
 GET /api/mythra/rooms/:id/status
 Authorization: Bearer {token}
 ```
 
 Returns real-time room status including:
+
 - Room details
 - All scenes
 - All devices
 - Active game session (if any)
 
 #### Emergency Stop
+
 ```http
 POST /api/mythra/emergency-stop
 Authorization: Bearer {token}
@@ -255,6 +268,7 @@ Content-Type: application/json
 ```
 
 #### Reset Room
+
 ```http
 POST /api/mythra/reset-room
 Authorization: Bearer {token}
@@ -267,6 +281,7 @@ Content-Type: application/json
 ```
 
 #### Send Hint
+
 ```http
 POST /api/mythra/hint
 Authorization: Bearer {token}
@@ -282,12 +297,14 @@ Content-Type: application/json
 ### Audit Logs
 
 #### Query Logs
+
 ```http
 GET /api/audit/logs
 Authorization: Bearer {token}
 ```
 
 Query parameters:
+
 - `userId` - Filter by user
 - `actionType` - Filter by action type (login, create, update, delete, etc.)
 - `resourceType` - Filter by resource type (clients, rooms, devices, etc.)
@@ -299,16 +316,19 @@ Query parameters:
 - `offset` - Pagination offset (default: 0)
 
 #### Get Statistics
+
 ```http
 GET /api/audit/stats
 Authorization: Bearer {token}
 ```
 
 Query parameters:
+
 - `startDate` - Filter by start date
 - `endDate` - Filter by end date
 
 #### Recent Logs
+
 ```http
 GET /api/audit/recent
 Authorization: Bearer {token}
@@ -317,12 +337,14 @@ Authorization: Bearer {token}
 Returns last 24 hours of activity.
 
 #### User Audit Trail
+
 ```http
 GET /api/audit/user/:userId
 Authorization: Bearer {token}
 ```
 
 #### Resource Audit Trail
+
 ```http
 GET /api/audit/resource/:resourceType/:resourceId
 Authorization: Bearer {token}
@@ -331,31 +353,37 @@ Authorization: Bearer {token}
 ## User Roles
 
 ### 1. Admin
+
 - **Level**: 100
 - **Access**: All clients, all resources
 - **Capabilities**: Full system access, user management, client management
 
 ### 2. Editor
+
 - **Level**: 50
 - **Access**: Own client only
 - **Capabilities**: Read, write, manage devices/scenes/puzzles
 
 ### 3. Viewer
+
 - **Level**: 30
 - **Access**: Own client only
 - **Capabilities**: Read-only access
 
 ### 4. Game Master
+
 - **Level**: 40
 - **Access**: Mythra interface, own client rooms
 - **Capabilities**: Operational control, emergency stop, hints, room status
 
 ### 5. Creative Director
+
 - **Level**: 45
 - **Access**: Own client only
 - **Capabilities**: Read, add comments, view analytics
 
 ### 6. Technician
+
 - **Level**: 35
 - **Access**: Own client only
 - **Capabilities**: Read, test devices, view diagnostics
@@ -372,6 +400,7 @@ All errors follow this format:
 ```
 
 Common HTTP status codes:
+
 - `400` - Bad Request (validation error)
 - `401` - Unauthorized (authentication required)
 - `403` - Forbidden (insufficient permissions)
@@ -382,10 +411,12 @@ Common HTTP status codes:
 ## Rate Limiting
 
 Default rate limits:
+
 - **Window**: 15 minutes (900,000 ms)
 - **Max Requests**: 100 per window
 
 Rate limit headers:
+
 - `X-RateLimit-Limit` - Maximum requests allowed
 - `X-RateLimit-Remaining` - Requests remaining in current window
 - `X-RateLimit-Reset` - Time when rate limit resets
@@ -393,20 +424,25 @@ Rate limit headers:
 ## Security
 
 ### CORS
+
 CORS is configured via `CORS_ORIGIN` environment variable. Only specified origins can access the API.
 
 ### Helmet
+
 Security headers are automatically applied:
+
 - Content Security Policy
 - HSTS (HTTP Strict Transport Security)
 - X-Frame-Options
 - X-Content-Type-Options
 
 ### Password Requirements
+
 - Minimum 8 characters
 - Hashed with bcrypt (10 rounds by default)
 
 ### JWT Tokens
+
 - Signed with `JWT_SECRET`
 - Default expiration: 24 hours
 - Include user ID, email, username, role, clientId
@@ -414,10 +450,12 @@ Security headers are automatically applied:
 ## Logging
 
 Logs are written to:
+
 - **Console**: Colored, human-readable format
 - **File**: JSON format at `LOG_FILE` path
 
 Log levels:
+
 - `error` - Critical errors
 - `warn` - Warnings
 - `info` - General information
@@ -428,6 +466,7 @@ Set log level via `LOG_LEVEL` environment variable.
 ## Database Connection
 
 The API uses a PostgreSQL connection pool:
+
 - **Min connections**: 2
 - **Max connections**: 10
 - **Idle timeout**: 30 seconds
@@ -436,76 +475,33 @@ The API uses a PostgreSQL connection pool:
 ## Development
 
 ### Run Tests
+
 ```bash
 npm test
 ```
 
 ### Check Dependencies
+
 ```bash
 npm audit
 ```
 
 ### Update Dependencies
+
 ```bash
 npm update
 ```
 
-## Production Deployment
+## Running Locally
 
-### 1. Set Environment
-```bash
-export NODE_ENV=production
-```
-
-### 2. Use Process Manager
-Use PM2 or similar:
-```bash
-npm install -g pm2
-pm2 start src/server.js --name sentient-api
-pm2 save
-pm2 startup
-```
-
-### 3. Enable HTTPS
-Use reverse proxy (nginx, Apache) to handle HTTPS:
-
-```nginx
-server {
-    listen 443 ssl http2;
-    server_name api.mythrasentient.com;
-
-    ssl_certificate /path/to/cert.pem;
-    ssl_certificate_key /path/to/key.pem;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-### 4. Database Backups
-Schedule regular backups:
-```bash
-pg_dump -h localhost -U sentient sentient > backup_$(date +%Y%m%d_%H%M%S).sql
-```
-
-### 5. Monitor Logs
-```bash
-pm2 logs sentient-api
-```
+For this workspace, focus on running the API in local development mode (`npm run dev`) alongside the rest of the stack.
 
 ## Troubleshooting
 
 ### Database Connection Failed
+
 Check PostgreSQL is running:
+
 ```bash
 docker ps | grep postgres
 # or
@@ -515,18 +511,23 @@ systemctl status postgresql
 Verify credentials in `.env` match database.
 
 ### JWT Secret Not Set
+
 Error: "FATAL: JWT_SECRET environment variable is not set"
 
 Solution: Set `JWT_SECRET` in `.env` file.
 
 ### CORS Errors
+
 Add your frontend URL to `CORS_ORIGIN` in `.env`:
+
 ```
 CORS_ORIGIN=http://localhost:3000,http://localhost:3001,https://yourfrontend.com
 ```
 
 ### Port Already in Use
+
 Change `PORT` in `.env` or kill existing process:
+
 ```bash
 lsof -ti:3000 | xargs kill -9
 ```
@@ -534,6 +535,7 @@ lsof -ti:3000 | xargs kill -9
 ## Support
 
 For issues or questions:
+
 1. Check this README
 2. Review API logs
 3. Check database connection

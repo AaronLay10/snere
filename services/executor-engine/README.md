@@ -2,12 +2,12 @@
 
 The Puzzle Engine orchestrates room logic, manages puzzle state machines, tracks game sessions, and issues commands to downstream devices/effects. This is the central “brain” replacing the logic previously embedded in Node-RED and firmware.
 
-## System Context
+## System Context (Local Dev)
 
 - Receives device telemetry relayed by Device Monitor and responds by issuing commands through Effects Controller or back to devices via Device Monitor proxy routes.
-- Exposes REST/WebSocket state through API Gateway for the Dashboard—align event payloads with the shared `@paragon/shared` types to keep clients synchronized.
-- Persists configuration and session outcomes into PostgreSQL while emitting high-frequency metrics for InfluxDB once wired.
-- Any change to puzzle contracts should be reflected in `docs/system-architecture.md` and `docs/development-status.md` before implementation to maintain a consistent domain model.
+- Exposes REST/WebSocket state for the dashboard web application—align event payloads with the shared `@paragon/shared` types to keep clients synchronized.
+- Persists configuration and session outcomes into PostgreSQL.
+- Any change to puzzle contracts should be reflected in `docs/system-architecture.md` before implementation to maintain a consistent domain model.
 
 ## Features
 
@@ -24,23 +24,21 @@ The Puzzle Engine orchestrates room logic, manages puzzle state machines, tracks
 
 Environment variables (`src/config.ts`):
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `SERVICE_PORT` | `3004` | HTTP/WebSocket port. |
-| `CORS_ORIGIN` | `*` | Allowed origins for REST and Socket.IO. |
-| `TICK_INTERVAL_MS` | `1000` | Tick interval for timer manager. |
-| `DEVICE_MONITOR_URL` | _unset_ | If set, enables command relays via Device Monitor. |
+| Variable                 | Default | Description                                              |
+| ------------------------ | ------- | -------------------------------------------------------- |
+| `SERVICE_PORT`           | `3004`  | HTTP/WebSocket port.                                     |
+| `CORS_ORIGIN`            | `*`     | Allowed origins for REST and Socket.IO in local dev.     |
+| `TICK_INTERVAL_MS`       | `1000`  | Tick interval for timer manager.                         |
+| `DEVICE_MONITOR_URL`     | _unset_ | If set, enables command relays via Device Monitor.       |
 | `EFFECTS_CONTROLLER_URL` | _unset_ | If set, enables firing sequences via Effects Controller. |
 
-Example `.env`:
+Example local `.env`:
 
 ```env
 SERVICE_PORT=3004
-CORS_ORIGIN=http://sentientengine.ai:3000,http://sentientengine.ai:3001
+CORS_ORIGIN=http://localhost:3002
 DEVICE_MONITOR_URL=http://device-monitor:3003
 ```
-
-> When running outside Docker, point `DEVICE_MONITOR_URL` to the external hostname (e.g., `http://sentientengine.ai:3003`).
 
 ## Scripts
 

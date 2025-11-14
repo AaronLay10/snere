@@ -1,14 +1,13 @@
-# Sentient Engine - Docker Deployment Guide
+# Sentient Engine - Local Dev Environment Guide
 
-This guide covers deploying Sentient Engine using Docker and Docker Compose for both development and production environments.
+This guide covers running the Sentient Engine stack locally using Docker and Docker Compose as a development environment for the web application.
 
 ## Table of Contents
 
 - [Quick Start](#quick-start)
 - [Architecture Overview](#architecture-overview)
 - [Prerequisites](#prerequisites)
-- [Production Deployment](#production-deployment)
-- [Development Environment](#development-environment)
+- [Local Development Environment](#local-development-environment)
 - [Configuration](#configuration)
 - [Maintenance](#maintenance)
 - [Troubleshooting](#troubleshooting)
@@ -18,29 +17,13 @@ This guide covers deploying Sentient Engine using Docker and Docker Compose for 
 
 ## Quick Start
 
-### Production Deployment
+### Local Environment
 
 ```bash
-# 1. Run setup script (installs Docker if needed)
-sudo ./scripts/setup-production.sh
-
-# 2. Configure environment variables
-nano .env.production
-
-# 3. Set up SSL certificates
-# See config/nginx/ssl/README.md
-
-# 4. Start services
-sudo ./scripts/start-production.sh
-```
-
-### Development Environment
-
-```bash
-# 1. Copy development environment
+# 1. Copy local environment defaults if needed
 cp .env.development .env
 
-# 2. Start development services
+# 2. Start local services for development
 ./scripts/start-development.sh
 ```
 
@@ -50,21 +33,21 @@ cp .env.development .env
 
 ### Docker Services
 
-The Sentient Engine stack includes the following containerized services:
+The Sentient Engine stack includes the following containerized services in a single local environment:
 
-| Service | Container Name | Port(s) | Purpose |
-|---------|---------------|---------|---------|
-| **sentient-api** | sentient-api-1, sentient-api-2 | 3000 | REST API (2 instances, load balanced) |
-| **scene-executor** | sentient-scene-executor | 3004 | Scene orchestration engine |
-| **device-monitor** | sentient-device-monitor | 3003 | MQTT device monitoring |
-| **sentient-web** | sentient-web | 3002 | React frontend (Vite) |
-| **postgres** | sentient-postgres | 5432 | PostgreSQL database |
-| **mosquitto** | sentient-mosquitto | 1883, 9001 | MQTT broker |
-| **nginx** | sentient-nginx | 80, 443 | Reverse proxy & SSL termination |
-| **prometheus** | sentient-prometheus | 9090 | Metrics collection |
-| **grafana** | sentient-grafana | 3200 | Monitoring dashboards |
-| **loki** | sentient-loki | 3100 | Log aggregation |
-| **promtail** | sentient-promtail | 9080 | Log shipping |
+| Service            | Container Name     | Port(s)    | Purpose                              |
+| ------------------ | ------------------ | ---------- | ------------------------------------ |
+| **sentient-api**   | sentient-api       | 3000       | REST API                             |
+| **scene-executor** | executor-engine    | 3004       | Scene orchestration engine           |
+| **device-monitor** | device-monitor     | 3003       | MQTT device monitoring               |
+| **sentient-web**   | sentient-web       | 3002       | React frontend (Vite)                |
+| **postgres**       | sentient-postgres  | internal   | PostgreSQL database (`sentient_dev`) |
+| **mosquitto**      | sentient-mosquitto | 1883, 9001 | MQTT broker                          |
+| **nginx**          | nginx              | 80, 443    | Optional local reverse proxy         |
+| **prometheus**     | prometheus         | 9090       | Metrics collection                   |
+| **grafana**        | grafana            | 3200       | Monitoring dashboards                |
+| **loki**           | loki               | 3100       | Log aggregation                      |
+| **promtail**       | promtail           | internal   | Log shipping                         |
 
 ### Network Architecture
 
@@ -94,17 +77,9 @@ Internet
 
 ## Prerequisites
 
-### System Requirements
+### System Requirements (Local Development)
 
-**Production:**
-- Ubuntu 24.04 LTS (recommended) or Ubuntu 22.04 LTS
-- 4+ CPU cores
-- 8+ GB RAM
-- 50+ GB disk space
-- Static IP address or domain name
-
-**Development:**
-- Any Linux/macOS/Windows with Docker
+- macOS (primary target) or any system with Docker
 - 2+ CPU cores
 - 4+ GB RAM
 - 20+ GB disk space
@@ -119,147 +94,17 @@ The setup script will automatically install Docker and Docker Compose if not pre
 
 ---
 
-## Production Deployment
+## Local Development Environment
 
-### Step 1: Initial Setup
-
-Run the setup script to prepare your environment:
-
-```bash
-sudo ./scripts/setup-production.sh
-```
-
-This script will:
-- Install Docker and Docker Compose (if needed)
-- Create necessary directories
-- Set up MQTT password file
-- Check for SSL certificates
-- Set proper permissions
-
-### Step 2: Configure Environment Variables
-
-Edit `.env.production` with your production credentials:
-
-```bash
-nano .env.production
-```
-
-**Required variables:**
-
-```bash
-# Database
-POSTGRES_DB=sentient
-POSTGRES_USER=sentient_prod
-POSTGRES_PASSWORD=your_strong_password_here
-
-# MQTT
-MQTT_USER=paragon_devices
-MQTT_PASSWORD=your_mqtt_password_here
-
-# JWT & Session
-JWT_SECRET=your_jwt_secret_min_32_chars
-SESSION_SECRET=your_session_secret_min_32_chars
-
-# Grafana
-GRAFANA_PASSWORD=your_grafana_password
-
-# API URLs
-API_URL=https://sentientengine.ai
-FRONTEND_URL=https://sentientengine.ai
-```
-
-**Security Notes:**
-- Use strong, unique passwords (12+ characters, mix of upper/lower/numbers/symbols)
-- Never commit `.env.production` to version control
-- Rotate secrets regularly
-
-### Step 3: SSL Certificates
-
-#### Option A: Let's Encrypt (Production - Recommended)
-
-```bash
-# Install certbot
-sudo apt-get update
-sudo apt-get install certbot
-
-# Stop nginx if running
-sudo systemctl stop nginx
-
-# Generate certificate
-sudo certbot certonly --standalone \
-  -d sentientengine.ai \
-  -d www.sentientengine.ai
-
-# Copy certificates to Docker volume
-sudo cp /etc/letsencrypt/live/sentientengine.ai/fullchain.pem \
-  /opt/sentient/config/nginx/ssl/
-sudo cp /etc/letsencrypt/live/sentientengine.ai/privkey.pem \
-  /opt/sentient/config/nginx/ssl/
-
-# Set permissions
-sudo chmod 644 /opt/sentient/config/nginx/ssl/fullchain.pem
-sudo chmod 600 /opt/sentient/config/nginx/ssl/privkey.pem
-```
-
-#### Option B: Self-Signed (Testing Only)
-
-```bash
-openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
-  -keyout /opt/sentient/config/nginx/ssl/privkey.pem \
-  -out /opt/sentient/config/nginx/ssl/fullchain.pem \
-  -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost"
-```
-
-### Step 4: Database Schema
-
-Copy your database schema and migrations:
-
-```bash
-# Option 1: Copy existing schema
-cp /path/to/database/schema.sql /opt/sentient/config/postgres/init/02-schema.sql
-
-# Option 2: Copy migrations
-cp /path/to/database/migrations/*.sql /opt/sentient/config/postgres/init/
-```
-
-### Step 5: Start Services
-
-```bash
-sudo ./scripts/start-production.sh
-```
-
-This will:
-- Pull latest Docker images
-- Build custom images for your services
-- Start all containers
-- Display service status and logs
-
-### Step 6: Verify Deployment
-
-```bash
-# Check service health
-sudo ./scripts/health-check.sh
-
-# View logs
-sudo ./scripts/logs.sh sentient-api-1
-
-# Access services
-# Web UI: https://sentientengine.ai
-# Grafana: https://sentientengine.ai/grafana
-```
-
----
-
-## Development Environment
-
-### Starting Development Mode
+### Starting Local Development Mode
 
 ```bash
 # Start with hot-reload enabled
 ./scripts/start-development.sh
 ```
 
-Development mode features:
+Local development mode features:
+
 - **Hot Module Replacement (HMR)** - Instant code changes without rebuild
 - **Debug ports exposed** - Attach debugger to any service
 - **Volume mounts** - Code changes reflect immediately
@@ -276,7 +121,7 @@ Development mode features:
 - PostgreSQL: localhost:5432 (sentient_dev/dev_password)
 - MQTT: localhost:1883 (paragon_devices/dev_password)
 
-### Debug Ports
+### Debug Ports (Local)
 
 Attach your IDE debugger to these ports:
 
@@ -302,10 +147,10 @@ Attach your IDE debugger to these ports:
 
 ```bash
 # Rebuild specific service
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build sentient-api-1
+docker compose up -d --build sentient-api
 
 # Rebuild all services
-docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
+docker compose up -d --build
 ```
 
 ---
@@ -314,31 +159,29 @@ docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 
 ### Environment Files
 
-- `.env.production` - Production credentials and settings
-- `.env.development` - Development defaults
+- `.env.development` - Local development defaults
 
 ### Service Configuration
 
-| Service | Config Location |
-|---------|----------------|
-| Nginx | `/opt/sentient/config/nginx/` |
-| Mosquitto | `/opt/sentient/config/mosquitto/` |
-| PostgreSQL | `/opt/sentient/config/postgres/init/` |
-| Prometheus | `/opt/sentient/config/prometheus/` |
-| Grafana | `/opt/sentient/config/grafana/` |
-| Loki | `/opt/sentient/config/loki/` |
-| Promtail | `/opt/sentient/config/promtail/` |
+| Service    | Config Location             |
+| ---------- | --------------------------- |
+| Nginx      | `config/nginx/`             |
+| Mosquitto  | `config/mosquitto-dev/`     |
+| PostgreSQL | `config/postgres-dev/init/` |
+| Prometheus | `config/prometheus/`        |
+| Grafana    | `config/grafana/`           |
+| Loki       | `config/loki/`              |
+| Promtail   | `config/promtail/`          |
 
 ### Persistent Volumes
 
-Data is stored in `/opt/sentient/volumes/`:
+Data is stored in the `volumes/` directory in this repo (mounted as Docker volumes):
 
-- `postgres-data/` - Database files
-- `mosquitto-data/` - MQTT persistence
-- `prometheus-data/` - Metrics data
-- `grafana-data/` - Dashboards and settings
-- `loki-data/` - Log storage
-- `nginx-logs/` - Access and error logs
+- `postgres-data-dev/` - Database files
+- `mosquitto-data-dev/` - MQTT persistence
+- `prometheus-data-dev/` - Metrics data
+- `grafana-data-dev/` - Dashboards and settings
+- `loki-data-dev/` - Log storage
 
 ---
 
@@ -348,79 +191,33 @@ Data is stored in `/opt/sentient/volumes/`:
 
 ```bash
 # View service status
-docker-compose ps
+docker compose ps
 
 # View logs (follow mode)
-docker-compose logs -f [service_name]
+docker compose logs -f [service_name]
 
 # Restart a service
-docker-compose restart [service_name]
+docker compose restart [service_name]
 
 # Health check
-sudo ./scripts/health-check.sh
+./scripts/health-check.sh
 ```
 
-### Database Backups
+### Updating Services Locally
 
 ```bash
-# Create backup
-sudo ./scripts/backup-database.sh
-
-# Backups are stored in: /opt/sentient/backups/
-# Format: sentient_db_YYYYMMDD_HHMMSS.sql.gz
-
-# Restore from backup
-sudo ./scripts/restore-database.sh backups/sentient_db_20250110_120000.sql.gz
+# Rebuild and restart all containers locally
+docker compose up -d --build
 ```
-
-### Updating Services
-
-```bash
-# Pull latest images
-docker-compose pull
-
-# Rebuild and restart
-docker-compose up -d --build
-
-# Or use the start script (does both)
-sudo ./scripts/start-production.sh
-```
-
-### Log Management
-
-```bash
-# View specific service logs
-sudo ./scripts/logs.sh sentient-api-1
-
-# View all logs
-docker-compose logs --tail=100
-
-# Clean up old logs
-docker-compose logs --tail=0 -f  # Truncate logs
-
-# Loki stores logs for 7 days (configured in loki-config.yml)
-```
-
-### Monitoring
-
-Access Grafana at `https://sentientengine.ai/grafana`:
-
-- **System Overview** - Service health, uptime
-- **API Performance** - Request rates, latency
-- **Device Status** - Controller online/offline
-- **Resource Usage** - CPU, memory, disk
 
 ### Stopping Services
 
 ```bash
 # Stop all services (data preserved)
-docker-compose down
+docker compose down
 
 # Stop and remove volumes (DANGER: deletes all data)
-docker-compose down -v
-
-# Production stop script
-sudo ./scripts/stop-production.sh
+docker compose down -v
 ```
 
 ---
@@ -546,60 +343,17 @@ docker-compose exec sentient-api-1 nc -zv mosquitto 1883
 
 ## Security Considerations
 
-### Production Hardening
+### Local Security Tips
 
-1. **Change all default passwords** in `.env.production`
-2. **Enable UFW firewall:**
-   ```bash
-   sudo ufw allow 22/tcp   # SSH
-   sudo ufw allow 80/tcp   # HTTP
-   sudo ufw allow 443/tcp  # HTTPS
-   sudo ufw enable
-   ```
-
-3. **Restrict MQTT to internal network only** (already configured in docker-compose.yml)
-
-4. **Use strong SSL/TLS settings** (already configured in nginx.conf)
-
-5. **Enable fail2ban:**
-   ```bash
-   sudo apt-get install fail2ban
-   sudo systemctl enable fail2ban
-   sudo systemctl start fail2ban
-   ```
-
-6. **Regular security updates:**
-   ```bash
-   sudo apt-get update
-   sudo apt-get upgrade
-   docker-compose pull  # Update container images
-   ```
-
-7. **Monitor logs for suspicious activity:**
-   ```bash
-   docker-compose logs nginx | grep -E '(40[0-9]|50[0-9])'
-   ```
-
-### Network Isolation
-
-The Docker network is isolated (172.20.0.0/16). Only required ports are exposed to host:
-
-- **Public:** 80, 443 (HTTP/HTTPS)
-- **Internal only:** 1883 (MQTT), 5432 (PostgreSQL)
-
-### Secrets Management
-
-- Never commit `.env.production` to git
-- Use `.gitignore` to exclude sensitive files
-- Rotate credentials regularly
-- Consider using Docker secrets in production
+- Keep your `.env` files out of version control
+- Use strong local passwords even for dev services
 
 ---
 
 ## Additional Resources
 
 - [Sentient Engine Documentation](docs/)
-- [SYSTEM_ARCHITECTURE.md](docs/SYSTEM_ARCHITECTURE.md) - Complete architecture reference
+- [SYSTEM_ARCHITECTURE.md](docs/SYSTEM_ARCHITECTURE.md) - Architecture reference
 - [CLAUDE.md](docs/CLAUDE.md) - Development guidelines
 - Docker Documentation: https://docs.docker.com
 - Docker Compose Reference: https://docs.docker.com/compose/

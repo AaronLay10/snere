@@ -53,6 +53,12 @@ export function useExecutorSocket(options?: UseExecutorSocketOptions) {
       const envUrl = import.meta.env.VITE_EXECUTOR_WS;
       if (envUrl && envUrl.trim().length > 0) return envUrl.trim();
 
+      // In development, connect directly to executor-engine service
+      const isDev = import.meta.env.DEV;
+      if (isDev) {
+        return 'ws://localhost:3004';
+      }
+
       const loc = window.location;
       const isHttps = loc.protocol === 'https:';
       const wsProto = isHttps ? 'wss' : 'ws';
@@ -82,7 +88,7 @@ export function useExecutorSocket(options?: UseExecutorSocketOptions) {
       // Parse URL to determine if it includes /scene-executor path
       // Socket.IO needs: url = origin only, path = full route including /scene-executor
       const isDirectPort = /:\d{2,5}(\/?|$)/.test(url) || url.includes(':3004');
-      
+
       if (isDirectPort) {
         // Direct port: url includes port, path is default /socket.io
         return io(url, {
@@ -99,7 +105,7 @@ export function useExecutorSocket(options?: UseExecutorSocketOptions) {
         const origin = `${urlObj.protocol}//${urlObj.host}`;
         const pathPrefix = urlObj.pathname.replace(/\/$/, ''); // /scene-executor
         const socketPath = `${pathPrefix}/socket.io`;
-        
+
         return io(origin, {
           transports: ['websocket'],
           autoConnect: true,
@@ -141,13 +147,13 @@ export function useExecutorSocket(options?: UseExecutorSocketOptions) {
 
     const tryConnect = () => {
       if (isCleaningUp) return;
-      
+
       const url = endpoints[endpointIndex];
       socket = connectTo(url);
-      
+
       // Attach listeners immediately
       attachCoreListeners(socket);
-      
+
       // Store in ref
       socketRef.current = socket;
 

@@ -4,13 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Sentient Engine** is a **LIVE PRODUCTION, INTERNET-ACCESSIBLE** escape room orchestration platform that manages multi-tenant escape room experiences through real-time hardware coordination, scene-based gameplay progression, and safety systems. It runs on Ubuntu as Docker containerized Node.js services with PostgreSQL and Mosquitto MQTT broker. Hardware controllers are Teensy 4.1 microcontrollers on Ethernet.
+In this workspace, **Sentient Engine** is treated as a local development environment for an escape room orchestration platform. It runs as Docker containerized Node.js services with PostgreSQL and Mosquitto MQTT broker. Hardware controllers are Teensy 4.1 microcontrollers on Ethernet.
 
-**⚠️ MIGRATION NOTICE:** The system was migrated from PM2 process management to Docker containerization on November 10, 2025. A backup of the previous PM2-based Sentient Server can be found in the `backups/` folder **for reference only**.
-
-**🎯 DUAL-ENVIRONMENT DEPLOYMENT:** As of November 13, 2025, both production and development environments run simultaneously with complete infrastructure separation via Docker Compose profiles. Production uses ports 3000-3004/5432/1883, development uses ports 4000-4004/5433/1884. Each environment has completely separate databases (postgres-prod/postgres-dev) and MQTT brokers (mosquitto-prod/mosquitto-dev) for zero cross-contamination.
-
-**⚠️ CRITICAL: This is a production system with public internet exposure. All changes must prioritize security, stability, and data integrity.**
+There is no separate production environment or dual-environment support described here; treat this repo as the single source of truth for the local stack.
 
 ### Core Philosophy
 
@@ -34,31 +30,23 @@ Device-Monitor ← MQTT sensors/heartbeat
 
 ### Technology Stack
 
-| Layer                   | Technology                         | Production Port             | Development Port           | Purpose                                   |
-| ----------------------- | ---------------------------------- | --------------------------- | -------------------------- | ----------------------------------------- |
-| Frontend                | Vite 5.4 + React 19.1 + TypeScript | 3002                        | 4002                       | Configuration web interface               |
-| API                     | Node.js/Express                    | 3000                        | 4000                       | REST API (2 clustered instances)          |
-| Scene Executor          | Node.js/TypeScript                 | 3004                        | 4004                       | Scene orchestration engine                |
-| Device Monitor          | Node.js/MQTT                       | 3003                        | 4003                       | Real-time device telemetry                |
-| Database                | PostgreSQL 16                      | 5432 (postgres-prod)        | 5433 (postgres-dev)        | Relational data (separate instances)      |
-| Message Broker          | Mosquitto MQTT                     | 1883, 9001 (mosquitto-prod) | 1884, 9002 (mosquitto-dev) | Device communication (separate instances) |
-| Reverse Proxy           | Nginx                              | 80, 443                     | 80, 443                    | HTTPS termination (shared)                |
-| Container Orchestration | Docker Compose                     | -                           | -                          | Service lifecycle with profiles           |
-| Observability           | Prometheus + Grafana + Loki        | 9090, 3200, 3100            | 9190, 4200, 4100           | Metrics, dashboards, logs                 |
+| Layer                   | Technology                         | Local Port(s)        | Purpose                                   |
+| ----------------------- | ---------------------------------- | -------------------- | ----------------------------------------- |
+| Frontend                | Vite 5.4 + React 19.1 + TypeScript | 3002                 | Configuration web interface               |
+| API                     | Node.js/Express                    | 3000                 | REST API                                  |
+| Scene Executor          | Node.js/TypeScript                 | 3004                 | Scene orchestration engine                |
+| Device Monitor          | Node.js/MQTT                       | 3003                 | Real-time device telemetry                |
+| Database                | PostgreSQL 16                      | internal (5432)      | Relational data (`sentient_dev`)         |
+| Message Broker          | Mosquitto MQTT                     | 1883, 9001           | Device communication                      |
+| Reverse Proxy           | Nginx (optional)                   | 80, 443              | Local HTTPS termination (if used)        |
+| Container Orchestration | Docker Compose                     | -                    | Service lifecycle (single environment)    |
+| Observability           | Prometheus + Grafana + Loki        | 9090, 3200, 3100     | Metrics, dashboards, logs                 |
 
-## Production Environment & Internet Accessibility
+## Environment & Accessibility
 
-**⚠️ THIS SYSTEM IS LIVE ON THE INTERNET**
+For this repository, assume you are working against a **local Docker-based development environment**.
 
-### Public Access Information
-
-- **Production Domain:** https://sentientengine.ai (Let's Encrypt SSL)
-- **Development Domain:** https://dev.sentientengine.ai (same SSL certificate)
-- **Public IP:** 63.224.145.234
-- **Network:** Behind Ubiquiti Dream Machine Pro with port forwarding
-- **Ports Exposed:** 80 (HTTP), 443 (HTTPS) only
-- **SSL Certificate:** Let's Encrypt (auto-renews, expires Feb 4, 2026)
-- **Status:** PRODUCTION - Real escape rooms depend on this system
+Historical notes about public domains, IPs, or specific hosting providers in this file are for reference only and should not be treated as live operational details.
 
 ### Security Posture
 
@@ -71,7 +59,7 @@ Device-Monitor ← MQTT sensors/heartbeat
 - ✅ **Authentication:** JWT tokens, bcrypt hashing (12 rounds), audit logging
 - ✅ **Rate Limiting:** 2000 requests per 15 minutes on API
 
-### Network Architecture & VLAN Configuration
+### Network Architecture & VLAN Configuration (Reference)
 
 **CRITICAL:** The system uses **multiple VLANs with cross-VLAN routing enabled** via the Ubiquiti Dream Machine Pro. Traffic can cross VLANs freely for internal communication.
 
@@ -104,30 +92,27 @@ const int mqtt_port = 1883;
 const char *mqtt_host = "sentientengine.ai";  // ❌ WRONG - routes through internet
 ```
 
-### CRITICAL PRODUCTION RULES
+### CRITICAL SAFETY RULES (LOCAL)
 
 **NEVER DO THESE:**
 
 1. ❌ Expose database passwords in code or logs
-2. ❌ Open MQTT port (1883) to the internet
-3. ❌ Disable SSL certificate validation
+2. ❌ Open MQTT port (1883) to the public internet
+3. ❌ Disable SSL certificate validation if you enable TLS locally
 4. ❌ Push code with hardcoded credentials
-5. ❌ Make breaking changes without testing
-6. ❌ Restart services during active escape room sessions
-7. ❌ Modify database schema without migration scripts
-8. ❌ Configure Teensy controllers to use public domain for MQTT (must use local IP 192.168.2.3)
-9. ❌ Run containers with privileged mode unless absolutely necessary
+5. ❌ Modify database schema without migration scripts
+6. ❌ Configure Teensy controllers to use public domains for MQTT (use local IP)
+7. ❌ Run containers with privileged mode unless absolutely necessary
 
 **ALWAYS DO THESE:**
 
-1. ✅ Test changes in development before production
-2. ✅ Use Docker Compose commands for service management (`docker-compose up -d`, `docker-compose restart`)
-3. ✅ Verify services restart successfully after changes (`docker-compose ps`)
-4. ✅ Check logs after deployments (`docker-compose logs [service]`)
+1. ✅ Test changes in this local environment before using them elsewhere
+2. ✅ Use Docker Compose commands for service management (`docker compose up -d`, `docker compose restart`)
+3. ✅ Verify services restart successfully after changes (`docker compose ps`)
+4. ✅ Check logs after changes (`docker compose logs [service]`)
 5. ✅ Maintain audit trail in git commits
 6. ✅ Update documentation when changing architecture
-7. ✅ Prioritize security over convenience
-8. ✅ Use the provided scripts in `scripts/` for common operations
+7. ✅ Use the provided scripts in `scripts/` for common operations
 
 ## Critical Documentation
 
@@ -141,7 +126,7 @@ const char *mqtt_host = "sentientengine.ai";  // ❌ WRONG - routes through inte
 - `.github/copilot-instructions.md` - Development workflow and conventions
 - `Documentation/TEENSY_V2_COMPLETE_GUIDE.md` - Teensy firmware standards
 
-## Development Workflow
+## Development Workflow (Local)
 
 ### Documentation-First Approach
 
@@ -156,79 +141,31 @@ const char *mqtt_host = "sentientengine.ai";  // ❌ WRONG - routes through inte
 
 ### Building and Deploying
 
-**ALWAYS use the Docker Compose deployment workflow. NEVER bypass Docker containerization.**
+**ALWAYS use the Docker Compose-based development workflow for this workspace.**
 
-**DUAL-ENVIRONMENT ARCHITECTURE:** Production and development run simultaneously with complete isolation via Docker Compose profiles.
-
-#### Production Deployment
+#### Local Development Environment
 
 ```bash
-# Start production environment only
-docker compose --profile production up -d
-
-# Or use convenience script
-sudo ./scripts/start-production.sh
+# Start local development stack
+npm run dev
 ```
 
-This starts:
-
-- All production services (sentient-\*-prod containers)
-- Uses sentient database
-- Ports 3000-3004, 3200, 9090
-- Optimized builds without debug ports
-
-#### Development Environment
-
-```bash
-# Start development environment only
-docker compose --profile development up -d
-
-# Or use convenience script
-./scripts/start-development.sh
-```
-
-This enables:
-
-- All development services (sentient-\*-dev containers)
-- Uses sentient_dev database
-- Ports 4000-4004, 4200, 9190
-- Hot Module Replacement (HMR) for instant code changes
-- Debug ports exposed (9229-9232) for IDE debugger attachment
-- Volume mounts for real-time code updates
-
-#### Both Environments
-
-```bash
-# Start both production and development
-docker compose --profile production --profile development up -d
-
-# Stop specific environment
-docker compose --profile production down    # Stop production only
-docker compose --profile development down   # Stop development only
-docker compose down                         # Stop everything
-```
-
-#### Service Management
+#### Service Management (Local)
 
 ```bash
 # Check service health
 sudo ./scripts/health-check.sh
 
-# View logs (production)
-docker compose logs -f sentient-api-prod-1
-docker compose logs --tail=100 sentient-executor-prod
-
-# View logs (development)
-docker compose logs -f sentient-api-dev-1
-docker compose logs --tail=100 sentient-executor-dev
+```bash
+# View logs
+docker compose logs -f sentient-api
 
 # Restart specific service
-docker compose restart sentient-api-prod-1    # Production
-docker compose restart sentient-api-dev-1     # Development
+docker compose restart sentient-api
 
 # Rebuild after code changes
-docker compose up -d --build sentient-api-prod-1   # Production
-docker compose up -d --build sentient-api-dev-1    # Development
+docker compose up -d --build sentient-api
+```
 ```
 
 #### Teensy Firmware
@@ -245,57 +182,28 @@ Or manually:
 - Toolchain: bundled arduino-cli at `bin/`
 - Output: `hardware/HEX_UPLOAD_FILES/<Controller>/`
 
-### Container Services
+### Container Services (Local)
 
 Check service health:
 
 ```bash
-sudo ./scripts/health-check.sh
+./scripts/health-check.sh
 ```
 
-**Production Containers** (ports 3000-3004, 3200, 9090):
+For local development you will typically see containers for:
 
-- `sentient-api-prod-1`, `sentient-api-prod-2` - REST API (2 clustered instances, port 3000)
-- `sentient-executor-prod` - Scene execution engine (port 3004)
-- `sentient-web-prod` - Vite frontend (port 3002)
-- `sentient-monitor-prod` - MQTT telemetry (port 3003)
-- `sentient-prometheus-prod` - Metrics collection (port 9090)
-- `sentient-grafana-prod` - Monitoring dashboards (port 3200)
-- `sentient-loki-prod` - Log aggregation (port 3100)
-- `sentient-promtail-prod` - Log shipping
-
-**Development Containers** (ports 4000-4004, 4200, 9190):
-
-- `sentient-api-dev-1`, `sentient-api-dev-2` - REST API with debug ports (port 4000)
-- `sentient-executor-dev` - Scene execution engine with HMR (port 4004)
-- `sentient-web-dev` - Vite frontend with HMR (port 4002)
-- `sentient-monitor-dev` - MQTT telemetry (port 4003)
-- `sentient-prometheus-dev` - Metrics collection (port 9190)
-- `sentient-grafana-dev` - Monitoring dashboards (port 4200)
-- `sentient-loki-dev` - Log aggregation (port 4100)
-- `sentient-promtail-dev` - Log shipping
-
-**Infrastructure Services:**
-
-_Production:_
-
-- `sentient-postgres-prod` - PostgreSQL database (port 5432, database: sentient)
-- `sentient-mosquitto-prod` - MQTT broker (ports 1883/9001)
-
-_Development:_
-
-- `sentient-postgres-dev` - PostgreSQL database (port 5433, database: sentient_dev)
-- `sentient-mosquitto-dev` - MQTT broker (ports 1884/9002)
-
-_Shared:_
-
-- `sentient-nginx` - Reverse proxy (ports 80, 443, routes both domains)
+- `sentient-api`
+- `sentient-web`
+- `executor-engine`
+- `device-monitor`
+- `postgres`
+- `mosquitto`
 
 View logs:
 
 ```bash
-sudo ./scripts/logs.sh sentient-api-1
-docker-compose logs -f --tail=100 [service_name]
+./scripts/logs.sh sentient-api
+docker compose logs -f --tail=100 [service_name]
 ```
 
 ## MQTT Topic Standard (CRITICAL)
@@ -663,31 +571,19 @@ mosquitto_pub -h localhost -p 1883 -u paragon_devices -P password \
 Access database (via Docker):
 
 ```bash
-docker-compose exec postgres psql -U sentient_prod -d sentient
-```
-
-Apply migration:
-
-```bash
-docker-compose exec postgres psql -U sentient_prod -d sentient -f /docker-entrypoint-initdb.d/migrations/004_something.sql
-```
-
-Query production schema:
-
-```bash
-docker-compose exec postgres psql -U sentient_prod -d sentient -c "\d devices"
+docker compose exec sentient-postgres psql -U sentient_dev -d sentient_dev
 ```
 
 Backup database:
 
 ```bash
-sudo ./scripts/backup-database.sh
+./scripts/backup-database.sh
 ```
 
 Restore database:
 
 ```bash
-sudo ./scripts/restore-database.sh backups/sentient_db_YYYYMMDD_HHMMSS.sql.gz
+./scripts/restore-database.sh backups/sentient_db_YYYYMMDD_HHMMSS.sql.gz
 ```
 
 ## Director Controls (Game Master Interface)
@@ -708,24 +604,22 @@ Room-level:
 
 All commands are audited and broadcast via WebSocket.
 
-## File System Layout
+## File System Layout (This Repo)
 
 ```
-/opt/sentient/
-├── docker-compose.yml                 # Production orchestration
-├── docker-compose.dev.yml             # Development overrides
-├── .env.production                    # Production secrets (gitignored)
-├── .env.development                   # Development defaults
-├── DOCKER_DEPLOYMENT.md               # Complete deployment guide
+./
+├── docker-compose.yml                 # Local orchestration (single env)
+├── .env.development                   # Local development defaults
+├── DOCKER_DEPLOYMENT.md               # Local deployment guide
 ├── README.md                          # Quick reference
 ├── CLAUDE.md                          # This file
 ├── docs/
 │   ├── SYSTEM_ARCHITECTURE.md         # Single source of truth
 │   └── ...
 ├── config/
-│   ├── nginx/                         # Nginx reverse proxy config
-│   ├── mosquitto/                     # MQTT broker config
-│   ├── postgres/init/                 # Database initialization
+│   ├── nginx/                         # (optional) Nginx reverse proxy
+│   ├── mosquitto-dev/                 # MQTT broker config (local)
+│   ├── postgres-dev/                  # Database initialization (local)
 │   ├── prometheus/                    # Metrics collection config
 │   ├── grafana/                       # Dashboard provisioning
 │   ├── loki/                          # Log aggregation config
@@ -736,10 +630,7 @@ All commands are audited and broadcast via WebSocket.
 │   ├── device-monitor/Dockerfile      # Device monitor image
 │   └── web/Dockerfile                 # Frontend image
 ├── scripts/
-│   ├── setup-production.sh            # Initial setup
-│   ├── start-production.sh            # Start production
-│   ├── start-development.sh           # Start development
-│   ├── stop-production.sh             # Stop services
+│   ├── start-development.sh           # Start local stack
 │   ├── health-check.sh                # Health check
 │   ├── logs.sh                        # View logs
 │   ├── backup-database.sh             # Database backup
@@ -749,29 +640,24 @@ All commands are audited and broadcast via WebSocket.
 │   ├── device-monitor/                # MQTT monitoring
 │   ├── executor-engine/               # Scene execution
 │   └── sentient-web/                  # Vite frontend
-├── volumes/                           # Persistent data (gitignored)
-│   ├── postgres-data/
-│   ├── mosquitto-data/
-│   ├── prometheus-data/
-│   ├── grafana-data/
-│   └── loki-data/
-└── backups/                           # Database backups & PM2 archive
+└── volumes/                           # Persistent data (gitignored)
+  ├── postgres-data-dev/
+  ├── mosquitto-data-dev/
+  ├── prometheus-data-dev/
+  ├── grafana-data-dev/
+  └── loki-data-dev/
 ```
 
 ## Critical Reminders
 
-1. **🌐 INTERNET-ACCESSIBLE PRODUCTION SYSTEM** - This site is live at https://sentientengine.ai with real users and escape rooms
-2. **Documentation-First** - Update SYSTEM_ARCHITECTURE.md BEFORE architectural changes
-3. **Ask for Approval** - Present proposals and wait for user approval before implementing
-4. **Security First** - Never expose credentials, database passwords, or MQTT port to internet
-5. **Verify Production** - Query actual database schema; don't assume based on schema.sql
-6. **Use Identifiers, Not Names** - MQTT topics use snake_case IDs from database, never display names
-7. **One Device = One Row** - Physical devices are aggregates; don't split into subcomponents
-8. **Docker Workflow** - Always use Docker Compose commands and deployment scripts
-9. **Multi-Tenant Safety** - Every query must filter by client_id
-10. **Lowercase Categories** - commands/, sensors/, status/, events/ (never capitalized)
-11. **Puzzle Terminology** - Use escape room industry standard: State (major stages), Step (sub-stages), NOT Phase
-12. **Never Skip Verification** - Always verify assumptions by querying production database or reading code
-13. **Test Before Deploy** - Changes affect live escape room operations; accuracy and stability over speed
-14. **Monitor After Changes** - Always check `docker-compose logs [service]` after deployments to verify services are healthy
-15. **PM2 Backup Reference** - The PM2-based system backup is in `backups/` folder for reference only
+1. **Local-Only System** - Treat this repo as a local development environment, not a live production system.
+2. **Documentation-First** - Update `SYSTEM_ARCHITECTURE.md` BEFORE architectural changes.
+3. **Ask for Approval** - Present proposals and wait for user approval before implementing large changes.
+4. **Security First** - Never expose credentials, database passwords, or MQTT port to the internet.
+5. **Use Identifiers, Not Names** - MQTT topics use snake_case IDs from database, never display names.
+6. **One Device = One Row** - Physical devices are aggregates; don't split into subcomponents.
+7. **Docker Workflow** - Always use `docker compose` commands and the provided scripts.
+8. **Multi-Tenant Safety** - Every query must filter by `client_id`.
+9. **Lowercase Categories** - `commands/`, `sensors/`, `status/`, `events/` (never capitalized).
+10. **Puzzle Terminology** - Use escape room industry standard: State (major stages), Step (sub-stages), NOT Phase.
+11. **Never Skip Verification** - Verify assumptions by reading code or querying the local database.

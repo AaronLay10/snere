@@ -32,100 +32,84 @@ DIRECTORY STRUCTURE:
 ├── scripts/                    # Utility scripts
 └── volumes/                    # Persistent data
 
-NEXT STEPS:
------------
+# NEXT STEPS - SENTIENT ENGINE (LOCAL DEV)
 
-1. CONFIGURE ENVIRONMENT VARIABLES
-   Edit .env.production with your production credentials:
-   
-   nano .env.production
-   
-   Update these CRITICAL values:
-   - POSTGRES_PASSWORD (strong password)
-   - MQTT_PASSWORD (strong password)
-   - JWT_SECRET (32+ random characters)
-   - SESSION_SECRET (32+ random characters)
-   - GRAFANA_PASSWORD (strong password)
+This document is a **local-only quickstart** for getting from a fresh clone to a running dev stack on your Mac.
 
-2. SET UP SSL CERTIFICATES
-   For production with HTTPS:
-   
-   See: config/nginx/ssl/README.md
-   
-   Quick start (Let's Encrypt):
-   sudo apt-get install certbot
-   sudo certbot certonly --standalone -d sentientengine.ai
-   sudo cp /etc/letsencrypt/live/sentientengine.ai/*.pem config/nginx/ssl/
+There is no separate production environment or dual-environment support described here.
 
-3. PREPARE YOUR SERVICES
-   You'll need to copy your actual application code:
-   
-   Option A: Copy existing services directory:
-   cp -r /path/to/your/services /opt/sentient/
-   
-   Option B: Clone from repository:
-   git clone <your-repo> /opt/sentient/services
-   
-   Required service directories:
-   - services/api/
-   - services/executor-engine/
-   - services/device-monitor/
-   - services/sentient-web/
+## 1. Clone the Repository
 
-4. SET UP DATABASE SCHEMA
-   Copy your database schema and migrations:
-   
-   cp /path/to/database/schema.sql config/postgres/init/02-schema.sql
-   cp /path/to/database/migrations/*.sql config/postgres/init/
+```bash
+git clone git@github.com:your-org/sentient.git
+cd sentient
+```
 
-5. RUN PRODUCTION SETUP
-   Execute the setup script:
-   
-   sudo ./scripts/setup-production.sh
-   
-   This will:
-   - Install Docker (if needed)
-   - Create directories
-   - Set up MQTT passwords
-   - Configure SSL
-   - Set permissions
+## 2. Install Local Prerequisites
 
-6. START SERVICES
-   Launch the production environment:
-   
-   sudo ./scripts/start-production.sh
+- macOS
+- Docker Desktop
+- Node.js (via `nvm` recommended)
 
-7. VERIFY DEPLOYMENT
-   Check that everything is running:
-   
-   sudo ./scripts/health-check.sh
-   docker-compose ps
-   docker-compose logs
+## 3. Start the Local Dev Stack
 
-DEVELOPMENT WORKFLOW:
---------------------
+From the repo root:
 
-For local development, use the development environment:
+```bash
+# Start all services
+npm run dev
 
-1. Copy development environment:
-   cp .env.development .env
+# View logs for all services
+npm run dev:logs
+```
 
-2. Start development services:
-   ./scripts/start-development.sh
+This uses the root `docker-compose.yml` and the scripts under `scripts/` to start:
 
-3. Access services:
-   - Web: http://localhost:3002 (with HMR)
-   - API: http://localhost:3000
-   - Scene Executor: http://localhost:3004
-   - Device Monitor: http://localhost:3003
-   - Grafana: http://localhost:3200
-   - Prometheus: http://localhost:9090
+- API (`sentient-api`)
+- Executor Engine (`executor-engine`)
+- Device Monitor (`device-monitor`)
+- Web Frontend (`sentient-web`)
+- PostgreSQL (`sentient-postgres`)
+- Mosquitto (`sentient-mosquitto`)
+- Prometheus (`prometheus`)
+- Grafana (`grafana`)
+- Loki (`loki`)
+- Promtail (`promtail`)
 
-4. Debug ports available:
-   - API Instance 1: 9229
-   - API Instance 2: 9228
-   - Scene Executor: 9230
-   - Device Monitor: 9231
+## 4. Access the UI and Tools
+
+- Web UI: http://localhost:3002
+- API Health: http://localhost:3000/health
+- Executor Health: http://localhost:3004/health
+- Device Monitor Health: http://localhost:3003/health
+- Grafana: http://localhost:3200
+- Prometheus: http://localhost:9090
+
+## 5. Database & Migrations
+
+The local database is `sentient_dev` running inside the `sentient-postgres` container.
+
+Common operations:
+
+```bash
+# Run migrations
+npm run db:migrate
+
+# Seed development data
+npm run db:seed
+
+# Reset dev DB (drop, recreate, migrate, seed)
+npm run db:reset
+```
+
+## 6. Summary
+
+For day-to-day work, you only need to remember:
+
+- Use `npm run dev` to bring everything up
+- Use `npm run dev:logs` to watch logs
+- Use the `db:*` scripts to manage the local database
+- Treat this repo as a **local-only** environment unless you explicitly design a new deployment elsewhere
 
 COMMON COMMANDS:
 ---------------

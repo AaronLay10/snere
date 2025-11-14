@@ -4,7 +4,7 @@ This file provides context and guidelines for GitHub Copilot when working with t
 
 ## Project Overview
 
-**Sentient Engine** is a production escape room orchestration platform managing multi-tenant experiences through real-time hardware coordination, scene-based gameplay progression, and safety systems.
+In this workspace, **Sentient Engine** is treated as a local development environment for an escape room orchestration platform. The same concepts (multi-tenant, MQTT, scenes, safety) apply, but all instructions here are scoped to running locally.
 
 **Technology Stack:**
 
@@ -24,20 +24,34 @@ This file provides context and guidelines for GitHub Copilot when working with t
 - Hardware executes commands and reports sensor data
 - Multi-tenant isolation with complete data separation
 
-## Dual-Environment Architecture
+## Development Architecture
 
-**Production and development run simultaneously with complete infrastructure separation:**
+**This workspace is your LOCAL DEVELOPMENT ENVIRONMENT where you build and test Sentient Engine.**
 
-| Aspect         | Production                 | Development                 |
-| -------------- | -------------------------- | --------------------------- |
-| **Ports**      | 3000-3004, 5432, 1883/9001 | 4000-4004, 5433, 1884/9002  |
-| **Database**   | postgres-prod (sentient)   | postgres-dev (sentient_dev) |
-| **MQTT**       | mosquitto-prod             | mosquitto-dev               |
-| **Network**    | sentient-production        | sentient-development        |
-| **Domain**     | sentientengine.ai          | dev.sentientengine.ai       |
-| **Containers** | sentient-\*-prod           | sentient-\*-dev             |
+### Development Workflow
 
-**Key Benefit:** Development changes/restarts never affect production.
+1. **Local Development** (This Mac)
+
+- Write and test code in this workspace
+- Run Docker Compose locally (`npm run dev`)
+- Database: `sentient_dev` on port 5432
+- Services exposed on ports 3000-3004
+- MQTT broker on ports 1883/9001
+- All infrastructure runs in Docker containers
+
+Any real deployment to remote servers should be designed and documented outside of this file.
+
+### Docker Configuration
+
+All services run via `docker-compose.yml`:
+
+- **API:** sentient-api (Node.js/TypeScript/Express)
+- **Executor Engine:** executor-engine (TypeScript scene orchestration)
+- **Device Monitor:** device-monitor (TypeScript MQTT telemetry)
+- **Frontend:** sentient-web (Vite + React 19)
+- **Database:** PostgreSQL 16
+- **MQTT:** Eclipse Mosquitto
+- **Observability:** Prometheus, Grafana, Loki
 
 ## Naming Conventions
 
@@ -82,10 +96,10 @@ paragon/clockwork/commands/boiler-room-subpanel/intro-tv/power-on
 
 ```javascript
 // Database/MQTT uses identifiers
-device_id: "intro_tv"; // System identifier
+device_id: 'intro_tv'; // System identifier
 
 // UI shows friendly names
-friendly_name: "Introduction TV"; // Display only
+friendly_name: 'Introduction TV'; // Display only
 ```
 
 ## MQTT Topic Standard
@@ -156,7 +170,7 @@ WHERE r.client_id = $1;  -- REQUIRED
 
 ```typescript
 // Multi-tenant safety
-router.get("/devices", authenticate, async (req, res) => {
+router.get('/devices', authenticate, async (req, res) => {
   const { client_id } = req.user;
 
   const devices = await pool.query(
@@ -206,40 +220,35 @@ const response = await api.get(`/api/sentient/devices`, {
 
 ## Environment Variables
 
-**Production:** `.env` (gitignored)
-**Development:** Use defaults or `.env.development`
+For this workspace, prefer `.env.development` or service-specific `.env` files for local settings. Keep them gitignored.
 
 **Key Variables:**
 
 ```bash
-# Database
-DATABASE_URL=postgresql://user:pass@postgres-prod:5432/sentient
+# Database (local)
+DATABASE_URL=postgresql://user:pass@postgres:5432/sentient_dev
 
-# MQTT
-MQTT_URL=mqtt://mosquitto-prod:1883
+# MQTT (local)
+MQTT_URL=mqtt://mosquitto:1883
 MQTT_USERNAME=sentient_api
 MQTT_PASSWORD=secret
 
-# Auth
+# Auth (local)
 JWT_SECRET=secret
 SESSION_SECRET=secret
 ```
 
-## Docker Commands
+## Docker Commands (Local)
 
 ```bash
-# Start production
-docker compose --profile production up -d
-
-# Start development
-docker compose --profile development up -d
+# Start local dev stack
+npm run dev
 
 # View logs
-docker compose logs -f sentient-api-prod-1
-docker compose logs -f sentient-api-dev-1
+docker compose logs -f sentient-api
 
 # Restart service
-docker compose restart sentient-api-prod-1
+docker compose restart sentient-api
 
 # Health check
 ./scripts/health-check.sh
@@ -254,7 +263,7 @@ try {
   const result = await someOperation();
   return result;
 } catch (error) {
-  logger.error("Operation failed", {
+  logger.error('Operation failed', {
     error: error.message,
     stack: error.stack,
     context: {
@@ -268,7 +277,7 @@ try {
 ### Structured Logging
 
 ```typescript
-logger.info("Scene started", {
+logger.info('Scene started', {
   scene_id,
   room_id,
   user_id,
@@ -295,7 +304,7 @@ fetchData((err, data) => {
 
 ## Security Requirements
 
-**CRITICAL - This is a production system accessible on the internet:**
+**IMPORTANT - Even in local development, follow good security practices:**
 
 1. ✅ Never expose credentials in code or logs
 2. ✅ Always validate and sanitize user input
@@ -304,7 +313,7 @@ fetchData((err, data) => {
 5. ✅ Implement proper error handling without leaking internals
 6. ✅ Use HTTPS for all external communication
 7. ✅ Rate limit API endpoints
-8. ✅ Audit all significant operations
+8. ✅ Audit significant operations where feasible
 
 ## Documentation References
 
@@ -330,8 +339,7 @@ fetchData((err, data) => {
 When uncertain about implementation details:
 
 1. Check **SYSTEM_ARCHITECTURE.md** first
-2. Query production database to verify actual schema
-3. Search codebase for existing patterns
-4. Ask the user for clarification before implementing
+2. Search codebase for existing patterns
+3. Ask the user for clarification before implementing
 
-**Remember:** This is a live production system. Accuracy and stability over speed.
+Treat this repo as a local development environment; any real production deployment should be handled with separate, environment-specific documentation.

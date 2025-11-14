@@ -5,6 +5,7 @@ The primary web interface for the Sentient escape room control system, built wit
 ## Overview
 
 This application provides the control dashboard for managing:
+
 - **Rooms**: Configure and monitor escape rooms
 - **Scenes**: Create and edit scene timelines with drag-and-drop support
 - **Devices**: View and manage connected hardware devices
@@ -30,7 +31,7 @@ This application provides the control dashboard for managing:
 npm install
 ```
 
-### Development
+### Development (Local)
 
 ```bash
 npm run dev
@@ -44,7 +45,7 @@ Server will start on `http://localhost:3002`
 npm run build
 ```
 
-### Preview Production Build
+### Preview Local Build
 
 ```bash
 npm run preview
@@ -75,23 +76,27 @@ src/
 ## Key Features
 
 ### Authentication
+
 - Role-based access control (admin, operator, guest)
 - Protected routes with automatic redirect
 - Persistent login state with Zustand
 
 ### Timeline Editor
+
 - Drag-and-drop step reordering
 - Visual step creation and editing
 - Support for actions, delays, and cutscenes
 - Real-time preview of scene flow
 
 ### Device Management
+
 - Real-time device status via Socket.io
 - MQTT topic monitoring
 - Device capability inspection
 - Connection status tracking
 
 ### Dashboard Layout
+
 - Consistent sidebar navigation
 - Role-based menu filtering
 - User profile display
@@ -102,6 +107,7 @@ src/
 The web interface connects to the Sentient API backend at `http://localhost:3000/api`.
 
 API modules are located in `src/lib/api.ts` and include:
+
 - `auth` - Login and user management
 - `rooms` - Room CRUD operations
 - `scenes` - Scene management
@@ -111,7 +117,9 @@ API modules are located in `src/lib/api.ts` and include:
 ## Development Notes
 
 ### Browser Caching
+
 If you see the old interface after updates:
+
 1. Open DevTools (F12)
 2. Right-click the refresh button
 3. Select "Empty Cache and Hard Reload"
@@ -119,14 +127,17 @@ If you see the old interface after updates:
 OR use Incognito/Private mode for a clean slate.
 
 ### Visual Indicator
+
 The sidebar displays "VITE ⚡" to confirm you're on the current Vite-based interface.
 
 ### Hot Module Replacement (HMR)
+
 Vite provides instant updates during development. Changes to components will reflect immediately without losing state.
 
 ## Migration History
 
 This application was migrated from Next.js to Vite in October 2024 to resolve persistent caching issues and improve development experience. The migration included:
+
 - Conversion from Next.js App Router to React Router v6
 - Removal of Next.js-specific APIs (`'use client'`, `next/navigation`)
 - Path alias conversion (`@/` to relative paths)
@@ -142,9 +153,7 @@ export default defineConfig([
   globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
-    extends: [
-      tseslint.configs.recommendedTypeChecked,
-    ],
+    extends: [tseslint.configs.recommendedTypeChecked],
     languageOptions: {
       parserOptions: {
         project: ['./tsconfig.node.json', './tsconfig.app.json'],
@@ -152,7 +161,7 @@ export default defineConfig([
       },
     },
   },
-])
+]);
 ```
 
 ## License

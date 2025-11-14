@@ -1,362 +1,243 @@
-# Sentient Engine - Docker Environment
+# Sentient Engine
 
-Production-ready Docker environment for the Sentient Engine escape room orchestration platform.
+**Escape room orchestration platform** used here as a local development environment for a single web application.
 
-## Quick Start
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.9.3-blue)](https://www.typescriptlang.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22-green)](https://nodejs.org/)
+[![React](https://img.shields.io/badge/React-19.1-61DAFB)](https://reactjs.org/)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED)](https://www.docker.com/)
 
-### Production
-
-```bash
-# 1. Setup (one-time)
-sudo ./scripts/setup-production.sh
-
-# 2. Configure
-nano .env.production
-
-# 3. Start
-sudo ./scripts/start-production.sh
-```
-
-### Development
+## 🚀 Quick Start
 
 ```bash
-# Start development environment
-./scripts/start-development.sh
+# Clone and setup
+git clone https://github.com/AaronLay10/sentient.git
+cd sentient
+npm install
+
+# Start local environment for the web app
+npm run dev
 ```
 
-## What's Included
+**Login:** `admin@paragon.local` / `password`
 
-This Docker environment provides a complete, production-ready deployment of Sentient Engine with:
+**📖 New to the project?** Read [Developer Onboarding Guide](./docs/DEVELOPER_ONBOARDING.md)
 
-### Core Services
-- **Sentient API** - REST API (2 clustered instances with load balancing)
-- **Scene Executor** - Scene orchestration and puzzle logic
-- **Device Monitor** - Real-time MQTT device monitoring
-- **Sentient Web** - React + Vite frontend
+## 📋 What's Included
 
-### Infrastructure
-- **PostgreSQL 16** - Relational database
-- **Mosquitto MQTT** - Message broker for hardware communication
-- **Nginx** - Reverse proxy with SSL termination
+### Application Overview
 
-### Observability Stack
-- **Prometheus** - Metrics collection
-- **Grafana** - Monitoring dashboards
-- **Loki** - Log aggregation
-- **Promtail** - Log shipping
+- **Sentient Web** - React 19 + Vite frontend
+- **Sentient API** - TypeScript/Express REST API used by the web app
 
-## Directory Structure
+## 🏗️ Architecture (Local Dev)
 
 ```
-/opt/sentient/
-├── docker-compose.yml              # Production configuration
-├── docker-compose.dev.yml          # Development overrides
-├── .env.production                 # Production secrets
-├── .env.development                # Development defaults
-├── DOCKER_DEPLOYMENT.md            # Complete deployment guide
-│
-├── config/                         # Service configurations
-│   ├── nginx/                      # Nginx reverse proxy
-│   ├── mosquitto/                  # MQTT broker
-│   ├── postgres/                   # Database initialization
-│   ├── prometheus/                 # Metrics collection
-│   ├── grafana/                    # Dashboard provisioning
-│   ├── loki/                       # Log aggregation
-│   └── promtail/                   # Log shipping
-│
-├── docker/                         # Dockerfiles for services
-│   ├── api/                        # API Dockerfiles
-│   ├── executor-engine/            # Scene executor Dockerfiles
-│   ├── device-monitor/             # Device monitor Dockerfiles
-│   └── web/                        # Frontend Dockerfiles
-│
-├── scripts/                        # Utility scripts
-│   ├── setup-production.sh         # Initial setup
-│   ├── start-production.sh         # Start production
-│   ├── start-development.sh        # Start development
-│   ├── stop-production.sh          # Stop services
-│   ├── backup-database.sh          # Database backup
-│   ├── restore-database.sh         # Database restore
-│   ├── logs.sh                     # View logs
-│   └── health-check.sh             # Health check
-│
-├── volumes/                        # Persistent data (gitignored)
-│   ├── postgres-data/
-│   ├── mosquitto-data/
-│   ├── prometheus-data/
-│   ├── grafana-data/
-│   └── loki-data/
-│
-└── backups/                        # Database backups
+┌─────────────┐      ┌──────────────┐      ┌─────────────┐
+│   Frontend  │─────▶│  Sentient    │─────▶│   MQTT      │
+│  React 19   │      │  API Service │      │   Broker    │
+└─────────────┘      └──────────────┘      └─────────────┘
+                            │                      │
+                            ▼                      ▼
+                    ┌──────────────┐
+                    │  PostgreSQL  │
+                    │   Database   │
+                    └──────────────┘
 ```
 
-## Common Commands
+**Key Principles (for this workspace):**
 
-### Service Management
+- **snake_case everywhere** - Database and API consistency
+- **Type-safe** - TypeScript across backend and frontend
+
+## 🛠️ Development
+
+### Project Structure
+
+```
+sentient/
+├── services/                    # Application services used by the web app
+│   ├── api/                    # REST API (TypeScript/Express)
+│   └── sentient-web/           # Frontend (React 19 + Vite)
+├── scripts/                     # Local development scripts
+├── docs/                        # Documentation for this workspace
+└── .vscode/                     # VS Code configuration
+```
+
+### Available Commands
 
 ```bash
-# Start services
-sudo ./scripts/start-production.sh              # Production
-./scripts/start-development.sh                  # Development
+# Development
+npm run dev              # Start the local web app stack
 
-# Stop services
-docker-compose down                              # Keep data
-docker-compose down -v                           # Remove all data
+# Testing
+npm test                 # Run all tests
+npm run test:watch       # Watch mode
+npm run test:coverage    # Coverage report
 
-# Restart a service
-docker-compose restart sentient-api-1
+# Code Quality
+npm run lint             # Lint all code
+npm run lint:fix         # Auto-fix issues
+npm run format           # Format all files
+npm run type-check       # TypeScript check
 
-# Rebuild a service
-docker-compose up -d --build sentient-api-1
-```
-
-### Monitoring
-
-```bash
-# View service status
-docker-compose ps
-
-# Health check
-sudo ./scripts/health-check.sh
-
-# View logs
-sudo ./scripts/logs.sh sentient-api-1           # Specific service
-docker-compose logs -f                           # All services
-docker-compose logs --tail=100 sentient-api-1    # Last 100 lines
-```
-
-### Database Operations
-
-```bash
-# Backup
-sudo ./scripts/backup-database.sh
-
-# Restore
-sudo ./scripts/restore-database.sh backups/sentient_db_20250110_120000.sql.gz
-
-# Access database shell
-docker-compose exec postgres psql -U sentient_prod -d sentient
-```
-
-### Debugging
-
-```bash
-# Enter container shell
-docker-compose exec sentient-api-1 /bin/sh
-
-# View container resources
-docker stats
-
-# Network test
-docker-compose exec sentient-api-1 ping postgres
-docker-compose exec sentient-api-1 nc -zv mosquitto 1883
-```
-
-## Access Points
-
-### Production
-- **Web UI:** https://sentientengine.ai
-- **API:** https://sentientengine.ai/api
-- **Grafana:** https://sentientengine.ai/grafana
-- **Prometheus:** http://localhost:9090 (internal only)
-
-### Development
-- **Web UI:** http://localhost:3002 (Vite HMR)
-- **API:** http://localhost:3000
-- **Scene Executor:** http://localhost:3004
-- **Device Monitor:** http://localhost:3003
-- **Grafana:** http://localhost:3200 (admin/admin)
-- **Prometheus:** http://localhost:9090
-- **PostgreSQL:** localhost:5432
-- **MQTT:** localhost:1883
-
-### Debug Ports (Development)
-- API Instance 1: 9229
-- API Instance 2: 9228
-- Scene Executor: 9230
-- Device Monitor: 9231
-
-## Architecture
-
-### Service Communication
-
-```
-Internet → Nginx:443
-              ↓
-    ┌─────────┼─────────────┐
-    ↓         ↓             ↓
-Web:3002  API:3000    Executor:3004
-                            ↓
-                      Monitor:3003
-                            ↓
-                      MQTT:1883
-                            ↓
-                      Hardware Controllers
-                            ↓
-                      PostgreSQL:5432
-```
-
-### Data Flow
-
-1. **Frontend** (React) → Nginx → API
-2. **API** → PostgreSQL (data) + Scene Executor (scenes)
-3. **Scene Executor** → MQTT → Teensy Controllers
-4. **Controllers** → MQTT → Device Monitor → PostgreSQL
-5. **All Services** → Prometheus (metrics) + Loki (logs)
-
-## Configuration
-
-### Environment Variables
-
-Required in `.env.production`:
-
-```bash
 # Database
-POSTGRES_PASSWORD=your_secure_password
+npm run db:migrate       # Run migrations
+npm run db:seed          # Seed test data
+npm run db:reset         # Reset database
 
-# MQTT
-MQTT_PASSWORD=your_mqtt_password
-
-# Security
-JWT_SECRET=your_jwt_secret_min_32_chars
-SESSION_SECRET=your_session_secret
-
-# Grafana
-GRAFANA_PASSWORD=your_grafana_password
+# Building
+npm run build            # Build all services
 ```
 
-### SSL Certificates
+## 🧪 Testing
 
-Production requires SSL certificates at:
-- `config/nginx/ssl/fullchain.pem`
-- `config/nginx/ssl/privkey.pem`
+### Running Tests
 
-See [config/nginx/ssl/README.md](config/nginx/ssl/README.md) for setup instructions.
-
-### MQTT Passwords
-
-MQTT users are configured in `config/mosquitto/mosquitto_passwd`.
-
-See [config/mosquitto/README.md](config/mosquitto/README.md) for management commands.
-
-## Security
-
-### Production Hardening
-
-1. ✅ Strong passwords in `.env.production`
-2. ✅ SSL/TLS with Let's Encrypt certificates
-3. ✅ UFW firewall (ports 22, 80, 443 only)
-4. ✅ MQTT restricted to internal network
-5. ✅ fail2ban for brute-force protection
-6. ✅ Regular security updates
-7. ✅ Non-root containers
-8. ✅ Multi-tenant data isolation
-
-### Network Isolation
-
-- Docker network: 172.20.0.0/16 (isolated)
-- Public ports: 80, 443 only
-- MQTT port 1883: Internal only (not exposed)
-- PostgreSQL: Internal only (not exposed)
-
-## Maintenance
-
-### Regular Tasks
-
-**Daily:**
-- Monitor Grafana dashboards
-- Check `./scripts/health-check.sh`
-
-**Weekly:**
-- Review logs for errors
-- Database backup: `./scripts/backup-database.sh`
-
-**Monthly:**
-- Update Docker images: `docker-compose pull && docker-compose up -d`
-- System security updates: `sudo apt-get update && sudo apt-get upgrade`
-- Review and clean old backups
-
-### Backup Strategy
-
-Automated backups are stored in `/opt/sentient/backups/` with 7-day retention.
-
-Manual backup:
 ```bash
-sudo ./scripts/backup-database.sh
+# All tests
+npm test
+
+# Specific service
+cd services/api && npm test
+cd services/sentient-web && npm test
+
+# Watch mode
+npm run test:watch
+
+# Coverage
+npm test -- --coverage
 ```
 
-Restore:
-```bash
-sudo ./scripts/restore-database.sh backups/sentient_db_YYYYMMDD_HHMMSS.sql.gz
+### Writing Tests
+
+**Unit Test:**
+
+```typescript
+describe('hashPassword', () => {
+  it('should hash a password', async () => {
+    const hash = await hashPassword('test123');
+    expect(hash).toBeDefined();
+    expect(hash).not.toBe('test123');
+  });
+});
 ```
 
-## Troubleshooting
+**Integration Test:**
 
-### Services won't start
-```bash
-# Check logs
-docker-compose logs [service_name]
+```typescript
+describe('POST /api/auth/login', () => {
+  it('should return token for valid credentials', async () => {
+    const response = await request(app)
+      .post('/api/auth/login')
+      .send({ email: 'admin@paragon.local', password: 'password' });
 
-# Check port conflicts
-sudo netstat -tulpn | grep -E ':(80|443|3000|5432|1883)'
-
-# Verify Docker is running
-sudo systemctl status docker
+    expect(response.status).toBe(200);
+    expect(response.body.token).toBeDefined();
+  });
+});
 ```
 
-### Database connection errors
-```bash
-# Test connection
-docker-compose exec postgres psql -U sentient_prod -d sentient
+## 🐛 Debugging
 
-# Check environment
-docker-compose exec sentient-api-1 env | grep DATABASE
-```
+### VS Code Debugging
 
-### MQTT issues
-```bash
-# Test broker
-mosquitto_sub -h localhost -p 1883 -u paragon_devices -P password -t '#'
+1. Press `F5` or use Debug panel
+2. Select "Attach to All Services"
+3. Set breakpoints in TypeScript files
+4. Debug with hot-reload support
 
-# Check logs
-docker-compose logs mosquitto
-```
+Debug ports:
 
-See [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md) for complete troubleshooting guide.
+- API: 9229
+- Executor Engine: 9231
+- Device Monitor: 9232
 
-## Documentation
+### View Logs
 
-- **[DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md)** - Complete deployment guide
-- **[docs/SYSTEM_ARCHITECTURE.md](docs/SYSTEM_ARCHITECTURE.md)** - System architecture
-- **[docs/CLAUDE.md](docs/CLAUDE.md)** - Development guidelines
-- **[config/nginx/ssl/README.md](config/nginx/ssl/README.md)** - SSL setup
-- **[config/mosquitto/README.md](config/mosquitto/README.md)** - MQTT configuration
-- **[config/postgres/init/README.md](config/postgres/init/README.md)** - Database setup
+Use your usual Node/React logging and any local terminal output from `npm run dev`.
 
-## System Requirements
+## 🌐 Access Points
 
-### Production
-- Ubuntu 24.04 LTS (recommended)
-- 4+ CPU cores
-- 8+ GB RAM
-- 50+ GB disk space
-- Static IP or domain name
+- **Frontend:** http://localhost:3002
+- **API:** http://localhost:3000
 
-### Development
-- Any OS with Docker
-- 2+ CPU cores
-- 4+ GB RAM
-- 20+ GB disk space
+## 🔐 Security
 
-## Support
+Even in local development, follow good practices:
 
-1. Check [DOCKER_DEPLOYMENT.md](DOCKER_DEPLOYMENT.md) troubleshooting section
-2. Run `./scripts/health-check.sh`
-3. Review logs: `docker-compose logs [service]`
-4. Check service status: `docker-compose ps`
+- Use parameterized queries for database access
+- Keep JWT and other secrets in local `.env` files (not committed)
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+- **Port already in use:** find and stop the process on that port.
+- **Hot reload not working:** ensure `npm run dev` is running and files are saved.
+
+## 🤝 Contributing
+
+We welcome contributions! Please read our [Contributing Guide](./CONTRIBUTING.md) for:
+
+- Development workflow
+- Code standards (snake_case everywhere!)
+- Testing requirements (80% coverage for critical paths)
+- Commit message format
+- Pull request process
+
+## 📚 Documentation
+
+- **[Developer Onboarding](./docs/DEVELOPER_ONBOARDING.md)** - Get started in 30 minutes
+- **[Contributing Guide](./CONTRIBUTING.md)** - Development workflow and standards
+- **[System Architecture](./SYSTEM_ARCHITECTURE.md)** - Architecture reference for this app
+- **[Copilot Instructions](./.github/copilot-instructions.md)** - Quick reference
+
+## 📊 Tech Stack
+
+**Backend:**
+
+- Node.js 22 + TypeScript 5.9
+- Express 4.18
+- PostgreSQL 16
+- MQTT 5
+
+**Frontend:**
+
+- React 19.1
+- Vite 5.4
+- TypeScript 5.9
+- Tailwind CSS 3.4
+- Zustand (state management)
+- Socket.IO (real-time)
+
+**Hardware:**
+
+- Teensy 4.1 microcontrollers
+- Arduino framework
+- MQTT client library
+- Auto-registration system
+
+**Infrastructure:**
+
+- Docker + Docker Compose
+- Prometheus + Grafana
+- Loki + Promtail
+- Nginx reverse proxy
+
+## 📝 License
+
+This project is UNLICENSED - proprietary software for Sentient Engine.
+
+## 🆘 Support
+
+- **Documentation:** Check `/docs` directory
+- **Issues:** Open a GitHub issue
+- **Questions:** Contact development team
 
 ---
 
-**Sentient Engine** - Escape Room Orchestration Platform
-**Version:** 2.0.1
-**Last Updated:** November 10, 2025
+**Built with ❤️ for the future of immersive entertainment**
+
+**Version:** 2.1.0
+**Last Updated:** January 14, 2025

@@ -1,0 +1,68 @@
+# Prettier Ignore
+# Files and directories to exclude from formatting
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+
+# Compiled files
+*.min.js
+*.min.css
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# Hardware compiled outputs
+hardware/HEX_UPLOAD_FILES/
+*.hex
+
+# Database dumps
+*.sql.gz
+backups/
+
+# Grafana provisioning (generated)
+config/grafana/dashboards/*.json
+
+# Archive
+archive/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# Markdown with specific formatting needs
+CHANGELOG.md
+CLAUDE.md

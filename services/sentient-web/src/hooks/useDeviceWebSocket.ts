@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface SensorData {
   sensorName: string;
@@ -30,7 +30,12 @@ export interface UseDeviceWebSocketReturn {
 
 // Dynamically determine WebSocket URL based on environment
 const getWebSocketUrl = (): string => {
-  // Always use nginx proxy for WebSocket connections
+  // In development, connect directly to device-monitor service
+  // In production, use nginx proxy
+  const isDev = import.meta.env.DEV;
+  if (isDev) {
+    return 'ws://localhost:3003';
+  }
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   return `${protocol}//${window.location.host}/monitor/ws`;
 };
@@ -95,7 +100,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
                   device_id: device.device_id,
                   controller_id: device.controller_id,
                   status: device.status || 'offline',
-                  lastHeartbeat: device.lastHeartbeat
+                  lastHeartbeat: device.lastHeartbeat,
                 });
               });
               setDeviceStatuses(statusMap);
@@ -128,7 +133,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
                 const existing = newMap.get(key) || [];
                 const updated = [
                   { sensorName, value, receivedAt },
-                  ...existing.slice(0, 99) // Keep last 100 readings
+                  ...existing.slice(0, 99), // Keep last 100 readings
                 ];
                 newMap.set(key, updated);
                 return newMap;
@@ -152,7 +157,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
                   device_id: device.device_id,
                   controller_id: device.controller_id,
                   status: device.status || 'offline',
-                  lastHeartbeat: device.lastHeartbeat
+                  lastHeartbeat: device.lastHeartbeat,
                 });
                 return newMap;
               });
@@ -215,6 +220,6 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
     connected,
     deviceStates,
     deviceStatuses,
-    sensorData
+    sensorData,
   };
 }

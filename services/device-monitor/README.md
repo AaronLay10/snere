@@ -1,6 +1,6 @@
 # Device Monitor Service
 
-The Device Monitor ingests raw MQTT traffic from escape room controllers, keeps a live registry of device status, and exposes REST endpoints for dashboards and other services. It is written in TypeScript and is designed to run as part of the Sentient Engine stack.
+The Device Monitor ingests raw MQTT traffic from escape room controllers, keeps a live registry of device status, and exposes REST endpoints for dashboards and other services. It is written in TypeScript and is designed to run as part of the local Sentient Engine development stack.
 
 ## System Context
 
@@ -25,15 +25,15 @@ The Device Monitor ingests raw MQTT traffic from escape room controllers, keeps 
 
 Configuration is read from environment variables (see `src/config.ts`). Key options:
 
-| Variable | Default | Description |
-| --- | --- | --- |
-| `SERVICE_PORT` | `3003` | HTTP port for the REST API. |
-| `MQTT_URL` | `mqtt://localhost:1883` | Broker connection string. |
-| `MQTT_TOPIC_FILTER` | `paragon/#` | MQTT subscription pattern. |
-| `MQTT_USERNAME` / `MQTT_PASSWORD` | _unset_ | Optional broker credentials. |
-| `DEVICE_HEARTBEAT_TIMEOUT_MS` | `30000` | Time before a device is marked offline. |
-| `HEALTH_SWEEP_INTERVAL_MS` | `30000` | Interval for sweeping device health. |
-| `PUZZLE_ENGINE_URL` | _unset_ | If provided, forwards key device events to Executor Engine (`http://executor-engine:3004` in Docker, `http://sentientengine.ai:3004` on bare metal). |
+| Variable                          | Default                 | Description                                                                                                                |
+| --------------------------------- | ----------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `SERVICE_PORT`                    | `3003`                  | HTTP port for the REST API.                                                                                                |
+| `MQTT_URL`                        | `mqtt://localhost:1883` | Broker connection string.                                                                                                  |
+| `MQTT_TOPIC_FILTER`               | `paragon/#`             | MQTT subscription pattern.                                                                                                 |
+| `MQTT_USERNAME` / `MQTT_PASSWORD` | _unset_                 | Optional broker credentials.                                                                                               |
+| `DEVICE_HEARTBEAT_TIMEOUT_MS`     | `30000`                 | Time before a device is marked offline.                                                                                    |
+| `HEALTH_SWEEP_INTERVAL_MS`        | `30000`                 | Interval for sweeping device health.                                                                                       |
+| `PUZZLE_ENGINE_URL`               | _unset_                 | If provided, forwards key device events to Executor Engine (e.g. `http://executor-engine:3004` when using Docker locally). |
 
 Create a `.env` file during development if needed:
 
@@ -44,7 +44,7 @@ MQTT_TOPIC_FILTER=paragon/#
 PUZZLE_ENGINE_URL=http://executor-engine:3004
 ```
 
-> Swap the URLs to `http://sentientengine.ai:3004` (or another external hostname) when running the service directly on the host.
+> Adjust the URL as needed if you point this service at a different local host or port.
 
 ## Scripts
 

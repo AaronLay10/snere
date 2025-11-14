@@ -15,7 +15,7 @@ COPY package*.json ./
 RUN npm install
 
 # Expose Vite dev server port
-EXPOSE 4002
+EXPOSE 3002
 
 # Start Vite dev server
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "4002"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "3002"]

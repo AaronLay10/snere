@@ -8,12 +8,13 @@ cd "$(dirname "$0")/.."
 echo "Starting Sentient Engine (Development)..."
 echo ""
 
-# Use development environment
-export $(cat .env.development | grep -v '^#' | xargs)
+# Use local development environment
+if [ -f .env.development ]; then
+	export $(cat .env.development | grep -v '^#' | xargs)
+fi
 
-# Start services with development overrides
 echo "Starting services in development mode..."
-docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+docker compose up -d
 
 # Wait for services to start
 echo ""
@@ -49,5 +50,5 @@ echo ""
 echo "Useful commands:"
 echo "  - View logs: docker compose logs -f [service]"
 echo "  - Stop: docker compose down"
-echo "  - Rebuild: docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build"
+echo "  - Rebuild: docker compose up -d --build"
 echo ""
