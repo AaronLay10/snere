@@ -99,7 +99,7 @@ router.get('/stats', authenticate, requireCapability('read'), async (req, res) =
   try {
     const { startDate, endDate } = req.query;
 
-    const filters = {};
+    const filters: any = {};
 
     // Non-admins can only see stats for their client
     if (req.user?.role !== 'admin') {

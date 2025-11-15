@@ -49,9 +49,8 @@ export function authenticateService(
     username: 'system-service',
     role: 'system',
     client_id: null as any,
-    permissions: ['*'], // All permissions for internal services
     isService: true,
-  };
+  } as any;
 
   // Mark request as service-authenticated
   req.isServiceAuth = true;
