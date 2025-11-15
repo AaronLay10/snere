@@ -1,25 +1,13 @@
-
+import { motion } from 'framer-motion';
+import { ArrowLeft, Clock, Edit, Eye, Film, Pause, Play, Plus, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { rooms, scenes, type Room, type Scene } from '../lib/api';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Breadcrumbs from '../components/navigation/Breadcrumbs';
 import SceneCreateModal from '../components/SceneCreateModal';
-import { motion } from 'framer-motion';
-import {
-  Film,
-  Plus,
-  ArrowLeft,
-  Edit,
-  Trash2,
-  Eye,
-  Clock,
-  ArrowUpDown,
-  Play,
-  Pause,
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+import { rooms, scenes, type Room, type Scene } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 export default function RoomScenesPage() {
   const navigate = useNavigate();
@@ -37,6 +25,7 @@ export default function RoomScenesPage() {
       loadRoom();
       loadScenes();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId]);
 
   const loadRoom = async () => {
@@ -97,18 +86,20 @@ export default function RoomScenesPage() {
     );
   }
 
-  const breadcrumbs = room ? [
-    { label: 'Rooms', href: '/dashboard/rooms' },
-    { label: room.name, href: `/dashboard/rooms/${roomId}` },
-    { label: 'Scenes', href: `/dashboard/rooms/${roomId}/scenes` },
-  ] : undefined;
+  const breadcrumbs = room
+    ? [
+        { label: 'Rooms', href: '/dashboard/rooms' },
+        { label: room.name, href: `/dashboard/rooms/${roomId}` },
+        { label: 'Scenes', href: `/dashboard/rooms/${roomId}/scenes` },
+      ]
+    : undefined;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         {/* Breadcrumbs */}
         {breadcrumbs && <Breadcrumbs customSegments={breadcrumbs} />}
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -142,7 +133,9 @@ export default function RoomScenesPage() {
           <div className="card-neural text-center py-20">
             <Film className="w-16 h-16 text-gray-600 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-400 mb-2">No scenes configured</h3>
-            <p className="text-gray-600 mb-6">Create your first scene to begin building the room experience</p>
+            <p className="text-gray-600 mb-6">
+              Create your first scene to begin building the room experience
+            </p>
             {['admin', 'editor'].includes(user?.role || '') && (
               <button
                 onClick={() => setShowCreateModal(true)}
@@ -222,7 +215,9 @@ export default function RoomScenesPage() {
                     {['admin', 'editor'].includes(user?.role || '') && (
                       <>
                         <button
-                          onClick={() => navigate(`/dashboard/rooms/${roomId}/scenes/${scene.id}/timeline`)}
+                          onClick={() =>
+                            navigate(`/dashboard/rooms/${roomId}/scenes/${scene.id}/timeline`)
+                          }
                           className="flex items-center justify-center p-2 rounded-xl bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
                           title="Edit Scene"
                         >
@@ -257,8 +252,12 @@ export default function RoomScenesPage() {
                 <p className="text-sm text-gray-500 mb-1">Estimated Total Duration</p>
                 <p className="text-2xl font-bold text-white">
                   {Math.floor(
-                    scenesList.reduce((sum: number, s: any) => sum + (s.estimated_duration_seconds || 0), 0) / 60
-                  )} minutes
+                    scenesList.reduce(
+                      (sum: number, s: any) => sum + (s.estimated_duration_seconds || 0),
+                      0
+                    ) / 60
+                  )}{' '}
+                  minutes
                 </p>
               </div>
               <div>

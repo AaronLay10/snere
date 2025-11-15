@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { X, AlertCircle, Loader2 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { puzzles, rooms, type Room } from '../../lib/api';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, Loader2, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import { puzzles, rooms, type Room } from '../../lib/api';
 
 interface PuzzleCreateModalProps {
   isOpen: boolean;

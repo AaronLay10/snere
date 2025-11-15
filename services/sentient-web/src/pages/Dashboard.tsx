@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { rooms, devices, users, audit } from '../lib/api';
 import { motion } from 'framer-motion';
 import {
-  DoorOpen,
-  Cpu,
-  Users as UsersIcon,
   Activity,
   AlertTriangle,
   CheckCircle,
   Clock,
+  Cpu,
+  DoorOpen,
   TrendingUp,
+  Users as UsersIcon,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import { audit, devices, rooms, users } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 export default function Dashboard() {
   const navigate = useNavigate();

@@ -3,12 +3,12 @@
  * Allows users to view and edit their own profile
  */
 
-import { useState, useEffect } from 'react';
-import { User as UserIcon, Mail, Phone, Shield, Calendar, Save, X } from 'lucide-react';
-import { useAuthStore } from '../store/authStore';
-import { users, auth } from '../lib/api';
+import { Calendar, Mail, Phone, Save, Shield, User as UserIcon, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import ProfilePhotoUpload from '../components/ProfilePhotoUpload';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import { auth, users } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 interface ProfileFormData {
   username: string;

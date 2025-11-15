@@ -9,7 +9,8 @@ dist/
 build/
 
 # Vite generated files
-.vite/
+**/.vite/
+**/.vite/**
 
 # Test coverage
 coverage/

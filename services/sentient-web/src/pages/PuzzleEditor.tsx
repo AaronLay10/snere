@@ -1,34 +1,33 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { puzzles, devices, mqtt, type Puzzle, type Device } from '../lib/api';
-import DashboardLayout from '../components/layout/DashboardLayout';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
+  Activity,
+  AlertCircle,
   ArrowLeft,
-  Save,
-  Plus,
-  Trash2,
-  GripVertical,
+  CheckCircle,
   ChevronDown,
   ChevronRight,
-  Play,
-  CheckCircle,
-  AlertCircle,
-  Eye,
-  Zap,
-  Activity,
-  Settings,
   Database,
+  Eye,
   GitBranch,
-  Square,
+  GripVertical,
   Info,
   Music,
+  Play,
+  Plus,
   RotateCcw,
+  Save,
+  Settings,
+  Square,
+  Trash2,
+  Zap,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
+import DashboardLayout from '../components/layout/DashboardLayout';
 import PuzzleSettingsModal from '../components/modals/PuzzleSettingsModal';
 import { useExecutorSocket } from '../hooks/useExecutorSocket';
+import { devices, mqtt, puzzles, type Device, type Puzzle } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 // Timeline Block Types
 type BlockType =

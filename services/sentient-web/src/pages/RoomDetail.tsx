@@ -1,35 +1,32 @@
+import { motion } from 'framer-motion';
+import {
+  Accessibility,
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle,
+  Cpu,
+  DoorOpen,
+  Edit,
+  FileText,
+  Film,
+  Globe,
+  List,
+  Play,
+  Puzzle,
+  Settings,
+  Trash2,
+  Users,
+  X,
+  XCircle,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { rooms, clients, scenes, devices, puzzles, type Room, type Client } from '../lib/api';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Breadcrumbs from '../components/navigation/Breadcrumbs';
 import RoomControlPanel from '../components/RoomControlPanel';
-import { motion } from 'framer-motion';
-import {
-  DoorOpen,
-  Edit,
-  Trash2,
-  ArrowLeft,
-  Users,
-  Clock,
-  BarChart,
-  Globe,
-  Accessibility,
-  FileText,
-  Cpu,
-  Puzzle,
-  Film,
-  Plus,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  List,
-  Play,
-  Settings,
-  X,
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+import { clients, devices, puzzles, rooms, scenes, type Client, type Room } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 export default function RoomDetailPage() {
   const navigate = useNavigate();

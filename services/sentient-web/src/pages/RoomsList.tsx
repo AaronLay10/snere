@@ -1,22 +1,22 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { rooms, clients, type Room, type Client } from '../lib/api';
 import { motion } from 'framer-motion';
 import {
+  BarChart,
+  Clock,
   DoorOpen,
+  Edit,
+  Eye,
+  Filter,
   Plus,
   Search,
-  Filter,
-  Edit,
   Trash2,
-  Eye,
   Users,
-  Clock,
-  BarChart,
 } from 'lucide-react';
-import DashboardLayout from '../components/layout/DashboardLayout';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import DashboardLayout from '../components/layout/DashboardLayout';
+import { clients, rooms, type Client, type Room } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 export default function RoomsPage() {
   const navigate = useNavigate();

@@ -1,20 +1,20 @@
-import { useState, useEffect, useMemo } from 'react';
-import { devices, mqtt, controllers } from '../lib/api';
-import { useDeviceWebSocket } from '../hooks/useDeviceWebSocket';
-import DashboardLayout from '../components/layout/DashboardLayout';
 import { motion } from 'framer-motion';
 import {
-  Power,
-  Search,
-  Filter,
-  Zap,
   AlertTriangle,
   CheckCircle,
-  Loader2,
-  RefreshCw,
   Cpu,
+  Filter,
+  Loader2,
+  Power,
+  RefreshCw,
+  Search,
+  Zap,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import DashboardLayout from '../components/layout/DashboardLayout';
+import { useDeviceWebSocket } from '../hooks/useDeviceWebSocket';
+import { controllers, devices, mqtt } from '../lib/api';
 
 interface PowerDevice {
   id: string;

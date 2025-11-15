@@ -3,25 +3,25 @@
  * Admin page for managing client organizations
  */
 
-import { useState, useEffect } from 'react';
 import {
   Building2,
-  Plus,
   Edit2,
-  Trash2,
-  X,
-  Save,
-  Search,
   Filter,
-  Mail,
   Globe,
   Hash,
+  Mail,
+  Plus,
+  Save,
+  Search,
+  Trash2,
+  X,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import ClientLogoUpload from '../components/ClientLogoUpload';
+import DashboardLayout from '../components/layout/DashboardLayout';
 import { clients, type Client } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
-import DashboardLayout from '../components/layout/DashboardLayout';
-import ClientLogoUpload from '../components/ClientLogoUpload';
-import toast from 'react-hot-toast';
 
 interface ClientFormData {
   name: string;

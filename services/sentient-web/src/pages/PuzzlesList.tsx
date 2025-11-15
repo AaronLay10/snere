@@ -1,21 +1,21 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { rooms, puzzles, type Room, type Puzzle } from '../lib/api';
-import DashboardLayout from '../components/layout/DashboardLayout';
-import PuzzleCreateModal from '../components/modals/PuzzleCreateModal';
 import { motion } from 'framer-motion';
 import {
-  Puzzle as PuzzleIcon,
-  Plus,
-  Edit,
-  Clock,
-  CheckCircle,
-  AlertCircle,
   Activity,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Edit,
+  Plus,
+  Puzzle as PuzzleIcon,
   Target,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
+import DashboardLayout from '../components/layout/DashboardLayout';
+import PuzzleCreateModal from '../components/modals/PuzzleCreateModal';
+import { puzzles, rooms, type Puzzle, type Room } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 export default function PuzzlesList() {
   const navigate = useNavigate();

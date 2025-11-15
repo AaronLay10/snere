@@ -1,25 +1,13 @@
+import { motion } from 'framer-motion';
+import { ArrowLeft, Edit, Film, Info, List, Play, Settings, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useAuthStore } from '../store/authStore';
-import { rooms, scenes, sceneSteps, type Room, type Scene } from '../lib/api';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Breadcrumbs from '../components/navigation/Breadcrumbs';
 import SceneEditModal from '../components/SceneEditModal';
-import { motion } from 'framer-motion';
-import {
-  Film,
-  ArrowLeft,
-  Edit,
-  Trash2,
-  List,
-  Play,
-  Clock,
-  CheckCircle,
-  XCircle,
-  Info,
-  Settings,
-} from 'lucide-react';
-import toast from 'react-hot-toast';
+import { rooms, scenes, sceneSteps, type Room, type Scene } from '../lib/api';
+import { useAuthStore } from '../store/authStore';
 
 export default function SceneDetailPage() {
   const navigate = useNavigate();
