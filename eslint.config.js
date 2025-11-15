@@ -1,5 +1,6 @@
 // Root ESLint configuration for Sentient Engine
 // Individual workspaces may have their own configs that extend or override this
+import globals from 'globals';
 
 export default [
   {
@@ -16,11 +17,18 @@ export default [
     ],
   },
   {
-    files: ['**/*.{js,mjs,cjs,ts,tsx}'],
+    files: ['**/*.{js,mjs,cjs}'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.node,
+        ...globals.es2021,
+      },
+    },
     rules: {
-      // Basic rules that apply across all workspaces
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'no-unused-vars': 'off', // TypeScript handles this
+      'no-unused-vars': 'warn',
     },
   },
 ];

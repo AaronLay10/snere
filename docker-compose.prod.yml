@@ -8,6 +8,8 @@ services:
     image: ghcr.io/aaronlay10/sentient-api:latest
     container_name: sentient-api-prod
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
       PORT: 3000
@@ -30,6 +32,8 @@ services:
     image: ghcr.io/aaronlay10/sentient-executor-engine:latest
     container_name: executor-engine-prod
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
       PORT: 3004
@@ -49,6 +53,8 @@ services:
     image: ghcr.io/aaronlay10/sentient-device-monitor:latest
     container_name: device-monitor-prod
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
       PORT: 3003
@@ -68,6 +74,8 @@ services:
     image: ghcr.io/aaronlay10/sentient-web:latest
     container_name: sentient-web-prod
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       NODE_ENV: production
       PORT: 3002
@@ -81,6 +89,8 @@ services:
     image: postgres:16-alpine
     container_name: sentient-postgres-prod
     restart: unless-stopped
+    env_file:
+      - .env.production
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
