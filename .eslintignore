@@ -1,0 +1,40 @@
+# ESLint Ignore - Root level
+# Files and directories to exclude from linting
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+
+# Vite generated files
+**/.vite/
+**/.vite/**
+.vite/
+
+# Test coverage
+coverage/
+**/coverage/
+
+# Generated types
+**/*.d.ts
+
+# Hardware compiled outputs
+hardware/HEX_UPLOAD_FILES/
+*.hex
+
+# Archive
+archive/
+
+# Database dumps
+*.sql.gz
+backups/
+
+# Lock files
+package-lock.json
+pnpm-lock.yaml
+yarn.lock

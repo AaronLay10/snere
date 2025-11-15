@@ -62,8 +62,8 @@ export default function UsersList() {
 
   useEffect(() => {
     loadUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     loadClients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterRole, filterActive]);
 
   const loadClients = async () => {
