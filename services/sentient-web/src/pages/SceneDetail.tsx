@@ -36,6 +36,7 @@ export default function SceneDetailPage() {
     if (roomId && sceneId) {
       loadData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, sceneId]);
 
   const loadData = async () => {
@@ -99,19 +100,22 @@ export default function SceneDetailPage() {
     );
   }
 
-  const breadcrumbs = room && scene ? [
-    { label: 'Rooms', href: '/dashboard/rooms' },
-    { label: room.name, href: `/dashboard/rooms/${roomId}` },
-    { label: 'Scenes', href: `/dashboard/rooms/${roomId}/scenes` },
-    { label: scene.name, href: `/dashboard/rooms/${roomId}/scenes/${sceneId}` },
-  ] : undefined;
+  const breadcrumbs =
+    room && scene
+      ? [
+          { label: 'Rooms', href: '/dashboard/rooms' },
+          { label: room.name, href: `/dashboard/rooms/${roomId}` },
+          { label: 'Scenes', href: `/dashboard/rooms/${roomId}/scenes` },
+          { label: scene.name, href: `/dashboard/rooms/${roomId}/scenes/${sceneId}` },
+        ]
+      : undefined;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         {/* Breadcrumbs */}
         {breadcrumbs && <Breadcrumbs customSegments={breadcrumbs} />}
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -124,9 +128,7 @@ export default function SceneDetailPage() {
             <div>
               <div className="flex items-center gap-3 mb-1">
                 <Film className="w-8 h-8 text-cyan-400" />
-                <h1 className="text-3xl font-light text-gradient-cyan-magenta">
-                  {scene.name}
-                </h1>
+                <h1 className="text-3xl font-light text-gradient-cyan-magenta">{scene.name}</h1>
               </div>
               <p className="text-sm text-gray-500">
                 {room.name} / Scenes / {scene.name}
@@ -144,10 +146,7 @@ export default function SceneDetailPage() {
                   <Edit className="w-4 h-4" />
                   <span>Edit</span>
                 </button>
-                <button
-                  onClick={handleDelete}
-                  className="btn-danger flex items-center gap-2"
-                >
+                <button onClick={handleDelete} className="btn-danger flex items-center gap-2">
                   <Trash2 className="w-4 h-4" />
                   <span>Delete</span>
                 </button>
@@ -282,9 +281,7 @@ export default function SceneDetailPage() {
             className="card-neural text-center py-12"
           >
             <Info className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">
-              No Timeline Steps
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">No Timeline Steps</h3>
             <p className="text-gray-600 mb-6">
               This scene doesn't have any steps yet. Add steps to create the scene flow.
             </p>

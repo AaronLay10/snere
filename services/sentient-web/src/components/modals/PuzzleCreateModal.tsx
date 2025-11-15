@@ -11,7 +11,11 @@ interface PuzzleCreateModalProps {
   preselectedRoomId?: string;
 }
 
-export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }: PuzzleCreateModalProps) {
+export default function PuzzleCreateModal({
+  isOpen,
+  onClose,
+  preselectedRoomId,
+}: PuzzleCreateModalProps) {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
@@ -30,10 +34,10 @@ export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }
     return name
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '_')          // Replace spaces with underscores
-      .replace(/-+/g, '_')           // Replace hyphens with underscores
-      .replace(/_+/g, '_')           // Remove duplicate underscores
-      .replace(/^_|_$/g, '');        // Trim underscores from start/end
+      .replace(/\s+/g, '_') // Replace spaces with underscores
+      .replace(/-+/g, '_') // Replace hyphens with underscores
+      .replace(/_+/g, '_') // Remove duplicate underscores
+      .replace(/^_|_$/g, ''); // Trim underscores from start/end
   };
 
   useEffect(() => {
@@ -43,6 +47,7 @@ export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }
         setRoomId(preselectedRoomId);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, preselectedRoomId]);
 
   useEffect(() => {
@@ -109,7 +114,13 @@ export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }
         puzzle_id: puzzleId,
         name: puzzleName,
         puzzle_type: puzzleType,
-        difficulty_rating: difficulty ? (difficulty === 'easy' ? 2 : difficulty === 'medium' ? 3 : 4) : undefined,
+        difficulty_rating: difficulty
+          ? difficulty === 'easy'
+            ? 2
+            : difficulty === 'medium'
+              ? 3
+              : 4
+          : undefined,
         config: initialConfig,
       });
 
@@ -122,7 +133,8 @@ export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }
       resetForm();
     } catch (error: any) {
       console.error('Failed to create puzzle:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to create puzzle';
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Failed to create puzzle';
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -273,9 +285,7 @@ export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }
 
                 {/* Difficulty */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Difficulty
-                  </label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Difficulty</label>
                   <select
                     value={difficulty}
                     onChange={(e) => setDifficulty(e.target.value)}
@@ -319,11 +329,7 @@ export default function PuzzleCreateModal({ isOpen, onClose, preselectedRoomId }
 
               {/* Footer */}
               <div className="flex items-center justify-end gap-3 mt-8 pt-6 border-t border-gray-700">
-                <button
-                  onClick={handleClose}
-                  disabled={loading}
-                  className="btn-neural"
-                >
+                <button onClick={handleClose} disabled={loading} className="btn-neural">
                   Cancel
                 </button>
                 <button

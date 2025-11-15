@@ -19,31 +19,30 @@ describe('Breadcrumbs', () => {
 
   it('should display breadcrumb items', () => {
     const items = [
-      { label: 'Home', path: '/' },
-      { label: 'Rooms', path: '/rooms' },
-      { label: 'Clockwork', path: '/rooms/clockwork' },
+      { label: 'Rooms', href: '/rooms' },
+      { label: 'Clockwork', href: '/rooms/clockwork' },
     ];
 
-    renderWithRouter(<Breadcrumbs items={items} />);
+    renderWithRouter(<Breadcrumbs customSegments={items} />);
 
-    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Dashboard')).toBeInTheDocument();
     expect(screen.getByText('Rooms')).toBeInTheDocument();
     expect(screen.getByText('Clockwork')).toBeInTheDocument();
   });
 
   it('should make last item non-clickable', () => {
     const items = [
-      { label: 'Home', path: '/' },
-      { label: 'Current Page', path: '/current' },
+      { label: 'Rooms', href: '/rooms' },
+      { label: 'Current Page', href: '/current' },
     ];
 
-    renderWithRouter(<Breadcrumbs items={items} />);
+    renderWithRouter(<Breadcrumbs customSegments={items} />);
 
-    const homeLink = screen.getByText('Home').closest('a');
-    const currentPageLink = screen.getByText('Current Page').closest('a');
+    const dashboardLink = screen.getByText('Dashboard').closest('a');
+    const currentPageSpan = screen.getByText('Current Page');
 
-    expect(homeLink).toHaveAttribute('href', '/');
-    // Last item should not be a link or should be styled differently
-    // Adjust assertion based on actual implementation
+    expect(dashboardLink).toHaveAttribute('href', '/');
+    // Last item should be a span, not a link
+    expect(currentPageSpan.tagName).toBe('SPAN');
   });
 });

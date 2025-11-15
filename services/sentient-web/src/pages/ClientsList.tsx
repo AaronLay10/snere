@@ -15,7 +15,7 @@ import {
   Filter,
   Mail,
   Globe,
-  Hash
+  Hash,
 } from 'lucide-react';
 import { clients, type Client } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
@@ -50,11 +50,12 @@ export default function ClientsList() {
     mqtt_namespace: '',
     contact_email: '',
     contact_phone: '',
-    status: 'active'
+    status: 'active',
   });
 
   useEffect(() => {
     loadClients();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterStatus]);
 
   const loadClients = async () => {
@@ -82,7 +83,7 @@ export default function ClientsList() {
       mqtt_namespace: '',
       contact_email: '',
       contact_phone: '',
-      status: 'active'
+      status: 'active',
     });
     setShowModal(true);
   };
@@ -96,7 +97,7 @@ export default function ClientsList() {
       mqtt_namespace: client.mqtt_namespace,
       contact_email: client.contact_email || '',
       contact_phone: client.contact_phone || '',
-      status: client.status || 'active'
+      status: client.status || 'active',
     });
     setShowModal(true);
   };
@@ -120,7 +121,8 @@ export default function ClientsList() {
   };
 
   const handleDeleteClient = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`)) return;
+    if (!confirm(`Are you sure you want to delete "${name}"? This action cannot be undone.`))
+      return;
 
     try {
       await clients.delete(id);
@@ -137,17 +139,23 @@ export default function ClientsList() {
     if (client.slug === 'system' && currentUser?.role !== 'admin') {
       return false;
     }
-    
-    return client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.slug.toLowerCase().includes(searchTerm.toLowerCase());
+
+    return (
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.slug.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   });
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-400 bg-green-500/10';
-      case 'inactive': return 'text-gray-400 bg-gray-500/10';
-      case 'suspended': return 'text-red-400 bg-red-500/10';
-      default: return 'text-gray-400 bg-gray-500/10';
+      case 'active':
+        return 'text-green-400 bg-green-500/10';
+      case 'inactive':
+        return 'text-gray-400 bg-gray-500/10';
+      case 'suspended':
+        return 'text-red-400 bg-red-500/10';
+      default:
+        return 'text-gray-400 bg-gray-500/10';
     }
   };
 
@@ -157,19 +165,12 @@ export default function ClientsList() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">
-              Clients
-            </h1>
-            <p className="text-gray-500">
-              Manage client organizations
-            </p>
+            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">Clients</h1>
+            <p className="text-gray-500">Manage client organizations</p>
           </div>
 
           {currentUser?.role === 'admin' && (
-            <button
-              onClick={handleCreateClient}
-              className="btn-primary flex items-center gap-2"
-            >
+            <button onClick={handleCreateClient} className="btn-primary flex items-center gap-2">
               <Plus className="w-5 h-5" />
               <span>New Client</span>
             </button>
@@ -218,9 +219,7 @@ export default function ClientsList() {
         ) : filteredClients.length === 0 ? (
           <div className="card-neural text-center py-20">
             <Building2 className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">
-              No clients found
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">No clients found</h3>
             <p className="text-gray-600 mb-6">
               {searchTerm ? 'Try adjusting your search' : 'Create your first client to get started'}
             </p>
@@ -242,7 +241,9 @@ export default function ClientsList() {
                   <tr className="border-b border-gray-800">
                     <th className="text-left p-4 text-sm font-medium text-gray-400">Name</th>
                     <th className="text-left p-4 text-sm font-medium text-gray-400">Slug</th>
-                    <th className="text-left p-4 text-sm font-medium text-gray-400">MQTT Namespace</th>
+                    <th className="text-left p-4 text-sm font-medium text-gray-400">
+                      MQTT Namespace
+                    </th>
                     <th className="text-left p-4 text-sm font-medium text-gray-400">Contact</th>
                     <th className="text-left p-4 text-sm font-medium text-gray-400">Status</th>
                     <th className="text-right p-4 text-sm font-medium text-gray-400">Actions</th>
@@ -250,7 +251,10 @@ export default function ClientsList() {
                 </thead>
                 <tbody>
                   {filteredClients.map((client) => (
-                    <tr key={client.id} className="border-b border-gray-800/50 hover:bg-gray-800/20 transition-colors">
+                    <tr
+                      key={client.id}
+                      className="border-b border-gray-800/50 hover:bg-gray-800/20 transition-colors"
+                    >
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           <div className="p-2 rounded-lg bg-cyan-500/10">
@@ -271,7 +275,9 @@ export default function ClientsList() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className="font-mono text-sm text-gray-400">{client.mqtt_namespace}</span>
+                        <span className="font-mono text-sm text-gray-400">
+                          {client.mqtt_namespace}
+                        </span>
                       </td>
                       <td className="p-4">
                         <div className="space-y-1">
@@ -290,7 +296,9 @@ export default function ClientsList() {
                         </div>
                       </td>
                       <td className="p-4">
-                        <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(client.status || 'active')}`}>
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(client.status || 'active')}`}
+                        >
                           {client.status || 'active'}
                         </span>
                       </td>
@@ -416,9 +424,7 @@ export default function ClientsList() {
 
                 {/* Status */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Status
-                  </label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
@@ -433,10 +439,7 @@ export default function ClientsList() {
 
               {/* Actions */}
               <div className="flex gap-2 pt-6 mt-6 border-t border-gray-800">
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="btn-secondary flex-1"
-                >
+                <button onClick={() => setShowModal(false)} className="btn-secondary flex-1">
                   Cancel
                 </button>
                 <button

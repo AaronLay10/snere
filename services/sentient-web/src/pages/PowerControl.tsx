@@ -38,7 +38,9 @@ interface ControllerStatus {
 export default function PowerControlPage() {
   const [loading, setLoading] = useState(true);
   const [powerDevices, setPowerDevices] = useState<PowerDevice[]>([]);
-  const [controllerStatuses, setControllerStatuses] = useState<Record<string, ControllerStatus>>({});
+  const [controllerStatuses, setControllerStatuses] = useState<Record<string, ControllerStatus>>(
+    {}
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const [filterController, setFilterController] = useState('all');
   const [commandLoading, setCommandLoading] = useState<Record<string, boolean>>({});
@@ -67,7 +69,11 @@ export default function PowerControlPage() {
 
     // Check various possible state keys
     if ('power' in state) return { isOn: !!state.power, hasState: true };
-    if ('state' in state) return { isOn: state.state === 'on' || state.state === 1 || state.state === true, hasState: true };
+    if ('state' in state)
+      return {
+        isOn: state.state === 'on' || state.state === 1 || state.state === true,
+        hasState: true,
+      };
     if ('relay_state' in state) return { isOn: !!state.relay_state, hasState: true };
     if ('on' in state) return { isOn: !!state.on, hasState: true };
 
@@ -80,27 +86,27 @@ export default function PowerControlPage() {
 
       // Query ALL devices first
       const response = await devices.getAll({});
-      
+
       console.log('[PowerControl] Total devices from API:', response.devices?.length || 0);
-      
+
       // Build a map by checking device names that match power control patterns
       // Since controller meta-devices don't exist, we'll identify by device names
       const controllerUuidMap: Record<string, string> = {};
-      
+
       // Identify ONLY actual power relay devices by voltage patterns
       (response.devices || []).forEach((device: PowerDevice) => {
         const deviceId = device.device_id?.toLowerCase() || '';
         const friendlyName = device.friendly_name?.toLowerCase() || '';
-        
+
         // Only include devices that are actual power relays (have voltage ratings)
-        const isPowerRelay = 
+        const isPowerRelay =
           deviceId.includes('24v') ||
           deviceId.includes('12v') ||
           deviceId.includes('5v') ||
           friendlyName.includes('24v') ||
           friendlyName.includes('12v') ||
           friendlyName.includes('5v');
-        
+
         if (isPowerRelay) {
           // Mark this controller UUID as a power controller
           if (!controllerUuidMap[device.controller_id]) {
@@ -115,23 +121,23 @@ export default function PowerControlPage() {
 
       // Collect all devices for identified power controllers
       const powerControllerUuids = Object.keys(controllerUuidMap);
-      
+
       // Group devices by controller UUID to assign proper names
       const devicesByUuid: Record<string, PowerDevice[]> = {};
       (response.devices || []).forEach((device: PowerDevice) => {
         if (powerControllerUuids.includes(device.controller_id)) {
           const deviceId = device.device_id?.toLowerCase() || '';
           const friendlyName = device.friendly_name?.toLowerCase() || '';
-          
+
           // Only include actual power relay devices (with voltage ratings)
-          const isPowerRelay = 
+          const isPowerRelay =
             deviceId.includes('24v') ||
             deviceId.includes('12v') ||
             deviceId.includes('5v') ||
             friendlyName.includes('24v') ||
             friendlyName.includes('12v') ||
             friendlyName.includes('5v');
-            
+
           if (isPowerRelay) {
             if (!devicesByUuid[device.controller_id]) {
               devicesByUuid[device.controller_id] = [];
@@ -140,24 +146,24 @@ export default function PowerControlPage() {
           }
         }
       });
-      
+
       // Assign controller names based on device names
       Object.keys(devicesByUuid).forEach((uuid) => {
         const devices = devicesByUuid[uuid];
         let controllerIdentifier: string;
-        
+
         // Check specific device patterns for each controller
         // Upper Right: main_lighting, gauges, kraken, vault, syringe, lever_boiler, pilot_light, fuse, chemical, crawl_space, floor_audio, kracken_radar
-        const hasMainLighting = devices.some(d => d.device_id?.includes('main_lighting'));
-        
+        const hasMainLighting = devices.some((d) => d.device_id?.includes('main_lighting'));
+
         // Lower Right: gear, floor, subpanel, gun_drawers
-        const hasGear = devices.some(d => d.device_id?.includes('gear'));
-        const hasSubpanel = devices.some(d => d.device_id?.includes('subpanel'));
-        
+        const hasGear = devices.some((d) => d.device_id?.includes('gear'));
+        const hasSubpanel = devices.some((d) => d.device_id?.includes('subpanel'));
+
         // Lower Left: clock, lever_riddle (exactly 6 devices)
-        const hasClock = devices.some(d => d.device_id?.includes('clock'));
-        const hasLeverRiddle = devices.some(d => d.device_id?.includes('lever_riddle'));
-        
+        const hasClock = devices.some((d) => d.device_id?.includes('clock'));
+        const hasLeverRiddle = devices.some((d) => d.device_id?.includes('lever_riddle'));
+
         // Lower Left is most distinctive - only has clock and lever_riddle devices (6 total)
         if (hasClock || hasLeverRiddle) {
           controllerIdentifier = 'power_control_lower_left';
@@ -176,8 +182,8 @@ export default function PowerControlPage() {
         } else {
           controllerIdentifier = 'power_control_lower_right';
         }
-        
-        devices.forEach(device => {
+
+        devices.forEach((device) => {
           allPowerDevices.push({
             ...device,
             controller_uuid: device.controller_id, // Preserve original UUID
@@ -222,7 +228,7 @@ export default function PowerControlPage() {
           id: controller.id,
           name: controller.name || controller.controller_id,
           status: controller.status === 'active' ? 'online' : 'offline',
-          lastHeartbeat: controller.last_heartbeat ? new Date(controller.last_heartbeat) : null
+          lastHeartbeat: controller.last_heartbeat ? new Date(controller.last_heartbeat) : null,
         };
       });
 
@@ -243,10 +249,7 @@ export default function PowerControlPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const sendPowerCommand = async (
-    device: PowerDevice,
-    action: 'power_on' | 'power_off'
-  ) => {
+  const sendPowerCommand = async (device: PowerDevice, action: 'power_on' | 'power_off') => {
     const loadingKey = `${device.id}-${action}`;
     setCommandLoading((prev) => ({ ...prev, [loadingKey]: true }));
 
@@ -260,14 +263,14 @@ export default function PowerControlPage() {
         timestamp: Date.now(),
       };
 
-      console.log('[PowerControl] Sending command:', { 
-        topic, 
-        payload, 
+      console.log('[PowerControl] Sending command:', {
+        topic,
+        payload,
         controllerName,
         deviceId: device.device_id,
         deviceName: device.friendly_name,
         action,
-        fullDevice: device
+        fullDevice: device,
       });
       await mqtt.publish(topic, payload);
 
@@ -356,20 +359,22 @@ export default function PowerControlPage() {
   // Calculate statistics for controllers and devices separately
   const stats = useMemo(() => {
     // Controller statistics (from heartbeat data)
-    const powerControllerIds = ['power_control_upper_right', 'power_control_lower_right', 'power_control_lower_left'];
-    const powerControllers = powerControllerIds
-      .map(id => controllerStatuses[id])
-      .filter(Boolean);
+    const powerControllerIds = [
+      'power_control_upper_right',
+      'power_control_lower_right',
+      'power_control_lower_left',
+    ];
+    const powerControllers = powerControllerIds.map((id) => controllerStatuses[id]).filter(Boolean);
 
-    const controllersOnline = powerControllers.filter(c => c.status === 'online').length;
-    const controllersOffline = powerControllers.filter(c => c.status === 'offline').length;
+    const controllersOnline = powerControllers.filter((c) => c.status === 'online').length;
+    const controllersOffline = powerControllers.filter((c) => c.status === 'offline').length;
 
     // Device power state statistics (from WebSocket real-time data)
     // If a controller is offline, all its devices are considered offline/off
     let devicesPoweredOn = 0;
     let devicesPoweredOff = 0;
 
-    powerDevices.forEach(device => {
+    powerDevices.forEach((device) => {
       const controllerStatus = controllerStatuses[device.controller_id];
       const isControllerOnline = controllerStatus?.status === 'online';
 
@@ -397,8 +402,9 @@ export default function PowerControlPage() {
       controllersOnline,
       controllersOffline,
       devicesPoweredOn,
-      devicesPoweredOff
+      devicesPoweredOff,
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [powerDevices, controllerStatuses, deviceStates]);
 
   if (loading) {
@@ -419,12 +425,8 @@ export default function PowerControlPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">
-              Power Control
-            </h1>
-            <p className="text-gray-500">
-              Manage all power switches across three controllers
-            </p>
+            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">Power Control</h1>
+            <p className="text-gray-500">Manage all power switches across three controllers</p>
           </div>
           <button
             onClick={loadPowerDevices}
@@ -442,9 +444,7 @@ export default function PowerControlPage() {
           <div className="card-neural">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-                  Total Devices
-                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Total Devices</p>
                 <p className="text-2xl font-bold text-cyan-400">{stats.totalDevices}</p>
               </div>
               <Cpu className="w-8 h-8 text-cyan-400" />
@@ -481,9 +481,7 @@ export default function PowerControlPage() {
           <div className="card-neural">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-                  Devices ON
-                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Devices ON</p>
                 <p className="text-2xl font-bold text-emerald-400">{stats.devicesPoweredOn}</p>
               </div>
               <Power className="w-8 h-8 text-emerald-400" />
@@ -494,9 +492,7 @@ export default function PowerControlPage() {
           <div className="card-neural">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-                  Devices OFF
-                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Devices OFF</p>
                 <p className="text-2xl font-bold text-gray-400">{stats.devicesPoweredOff}</p>
               </div>
               <Power className="w-8 h-8 text-gray-400" />
@@ -507,9 +503,7 @@ export default function PowerControlPage() {
           <div className="card-neural">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">
-                  WebSocket
-                </p>
+                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">WebSocket</p>
                 <p className="text-sm font-semibold">
                   {wsConnected ? (
                     <span className="text-green-400">Connected</span>
@@ -566,7 +560,7 @@ export default function PowerControlPage() {
               if (devices.length === 0) return null;
 
               // Sort devices alphabetically
-              const sortedDevices = [...devices].sort((a, b) => 
+              const sortedDevices = [...devices].sort((a, b) =>
                 a.friendly_name.localeCompare(b.friendly_name)
               );
 
@@ -574,27 +568,35 @@ export default function PowerControlPage() {
               const isControllerOnline = controllerStatus?.status === 'online';
 
               // Count powered on/off devices for this controller
-              const devicesOn = devices.filter(d => getDevicePowerState(d).isOn).length;
-              const devicesOff = devices.filter(d => !getDevicePowerState(d).isOn && getDevicePowerState(d).hasState).length;
+              const devicesOn = devices.filter((d) => getDevicePowerState(d).isOn).length;
+              const devicesOff = devices.filter(
+                (d) => !getDevicePowerState(d).isOn && getDevicePowerState(d).hasState
+              ).length;
 
               return (
                 <div key={controllerId} className="space-y-3">
                   {/* Controller Header */}
                   <div className="card-neural bg-gradient-to-r from-cyan-500/10 to-magenta-500/10 p-4">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className={`p-2 rounded-lg ${isControllerOnline ? 'bg-green-500/20' : 'bg-red-500/20'}`}>
-                        <Power className={`w-5 h-5 ${isControllerOnline ? 'text-green-400' : 'text-red-400'}`} />
+                      <div
+                        className={`p-2 rounded-lg ${isControllerOnline ? 'bg-green-500/20' : 'bg-red-500/20'}`}
+                      >
+                        <Power
+                          className={`w-5 h-5 ${isControllerOnline ? 'text-green-400' : 'text-red-400'}`}
+                        />
                       </div>
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
                           <h2 className="text-lg font-semibold text-white">
                             {getControllerDisplayName(controllerId)}
                           </h2>
-                          <div className={`px-2 py-0.5 rounded text-xs font-medium ${
-                            isControllerOnline
-                              ? 'bg-green-500/20 text-green-400'
-                              : 'bg-red-500/20 text-red-400'
-                          }`}>
+                          <div
+                            className={`px-2 py-0.5 rounded text-xs font-medium ${
+                              isControllerOnline
+                                ? 'bg-green-500/20 text-green-400'
+                                : 'bg-red-500/20 text-red-400'
+                            }`}
+                          >
                             {isControllerOnline ? 'ONLINE' : 'OFFLINE'}
                           </div>
                         </div>
@@ -605,7 +607,8 @@ export default function PowerControlPage() {
                         </div>
                         {controllerStatus?.lastHeartbeat && (
                           <p className="text-xs text-gray-500 mt-0.5">
-                            Last heartbeat: {new Date(controllerStatus.lastHeartbeat).toLocaleTimeString()}
+                            Last heartbeat:{' '}
+                            {new Date(controllerStatus.lastHeartbeat).toLocaleTimeString()}
                           </p>
                         )}
                       </div>
@@ -678,9 +681,7 @@ export default function PowerControlPage() {
                             }`}
                           >
                             <Power
-                              className={`w-4 h-4 ${
-                                isOnline ? 'text-green-400' : 'text-gray-500'
-                              }`}
+                              className={`w-4 h-4 ${isOnline ? 'text-green-400' : 'text-gray-500'}`}
                             />
                           </div>
 
@@ -690,11 +691,17 @@ export default function PowerControlPage() {
                             </h3>
                             {/* Real-time power state indicator */}
                             {hasState && (
-                              <div className={`flex items-center gap-1.5 mt-0.5 px-2 py-1 rounded ${
-                                isOn ? 'bg-green-500/20' : 'bg-red-500/20'
-                              }`}>
-                                <div className={`w-1.5 h-1.5 rounded-full ${isOn ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
-                                <span className={`text-xs font-medium ${isOn ? 'text-green-400' : 'text-red-400'}`}>
+                              <div
+                                className={`flex items-center gap-1.5 mt-0.5 px-2 py-1 rounded ${
+                                  isOn ? 'bg-green-500/20' : 'bg-red-500/20'
+                                }`}
+                              >
+                                <div
+                                  className={`w-1.5 h-1.5 rounded-full ${isOn ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`}
+                                />
+                                <span
+                                  className={`text-xs font-medium ${isOn ? 'text-green-400' : 'text-red-400'}`}
+                                >
                                   {isOn ? 'POWERED ON' : 'POWERED OFF'}
                                 </span>
                               </div>
@@ -753,12 +760,12 @@ export default function PowerControlPage() {
               );
             })}
 
-        {filteredDevices.length === 0 && (
-          <div className="col-span-full card-neural text-center py-12">
-            <Filter className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <p className="text-gray-500">No power devices found</p>
-          </div>
-        )}
+          {filteredDevices.length === 0 && (
+            <div className="col-span-full card-neural text-center py-12">
+              <Filter className="w-16 h-16 text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-500">No power devices found</p>
+            </div>
+          )}
         </div>
       </div>
     </DashboardLayout>

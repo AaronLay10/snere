@@ -28,6 +28,7 @@ export default function PuzzlesList() {
 
   useEffect(() => {
     loadPuzzles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.client_id]);
 
   const loadPuzzles = async () => {
@@ -69,20 +70,26 @@ export default function PuzzlesList() {
     if (selectedRoom === 'all') {
       // Return all puzzles from all rooms
       return Object.entries(puzzlesByRoom).flatMap(([roomId, puzzles]) =>
-        puzzles.map(puzzle => ({ ...puzzle, roomId }))
+        puzzles.map((puzzle) => ({ ...puzzle, roomId }))
       );
     } else {
       // Return puzzles for selected room
-      return (puzzlesByRoom[selectedRoom] || []).map(puzzle => ({ ...puzzle, roomId: selectedRoom }));
+      return (puzzlesByRoom[selectedRoom] || []).map((puzzle) => ({
+        ...puzzle,
+        roomId: selectedRoom,
+      }));
     }
   };
 
   const displayPuzzles = getDisplayPuzzles();
-  const totalPuzzles = Object.values(puzzlesByRoom).reduce((sum, puzzles) => sum + puzzles.length, 0);
+  const totalPuzzles = Object.values(puzzlesByRoom).reduce(
+    (sum, puzzles) => sum + puzzles.length,
+    0
+  );
 
   // Get room name by ID
   const getRoomName = (roomId: string) => {
-    const room = roomsList.find(r => r.id === roomId);
+    const room = roomsList.find((r) => r.id === roomId);
     return room?.name || 'Unknown Room';
   };
 
@@ -94,7 +101,8 @@ export default function PuzzlesList() {
 
     const hasTimeline = timeline.length > 0;
     const hasVariables = variables.length > 0;
-    const hasWinCondition = puzzle.solve_conditions || timeline.some((block: any) => block.type === 'solve');
+    const hasWinCondition =
+      puzzle.solve_conditions || timeline.some((block: any) => block.type === 'solve');
 
     return {
       hasTimeline,
@@ -125,9 +133,7 @@ export default function PuzzlesList() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">
-              Puzzle Library
-            </h1>
+            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">Puzzle Library</h1>
             <p className="text-gray-500">
               Create and manage reusable puzzles for your escape rooms
             </p>
@@ -189,7 +195,7 @@ export default function PuzzlesList() {
               <div>
                 <p className="text-xs text-gray-500 uppercase">Configured</p>
                 <p className="text-2xl font-bold text-white">
-                  {displayPuzzles.filter(p => getPuzzleStatusInfo(p).configured).length}
+                  {displayPuzzles.filter((p) => getPuzzleStatusInfo(p).configured).length}
                 </p>
               </div>
             </div>
@@ -208,7 +214,8 @@ export default function PuzzlesList() {
               <div>
                 <p className="text-xs text-gray-500 uppercase">Incomplete</p>
                 <p className="text-2xl font-bold text-white">
-                  {totalPuzzles - displayPuzzles.filter(p => getPuzzleStatusInfo(p).configured).length}
+                  {totalPuzzles -
+                    displayPuzzles.filter((p) => getPuzzleStatusInfo(p).configured).length}
                 </p>
               </div>
             </div>
@@ -267,8 +274,12 @@ export default function PuzzlesList() {
                 >
                   <div className="flex items-start gap-4">
                     {/* Icon */}
-                    <div className={`p-4 rounded-xl ${statusInfo.configured ? 'bg-green-500/10' : 'bg-purple-500/10'}`}>
-                      <PuzzleIcon className={`w-8 h-8 ${statusInfo.configured ? 'text-green-400' : 'text-purple-400'}`} />
+                    <div
+                      className={`p-4 rounded-xl ${statusInfo.configured ? 'bg-green-500/10' : 'bg-purple-500/10'}`}
+                    >
+                      <PuzzleIcon
+                        className={`w-8 h-8 ${statusInfo.configured ? 'text-green-400' : 'text-purple-400'}`}
+                      />
                     </div>
 
                     {/* Content */}
@@ -358,7 +369,6 @@ export default function PuzzlesList() {
             })}
           </div>
         )}
-
       </div>
 
       {/* Create Puzzle Modal */}

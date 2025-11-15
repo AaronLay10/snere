@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -60,6 +59,7 @@ export default function RoomDetailPage() {
       loadRoom();
       loadStats();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, navigate]);
 
   useEffect(() => {
@@ -189,17 +189,19 @@ export default function RoomDetailPage() {
     );
   }
 
-  const breadcrumbs = room ? [
-    { label: 'Rooms', href: '/dashboard/rooms' },
-    { label: room.name, href: `/dashboard/rooms/${roomId}` },
-  ] : undefined;
+  const breadcrumbs = room
+    ? [
+        { label: 'Rooms', href: '/dashboard/rooms' },
+        { label: room.name, href: `/dashboard/rooms/${roomId}` },
+      ]
+    : undefined;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
         {/* Breadcrumbs */}
         {breadcrumbs && <Breadcrumbs customSegments={breadcrumbs} />}
-        
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -227,10 +229,7 @@ export default function RoomDetailPage() {
             <div className={`status-badge status-${room.status}`}>{room.status}</div>
             {['admin', 'editor'].includes(user?.role || '') && (
               <>
-                <button
-                  onClick={handleEdit}
-                  className="btn-secondary flex items-center gap-2"
-                >
+                <button onClick={handleEdit} className="btn-secondary flex items-center gap-2">
                   <Edit className="w-5 h-5" />
                   <span>Edit</span>
                 </button>
@@ -609,13 +608,16 @@ export default function RoomDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Slug *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Slug *</label>
                     <input
                       type="text"
                       value={formData.slug || ''}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '-') })}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          slug: e.target.value.toLowerCase().replace(/[^a-z0-9-_]/g, '-'),
+                        })
+                      }
                       className="input-neural"
                       placeholder="room-slug"
                     />
@@ -635,9 +637,7 @@ export default function RoomDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Theme
-                    </label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Theme</label>
                     <input
                       type="text"
                       value={formData.theme || ''}
@@ -651,9 +651,7 @@ export default function RoomDetailPage() {
                 {/* Client (Admin only) */}
                 {user?.role === 'admin' && clientsList.length > 0 && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Client *
-                    </label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Client *</label>
                     <select
                       value={formData.client_id || ''}
                       onChange={(e) => setFormData({ ...formData, client_id: e.target.value })}
@@ -692,7 +690,9 @@ export default function RoomDetailPage() {
                     <input
                       type="number"
                       value={formData.min_players || 2}
-                      onChange={(e) => setFormData({ ...formData, min_players: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, min_players: parseInt(e.target.value) })
+                      }
                       className="input-neural"
                       min="1"
                     />
@@ -705,7 +705,9 @@ export default function RoomDetailPage() {
                     <input
                       type="number"
                       value={formData.max_players || 8}
-                      onChange={(e) => setFormData({ ...formData, max_players: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, max_players: parseInt(e.target.value) })
+                      }
                       className="input-neural"
                       min="1"
                     />
@@ -718,7 +720,9 @@ export default function RoomDetailPage() {
                     <input
                       type="number"
                       value={formData.duration_minutes || 60}
-                      onChange={(e) => setFormData({ ...formData, duration_minutes: parseInt(e.target.value) })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, duration_minutes: parseInt(e.target.value) })
+                      }
                       className="input-neural"
                       min="15"
                       step="15"
@@ -734,7 +738,9 @@ export default function RoomDetailPage() {
                     </label>
                     <select
                       value={formData.difficulty_level || ''}
-                      onChange={(e) => setFormData({ ...formData, difficulty_level: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, difficulty_level: e.target.value })
+                      }
                       className="input-neural"
                     >
                       <option value="">Not Set</option>
@@ -746,9 +752,7 @@ export default function RoomDetailPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Status
-                    </label>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">Status</label>
                     <select
                       value={formData.status || 'draft'}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}

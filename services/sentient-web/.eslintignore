@@ -1,0 +1,18 @@
+# ESLint Ignore
+# Files and directories to exclude from linting
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+
+# Vite generated files
+.vite/
+
+# Test coverage
+coverage/
+
+# Generated types
+*.d.ts

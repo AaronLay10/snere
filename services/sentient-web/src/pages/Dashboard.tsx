@@ -28,6 +28,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadDashboardData = async () => {
@@ -218,10 +219,8 @@ export default function Dashboard() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white">
-                      <span className="font-medium">{activity.username}</span>
-                      {' '}
-                      {activity.action_type}
-                      {' '}
+                      <span className="font-medium">{activity.username}</span>{' '}
+                      {activity.action_type}{' '}
                       <span className="text-cyan-400">{activity.resource_type}</span>
                     </p>
                     <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
@@ -229,7 +228,9 @@ export default function Dashboard() {
                       <span>{formatTime(activity.created_at)}</span>
                     </div>
                   </div>
-                  <div className={`status-badge ${activity.success ? 'status-active' : 'status-archived'}`}>
+                  <div
+                    className={`status-badge ${activity.success ? 'status-active' : 'status-archived'}`}
+                  >
                     {activity.success ? 'Success' : 'Failed'}
                   </div>
                 </div>
@@ -247,21 +248,9 @@ export default function Dashboard() {
         >
           <h2 className="text-xl font-semibold text-cyan-400 mb-4">System Status</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <StatusIndicator
-              label="API Service"
-              status="operational"
-              uptime="99.9%"
-            />
-            <StatusIndicator
-              label="Database"
-              status="operational"
-              uptime="100%"
-            />
-            <StatusIndicator
-              label="MQTT Broker"
-              status="operational"
-              uptime="99.8%"
-            />
+            <StatusIndicator label="API Service" status="operational" uptime="99.9%" />
+            <StatusIndicator label="Database" status="operational" uptime="100%" />
+            <StatusIndicator label="MQTT Broker" status="operational" uptime="99.8%" />
           </div>
         </motion.div>
       </div>
@@ -272,7 +261,7 @@ export default function Dashboard() {
 function QuickActionButton({ title, description, icon: Icon, href }: any) {
   return (
     <button
-      onClick={() => window.location.href = href}
+      onClick={() => (window.location.href = href)}
       className="flex items-start gap-3 p-4 rounded-xl bg-cyan-500/5 border border-cyan-500/20 hover:bg-cyan-500/10 hover:border-cyan-500/40 transition-all group"
     >
       <div className="p-2 rounded-lg bg-cyan-500/10 group-hover:bg-cyan-500/20 transition-colors">
@@ -294,7 +283,9 @@ function StatusIndicator({ label, status, uptime }: any) {
         <p className="text-sm font-medium text-white">{label}</p>
         <p className="text-xs text-gray-500 mt-1">Uptime: {uptime}</p>
       </div>
-      <div className={`flex items-center gap-2 ${isOperational ? 'text-green-400' : 'text-red-400'}`}>
+      <div
+        className={`flex items-center gap-2 ${isOperational ? 'text-green-400' : 'text-red-400'}`}
+      >
         {isOperational ? (
           <CheckCircle className="w-5 h-5" />
         ) : (

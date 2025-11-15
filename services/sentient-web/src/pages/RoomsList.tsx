@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
@@ -31,6 +30,7 @@ export default function RoomsPage() {
 
   useEffect(() => {
     loadRooms();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [statusFilter, clientFilter]);
 
   useEffect(() => {
@@ -86,9 +86,10 @@ export default function RoomsPage() {
     }
   };
 
-  const filteredRooms = roomsList.filter((room) =>
-    room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    room.slug.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRooms = roomsList.filter(
+    (room) =>
+      room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      room.slug.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -97,12 +98,8 @@ export default function RoomsPage() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">
-              Escape Rooms
-            </h1>
-            <p className="text-gray-500">
-              Manage room configurations and experiences
-            </p>
+            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">Escape Rooms</h1>
+            <p className="text-gray-500">Manage room configurations and experiences</p>
           </div>
 
           {['admin', 'editor'].includes(user?.role || '') && (
@@ -179,11 +176,11 @@ export default function RoomsPage() {
         ) : filteredRooms.length === 0 ? (
           <div className="card-neural text-center py-20">
             <DoorOpen className="w-16 h-16 text-gray-600 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-400 mb-2">
-              No rooms found
-            </h3>
+            <h3 className="text-xl font-semibold text-gray-400 mb-2">No rooms found</h3>
             <p className="text-gray-600 mb-6">
-              {searchTerm ? 'Try adjusting your search' : 'Create your first escape room to get started'}
+              {searchTerm
+                ? 'Try adjusting your search'
+                : 'Create your first escape room to get started'}
             </p>
             {!searchTerm && ['admin', 'editor'].includes(user?.role || '') && (
               <button
@@ -217,23 +214,17 @@ export default function RoomsPage() {
                       </h3>
                       <p className="text-xs text-gray-500">/{room.slug}</p>
                       {user?.role === 'admin' && room.client_name && (
-                        <p className="text-xs text-cyan-400/60 mt-0.5">
-                          {room.client_name}
-                        </p>
+                        <p className="text-xs text-cyan-400/60 mt-0.5">{room.client_name}</p>
                       )}
                     </div>
                   </div>
 
-                  <div className={`status-badge status-${room.status}`}>
-                    {room.status}
-                  </div>
+                  <div className={`status-badge status-${room.status}`}>{room.status}</div>
                 </div>
 
                 {/* Description */}
                 {room.description && (
-                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">
-                    {room.description}
-                  </p>
+                  <p className="text-sm text-gray-400 mb-4 line-clamp-2">{room.description}</p>
                 )}
 
                 {/* Stats */}
@@ -243,9 +234,7 @@ export default function RoomsPage() {
                       <Users className="w-3 h-3" />
                       <span className="text-xs">Capacity</span>
                     </div>
-                    <p className="text-sm font-semibold text-white">
-                      {room.capacity || 'N/A'}
-                    </p>
+                    <p className="text-sm font-semibold text-white">{room.capacity || 'N/A'}</p>
                   </div>
                   <div>
                     <div className="flex items-center gap-1 text-gray-500 mb-1">

@@ -32,15 +32,15 @@ import { useExecutorSocket } from '../hooks/useExecutorSocket';
 
 // Timeline Block Types
 type BlockType =
-  | 'state'           // State block (contains sub-blocks)
-  | 'watch'           // Sensor watch
-  | 'action'          // Execute action
-  | 'audio'           // Play audio cue
-  | 'check'           // Check condition
-  | 'set_variable'    // Set puzzle variable
-  | 'solve'           // Solve puzzle (terminal)
-  | 'fail'            // Fail puzzle (terminal)
-  | 'reset';          // Reset puzzle
+  | 'state' // State block (contains sub-blocks)
+  | 'watch' // Sensor watch
+  | 'action' // Execute action
+  | 'audio' // Play audio cue
+  | 'check' // Check condition
+  | 'set_variable' // Set puzzle variable
+  | 'solve' // Solve puzzle (terminal)
+  | 'fail' // Fail puzzle (terminal)
+  | 'reset'; // Reset puzzle
 
 type ConditionOperator = '==' | '!=' | '>' | '<' | '>=' | '<=' | 'between' | 'in';
 
@@ -127,7 +127,10 @@ export default function PuzzleEditor() {
   const [draggedBlock, setDraggedBlock] = useState<TimelineBlock | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [expandedBlocks, setExpandedBlocks] = useState<Set<string>>(new Set());
-  const [draggedChildBlock, setDraggedChildBlock] = useState<{ block: TimelineBlock; parentId: string } | null>(null);
+  const [draggedChildBlock, setDraggedChildBlock] = useState<{
+    block: TimelineBlock;
+    parentId: string;
+  } | null>(null);
   const [dragOverChildIndex, setDragOverChildIndex] = useState<number | null>(null);
 
   // Real-time execution tracking
@@ -140,6 +143,7 @@ export default function PuzzleEditor() {
 
   useEffect(() => {
     loadPuzzle();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [puzzleId]);
 
   // Listen for timeline execution events
@@ -181,14 +185,16 @@ export default function PuzzleEditor() {
 
     const handleTimelineBlockCompleted = (data: any) => {
       if (data.sceneId !== puzzleId) return;
-      setCompletedBlockIds(prev => new Set(prev).add(data.blockId));
+      setCompletedBlockIds((prev) => new Set(prev).add(data.blockId));
       console.log('Timeline block completed:', data);
     };
 
     const handleTimelineCompleted = (data: any) => {
       if (data.sceneId !== puzzleId) return;
       setActiveBlockId(null);
-      toast.success(`Timeline completed! ${data.totalBlocks} blocks executed in ${Math.round(data.totalTimeMs / 1000)}s`);
+      toast.success(
+        `Timeline completed! ${data.totalBlocks} blocks executed in ${Math.round(data.totalTimeMs / 1000)}s`
+      );
     };
 
     const handleTimelineError = (data: any) => {
@@ -255,7 +261,7 @@ export default function PuzzleEditor() {
           name: 'ON START',
           description: 'Actions when puzzle begins',
           childBlocks: [],
-          expanded: true
+          expanded: true,
         };
         setTimelineBlocks([initialBlock]);
         setExpandedBlocks(new Set(['on_start']));
@@ -264,7 +270,6 @@ export default function PuzzleEditor() {
       if (config.variables) {
         setPuzzleVariables(config.variables);
       }
-
     } catch (error: any) {
       console.error('Failed to load puzzle:', error);
       toast.error('Failed to load puzzle configuration');
@@ -280,9 +285,9 @@ export default function PuzzleEditor() {
       setSaving(true);
 
       // Sync expanded state from Set back into blocks before saving
-      const blocksWithExpandedState = timelineBlocks.map(block => ({
+      const blocksWithExpandedState = timelineBlocks.map((block) => ({
         ...block,
-        expanded: expandedBlocks.has(block.id)
+        expanded: expandedBlocks.has(block.id),
       }));
 
       const config = {
@@ -290,12 +295,11 @@ export default function PuzzleEditor() {
         timeline: blocksWithExpandedState,
         variables: puzzleVariables,
         version: '2.0',
-        lastModified: new Date().toISOString()
+        lastModified: new Date().toISOString(),
       };
 
       await puzzles.update(puzzleId, { config });
       toast.success('Puzzle configuration saved');
-
     } catch (error: any) {
       console.error('Failed to save puzzle:', error);
       toast.error('Failed to save puzzle configuration');
@@ -333,7 +337,11 @@ export default function PuzzleEditor() {
     } catch (error: any) {
       console.error('Failed to start puzzle:', error);
       toast.dismiss();
-      toast.error(error.response?.data?.error?.message || error.message || 'Failed to start puzzle on executor');
+      toast.error(
+        error.response?.data?.error?.message ||
+          error.message ||
+          'Failed to start puzzle on executor'
+      );
     } finally {
       setTesting(false);
     }
@@ -359,7 +367,11 @@ export default function PuzzleEditor() {
     } catch (error: any) {
       console.error('Failed to reset puzzle:', error);
       toast.dismiss();
-      toast.error(error.response?.data?.error?.message || error.message || 'Failed to reset puzzle on executor');
+      toast.error(
+        error.response?.data?.error?.message ||
+          error.message ||
+          'Failed to reset puzzle on executor'
+      );
     }
   };
 
@@ -385,7 +397,7 @@ export default function PuzzleEditor() {
         toast.success(`✓ Executed: ${block.name}`);
         console.log('Block tested:', { block, topic, payload });
       } else if (block.type === 'audio' && block.audioCue && block.audioDevice) {
-        const device = availableDevices.find(d => d.device_id === block.audioDevice);
+        const device = availableDevices.find((d) => d.device_id === block.audioDevice);
         if (!device) {
           toast.error('Audio device not found');
           setTestingBlockId(null);
@@ -423,10 +435,10 @@ export default function PuzzleEditor() {
       expanded: true,
       ...(type === 'state' && { childBlocks: [] }),
       ...(type === 'watch' && {
-        watchConditions: { logic: 'AND', conditions: [] }
+        watchConditions: { logic: 'AND', conditions: [] },
       }),
       ...(type === 'check' && {
-        checkConditions: { logic: 'AND', conditions: [] }
+        checkConditions: { logic: 'AND', conditions: [] },
       }),
     };
 
@@ -436,7 +448,7 @@ export default function PuzzleEditor() {
     setTimelineBlocks(newBlocks);
 
     // Expand the new block
-    setExpandedBlocks(prev => new Set(prev).add(newBlock.id));
+    setExpandedBlocks((prev) => new Set(prev).add(newBlock.id));
   };
 
   const addChildBlock = (parentId: string, type: BlockType) => {
@@ -449,29 +461,29 @@ export default function PuzzleEditor() {
       description: '',
       expanded: true,
       ...(type === 'watch' && {
-        watchConditions: { logic: 'AND', conditions: [] }
+        watchConditions: { logic: 'AND', conditions: [] },
       }),
       ...(type === 'action' && {
-        action: { type: 'mqtt.publish', target: '', payload: {} }
+        action: { type: 'mqtt.publish', target: '', payload: {} },
       }),
       ...(type === 'check' && {
-        checkConditions: { logic: 'AND', conditions: [] }
+        checkConditions: { logic: 'AND', conditions: [] },
       }),
       ...(type === 'set_variable' && {
         variableName: '',
         variableValue: '',
-        variableSource: 'static'
+        variableSource: 'static',
       }),
     };
 
     console.log('🔵 New child block created:', newBlock);
 
-    setTimelineBlocks(blocks => {
-      const updatedBlocks = blocks.map(block => {
+    setTimelineBlocks((blocks) => {
+      const updatedBlocks = blocks.map((block) => {
         if (block.id === parentId && block.type === 'state') {
           const updatedBlock = {
             ...block,
-            childBlocks: [...(block.childBlocks || []), newBlock]
+            childBlocks: [...(block.childBlocks || []), newBlock],
           };
           console.log('🔵 Updated parent block:', updatedBlock);
           return updatedBlock;
@@ -482,7 +494,7 @@ export default function PuzzleEditor() {
       return updatedBlocks;
     });
 
-    setExpandedBlocks(prev => new Set(prev).add(newBlock.id));
+    setExpandedBlocks((prev) => new Set(prev).add(newBlock.id));
     console.log('🔵 Child block added successfully');
   };
 
@@ -496,7 +508,7 @@ export default function PuzzleEditor() {
       set_variable: 'Set Variable',
       solve: 'Puzzle Solved',
       fail: 'Puzzle Failed',
-      reset: 'Reset Puzzle'
+      reset: 'Reset Puzzle',
     };
     return names[type];
   };
@@ -504,14 +516,14 @@ export default function PuzzleEditor() {
   const updateBlock = (blockId: string, updates: Partial<TimelineBlock>, parentId?: string) => {
     if (parentId) {
       // Update child block
-      setTimelineBlocks(blocks =>
-        blocks.map(block => {
+      setTimelineBlocks((blocks) =>
+        blocks.map((block) => {
           if (block.id === parentId && block.type === 'state') {
             return {
               ...block,
-              childBlocks: block.childBlocks?.map(child =>
+              childBlocks: block.childBlocks?.map((child) =>
                 child.id === blockId ? { ...child, ...updates } : child
-              )
+              ),
             };
           }
           return block;
@@ -519,10 +531,8 @@ export default function PuzzleEditor() {
       );
     } else {
       // Update top-level block
-      setTimelineBlocks(blocks =>
-        blocks.map(block =>
-          block.id === blockId ? { ...block, ...updates } : block
-        )
+      setTimelineBlocks((blocks) =>
+        blocks.map((block) => (block.id === blockId ? { ...block, ...updates } : block))
       );
     }
   };
@@ -530,12 +540,12 @@ export default function PuzzleEditor() {
   const deleteBlock = (blockId: string, parentId?: string) => {
     if (parentId) {
       // Delete child block
-      setTimelineBlocks(blocks =>
-        blocks.map(block => {
+      setTimelineBlocks((blocks) =>
+        blocks.map((block) => {
           if (block.id === parentId && block.type === 'state') {
             return {
               ...block,
-              childBlocks: block.childBlocks?.filter(child => child.id !== blockId)
+              childBlocks: block.childBlocks?.filter((child) => child.id !== blockId),
             };
           }
           return block;
@@ -543,12 +553,12 @@ export default function PuzzleEditor() {
       );
     } else {
       // Delete top-level block
-      setTimelineBlocks(blocks => blocks.filter(block => block.id !== blockId));
+      setTimelineBlocks((blocks) => blocks.filter((block) => block.id !== blockId));
     }
   };
 
   const toggleBlockExpansion = (blockId: string) => {
-    setExpandedBlocks(prev => {
+    setExpandedBlocks((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(blockId)) {
         newSet.delete(blockId);
@@ -576,7 +586,7 @@ export default function PuzzleEditor() {
     if (!draggedBlock) return;
 
     const newBlocks = [...timelineBlocks];
-    const dragIndex = newBlocks.findIndex(b => b.id === draggedBlock.id);
+    const dragIndex = newBlocks.findIndex((b) => b.id === draggedBlock.id);
 
     if (dragIndex !== -1 && dragIndex !== dropIndex) {
       newBlocks.splice(dragIndex, 1);
@@ -595,7 +605,12 @@ export default function PuzzleEditor() {
   };
 
   // Child block drag and drop handlers
-  const handleChildDragStart = (e: React.DragEvent, block: TimelineBlock, parentId: string, index: number) => {
+  const handleChildDragStart = (
+    e: React.DragEvent,
+    block: TimelineBlock,
+    parentId: string,
+    index: number
+  ) => {
     setDraggedChildBlock({ block, parentId });
     e.dataTransfer.effectAllowed = 'move';
     e.stopPropagation();
@@ -613,11 +628,11 @@ export default function PuzzleEditor() {
 
     if (!draggedChildBlock || draggedChildBlock.parentId !== parentId) return;
 
-    setTimelineBlocks(blocks =>
-      blocks.map(block => {
+    setTimelineBlocks((blocks) =>
+      blocks.map((block) => {
         if (block.id === parentId && block.type === 'state') {
           const childBlocks = [...(block.childBlocks || [])];
-          const dragIndex = childBlocks.findIndex(b => b.id === draggedChildBlock.block.id);
+          const dragIndex = childBlocks.findIndex((b) => b.id === draggedChildBlock.block.id);
 
           if (dragIndex !== -1 && dragIndex !== dropIndex) {
             childBlocks.splice(dragIndex, 1);
@@ -651,7 +666,7 @@ export default function PuzzleEditor() {
       set_variable: Database,
       solve: CheckCircle,
       fail: AlertCircle,
-      reset: Activity
+      reset: Activity,
     };
     return icons[type];
   };
@@ -667,7 +682,7 @@ export default function PuzzleEditor() {
       set_variable: 'border-cyan-500/30 bg-cyan-500/10',
       solve: 'border-green-600/30 bg-green-600/10',
       fail: 'border-red-500/30 bg-red-500/10',
-      reset: 'border-gray-500/30 bg-gray-500/10'
+      reset: 'border-gray-500/30 bg-gray-500/10',
     };
     return colors[type];
   };
@@ -762,7 +777,7 @@ export default function PuzzleEditor() {
               onClick={() => {
                 setPuzzleVariables([
                   ...puzzleVariables,
-                  { name: 'new_variable', type: 'number', defaultValue: 0 }
+                  { name: 'new_variable', type: 'number', defaultValue: 0 },
                 ]);
               }}
               className="px-3 py-1 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg text-sm flex items-center gap-1"
@@ -930,7 +945,12 @@ interface TimelineBlockComponentProps {
   onDragOver: (e: React.DragEvent, index: number) => void;
   onDrop: (e: React.DragEvent, index: number) => void;
   onDragEnd: () => void;
-  onChildDragStart: (e: React.DragEvent, block: TimelineBlock, parentId: string, index: number) => void;
+  onChildDragStart: (
+    e: React.DragEvent,
+    block: TimelineBlock,
+    parentId: string,
+    index: number
+  ) => void;
   onChildDragOver: (e: React.DragEvent, parentId: string, index: number) => void;
   onChildDrop: (e: React.DragEvent, parentId: string, index: number) => void;
   onChildDragEnd: () => void;
@@ -970,18 +990,25 @@ function TimelineBlockComponent({
   saving,
   isActive = false,
   isCompleted = false,
-  activeSensorData = {}
+  activeSensorData = {},
 }: TimelineBlockComponentProps) {
   const Icon = getBlockIcon(block.type);
   const colorClass = getBlockColor(block.type);
   const canHaveChildren = block.type === 'state';
   const isTerminal = block.type === 'solve' || block.type === 'fail';
-  const canCollapse = block.type === 'state' || block.type === 'watch' || block.type === 'check' || block.type === 'action' || block.type === 'audio' || block.type === 'set_variable';
+  const canCollapse =
+    block.type === 'state' ||
+    block.type === 'watch' ||
+    block.type === 'check' ||
+    block.type === 'action' ||
+    block.type === 'audio' ||
+    block.type === 'set_variable';
 
   // Determine border styling based on execution state
   let borderStyle = colorClass;
   if (isActive) {
-    borderStyle = 'border-emerald-400 bg-emerald-500/20 shadow-lg shadow-emerald-500/50 animate-pulse';
+    borderStyle =
+      'border-emerald-400 bg-emerald-500/20 shadow-lg shadow-emerald-500/50 animate-pulse';
   } else if (isCompleted) {
     borderStyle = 'border-green-600/50 bg-green-600/10';
   }
@@ -999,9 +1026,7 @@ function TimelineBlockComponent({
     >
       {/* Block Header */}
       <div className="flex items-center gap-3 p-4">
-        {!isTerminal && (
-          <GripVertical className="w-5 h-5 text-gray-600 flex-shrink-0" />
-        )}
+        {!isTerminal && <GripVertical className="w-5 h-5 text-gray-600 flex-shrink-0" />}
 
         <Icon className="w-5 h-5 text-cyan-400 flex-shrink-0" />
 
@@ -1039,7 +1064,8 @@ function TimelineBlockComponent({
             <div className="mt-2 text-xs text-gray-500">
               {(block.childBlocks?.length || 0) > 0 ? (
                 <span>
-                  Contains <span className="text-cyan-400">{block.childBlocks?.length}</span> {block.childBlocks?.length === 1 ? 'block' : 'blocks'}
+                  Contains <span className="text-cyan-400">{block.childBlocks?.length}</span>{' '}
+                  {block.childBlocks?.length === 1 ? 'block' : 'blocks'}
                 </span>
               ) : (
                 <span className="text-gray-600">No blocks added</span>
@@ -1048,121 +1074,145 @@ function TimelineBlockComponent({
           )}
 
           {/* Show condition summary when collapsed */}
-          {!isExpanded && block.type === 'watch' && (block.watchConditions?.conditions.length || 0) > 0 && (
-            <div className="mt-2 text-xs text-gray-500">
-              {block.watchConditions?.conditions.map((cond, idx) => {
-                const device = availableDevices.find(d => d.device_id === cond.deviceId);
-                const deviceName = device?.friendly_name || cond.deviceId;
-                const valueDisplay = Array.isArray(cond.value) ? cond.value.join(' & ') : cond.value;
+          {!isExpanded &&
+            block.type === 'watch' &&
+            (block.watchConditions?.conditions.length || 0) > 0 && (
+              <div className="mt-2 text-xs text-gray-500">
+                {block.watchConditions?.conditions.map((cond, idx) => {
+                  const device = availableDevices.find((d) => d.device_id === cond.deviceId);
+                  const deviceName = device?.friendly_name || cond.deviceId;
+                  const valueDisplay = Array.isArray(cond.value)
+                    ? cond.value.join(' & ')
+                    : cond.value;
 
-                // Get live sensor value if block is active
-                const sensorKey = cond.sensorName ? `${cond.deviceId}.${cond.sensorName}` : cond.deviceId;
-                const liveValue = isActive && activeSensorData[sensorKey];
+                  // Get live sensor value if block is active
+                  const sensorKey = cond.sensorName
+                    ? `${cond.deviceId}.${cond.sensorName}`
+                    : cond.deviceId;
+                  const liveValue = isActive && activeSensorData[sensorKey];
 
-                return (
-                  <div key={idx} className="truncate">
-                    {idx > 0 && <span className="text-gray-600"> {block.watchConditions?.logic} </span>}
-                    When <span className="text-cyan-400">{deviceName}</span>
-                    {cond.sensorName && <span className="text-cyan-400">.{cond.sensorName}</span>}
-                    {' '}{cond.operator}{' '}
-                    <span className="text-yellow-400">{valueDisplay}</span>
-                    {liveValue !== undefined && (
-                      <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-mono">
-                        Live: {liveValue}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  return (
+                    <div key={idx} className="truncate">
+                      {idx > 0 && (
+                        <span className="text-gray-600"> {block.watchConditions?.logic} </span>
+                      )}
+                      When <span className="text-cyan-400">{deviceName}</span>
+                      {cond.sensorName && (
+                        <span className="text-cyan-400">.{cond.sensorName}</span>
+                      )}{' '}
+                      {cond.operator} <span className="text-yellow-400">{valueDisplay}</span>
+                      {liveValue !== undefined && (
+                        <span className="ml-2 px-2 py-0.5 bg-emerald-500/20 text-emerald-300 rounded font-mono">
+                          Live: {liveValue}
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
           {/* Show check condition summary when collapsed */}
-          {!isExpanded && block.type === 'check' && (block.checkConditions?.conditions.length || 0) > 0 && (
-            <div className="mt-2 text-xs text-gray-500">
-              {block.checkConditions?.conditions.map((cond, idx) => {
-                const device = availableDevices.find(d => d.device_id === cond.deviceId);
-                const deviceName = device?.friendly_name || cond.deviceId;
-                const valueDisplay = Array.isArray(cond.value) ? cond.value.join(' & ') : cond.value;
+          {!isExpanded &&
+            block.type === 'check' &&
+            (block.checkConditions?.conditions.length || 0) > 0 && (
+              <div className="mt-2 text-xs text-gray-500">
+                {block.checkConditions?.conditions.map((cond, idx) => {
+                  const device = availableDevices.find((d) => d.device_id === cond.deviceId);
+                  const deviceName = device?.friendly_name || cond.deviceId;
+                  const valueDisplay = Array.isArray(cond.value)
+                    ? cond.value.join(' & ')
+                    : cond.value;
 
-                return (
-                  <div key={idx} className="truncate">
-                    {idx > 0 && <span className="text-gray-600"> {block.checkConditions?.logic} </span>}
-                    If <span className="text-cyan-400">{deviceName}</span>
-                    {cond.sensorName && <span className="text-cyan-400">.{cond.sensorName}</span>}
-                    {' '}{cond.operator}{' '}
-                    <span className="text-yellow-400">{valueDisplay}</span>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+                  return (
+                    <div key={idx} className="truncate">
+                      {idx > 0 && (
+                        <span className="text-gray-600"> {block.checkConditions?.logic} </span>
+                      )}
+                      If <span className="text-cyan-400">{deviceName}</span>
+                      {cond.sensorName && (
+                        <span className="text-cyan-400">.{cond.sensorName}</span>
+                      )}{' '}
+                      {cond.operator} <span className="text-yellow-400">{valueDisplay}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
           {/* Show action summary when collapsed */}
-          {!isExpanded && block.type === 'action' && block.action?.target && (() => {
-            // Parse target format: deviceId/commandName
-            const [deviceId, commandName] = block.action.target.split('/');
+          {!isExpanded &&
+            block.type === 'action' &&
+            block.action?.target &&
+            (() => {
+              // Parse target format: deviceId/commandName
+              const [deviceId, commandName] = block.action.target.split('/');
 
-            // Find the device
-            const device = availableDevices.find(d => d.device_id === deviceId);
+              // Find the device
+              const device = availableDevices.find((d) => d.device_id === deviceId);
 
-            // Look for the friendly name in device capabilities
-            let displayName = block.action.target; // fallback to raw target
+              // Look for the friendly name in device capabilities
+              let displayName = block.action.target; // fallback to raw target
 
-            if (device && commandName) {
-              const commands = device.capabilities?.commands || [];
+              if (device && commandName) {
+                const commands = device.capabilities?.commands || [];
 
-              // Find the command with matching name
-              const command = commands.find((cmd: any) => {
-                const cmdName = cmd.name || cmd.command_name || cmd;
-                return cmdName === commandName;
-              });
+                // Find the command with matching name
+                const command = commands.find((cmd: any) => {
+                  const cmdName = cmd.name || cmd.command_name || cmd;
+                  return cmdName === commandName;
+                });
 
-              if (command && (command.friendly_name || command.display_name)) {
-                displayName = command.friendly_name || command.display_name;
-              } else {
-                // Fallback: show device name + command name
-                displayName = `${device.friendly_name || deviceId} - ${commandName}`;
+                if (command && (command.friendly_name || command.display_name)) {
+                  displayName = command.friendly_name || command.display_name;
+                } else {
+                  // Fallback: show device name + command name
+                  displayName = `${device.friendly_name || deviceId} - ${commandName}`;
+                }
               }
-            }
 
-            return (
-              <div className="mt-2 text-xs text-gray-500 truncate">
-                Execute: <span className="text-cyan-400">{displayName}</span>
-                {block.action.delayMs! > 0 && <span className="text-gray-600"> (wait {block.action.delayMs}ms)</span>}
-              </div>
-            );
-          })()}
+              return (
+                <div className="mt-2 text-xs text-gray-500 truncate">
+                  Execute: <span className="text-cyan-400">{displayName}</span>
+                  {block.action.delayMs! > 0 && (
+                    <span className="text-gray-600"> (wait {block.action.delayMs}ms)</span>
+                  )}
+                </div>
+              );
+            })()}
 
           {/* Show audio summary when collapsed */}
-          {!isExpanded && block.type === 'audio' && block.audioCue && (() => {
-            // Find the audio device
-            const device = availableDevices.find(d => d.device_id === block.audioDevice);
-            let displayName = block.audioCue; // fallback to cue ID
+          {!isExpanded &&
+            block.type === 'audio' &&
+            block.audioCue &&
+            (() => {
+              // Find the audio device
+              const device = availableDevices.find((d) => d.device_id === block.audioDevice);
+              let displayName = block.audioCue; // fallback to cue ID
 
-            if (device) {
-              const commands = device.capabilities?.commands || [];
+              if (device) {
+                const commands = device.capabilities?.commands || [];
 
-              // Find the command with matching name
-              const command = commands.find((cmd: any) => {
-                const cmdName = cmd.name || cmd.command_name || cmd;
-                return cmdName === block.audioCue;
-              });
+                // Find the command with matching name
+                const command = commands.find((cmd: any) => {
+                  const cmdName = cmd.name || cmd.command_name || cmd;
+                  return cmdName === block.audioCue;
+                });
 
-              if (command && (command.friendly_name || command.display_name)) {
-                displayName = command.friendly_name || command.display_name;
-              } else if (device.friendly_name) {
-                // Fallback: show device name + cue
-                displayName = `${device.friendly_name} - ${block.audioCue}`;
+                if (command && (command.friendly_name || command.display_name)) {
+                  displayName = command.friendly_name || command.display_name;
+                } else if (device.friendly_name) {
+                  // Fallback: show device name + cue
+                  displayName = `${device.friendly_name} - ${block.audioCue}`;
+                }
               }
-            }
 
-            return (
-              <div className="mt-2 text-xs text-gray-500 truncate">
-                Play: <span className="text-green-400">{displayName}</span>
-              </div>
-            );
-          })()}
+              return (
+                <div className="mt-2 text-xs text-gray-500 truncate">
+                  Play: <span className="text-green-400">{displayName}</span>
+                </div>
+              );
+            })()}
         </div>
 
         <div className="flex items-center gap-2">
@@ -1332,7 +1382,7 @@ function ChildBlockComponent({
   onDragStart,
   onDragOver,
   onDrop,
-  onDragEnd
+  onDragEnd,
 }: ChildBlockComponentProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const Icon = getBlockIcon(block.type);
@@ -1366,17 +1416,22 @@ function ChildBlockComponent({
               {block.type === 'watch' && (block.watchConditions?.conditions.length || 0) > 0 && (
                 <div className="mt-1 text-xs text-gray-500 truncate">
                   {block.watchConditions?.conditions.map((cond, idx) => {
-                    const device = availableDevices.find(d => d.device_id === cond.deviceId);
+                    const device = availableDevices.find((d) => d.device_id === cond.deviceId);
                     const deviceName = device?.friendly_name || cond.deviceId;
-                    const valueDisplay = Array.isArray(cond.value) ? cond.value.join(' & ') : cond.value;
+                    const valueDisplay = Array.isArray(cond.value)
+                      ? cond.value.join(' & ')
+                      : cond.value;
 
                     return (
                       <span key={idx}>
-                        {idx > 0 && <span className="text-gray-600"> {block.watchConditions?.logic} </span>}
+                        {idx > 0 && (
+                          <span className="text-gray-600"> {block.watchConditions?.logic} </span>
+                        )}
                         When <span className="text-cyan-400">{deviceName}</span>
-                        {cond.sensorName && <span className="text-cyan-400">.{cond.sensorName}</span>}
-                        {' '}{cond.operator}{' '}
-                        <span className="text-yellow-400">{valueDisplay}</span>
+                        {cond.sensorName && (
+                          <span className="text-cyan-400">.{cond.sensorName}</span>
+                        )}{' '}
+                        {cond.operator} <span className="text-yellow-400">{valueDisplay}</span>
                       </span>
                     );
                   })}
@@ -1387,17 +1442,22 @@ function ChildBlockComponent({
               {block.type === 'check' && (block.checkConditions?.conditions.length || 0) > 0 && (
                 <div className="mt-1 text-xs text-gray-500 truncate">
                   {block.checkConditions?.conditions.map((cond, idx) => {
-                    const device = availableDevices.find(d => d.device_id === cond.deviceId);
+                    const device = availableDevices.find((d) => d.device_id === cond.deviceId);
                     const deviceName = device?.friendly_name || cond.deviceId;
-                    const valueDisplay = Array.isArray(cond.value) ? cond.value.join(' & ') : cond.value;
+                    const valueDisplay = Array.isArray(cond.value)
+                      ? cond.value.join(' & ')
+                      : cond.value;
 
                     return (
                       <span key={idx}>
-                        {idx > 0 && <span className="text-gray-600"> {block.checkConditions?.logic} </span>}
+                        {idx > 0 && (
+                          <span className="text-gray-600"> {block.checkConditions?.logic} </span>
+                        )}
                         If <span className="text-cyan-400">{deviceName}</span>
-                        {cond.sensorName && <span className="text-cyan-400">.{cond.sensorName}</span>}
-                        {' '}{cond.operator}{' '}
-                        <span className="text-yellow-400">{valueDisplay}</span>
+                        {cond.sensorName && (
+                          <span className="text-cyan-400">.{cond.sensorName}</span>
+                        )}{' '}
+                        {cond.operator} <span className="text-yellow-400">{valueDisplay}</span>
                       </span>
                     );
                   })}
@@ -1405,70 +1465,76 @@ function ChildBlockComponent({
               )}
 
               {/* Action block summary */}
-              {block.type === 'action' && block.action?.target && (() => {
-                // Parse target format: deviceId/commandName
-                const [deviceId, commandName] = block.action.target.split('/');
+              {block.type === 'action' &&
+                block.action?.target &&
+                (() => {
+                  // Parse target format: deviceId/commandName
+                  const [deviceId, commandName] = block.action.target.split('/');
 
-                // Find the device
-                const device = availableDevices.find(d => d.device_id === deviceId);
+                  // Find the device
+                  const device = availableDevices.find((d) => d.device_id === deviceId);
 
-                // Look for the friendly name in device capabilities
-                let displayName = block.action.target; // fallback to raw target
+                  // Look for the friendly name in device capabilities
+                  let displayName = block.action.target; // fallback to raw target
 
-                if (device && commandName) {
-                  const commands = device.capabilities?.commands || [];
+                  if (device && commandName) {
+                    const commands = device.capabilities?.commands || [];
 
-                  // Find the command with matching name
-                  const command = commands.find((cmd: any) => {
-                    const cmdName = cmd.name || cmd.command_name || cmd;
-                    return cmdName === commandName;
-                  });
+                    // Find the command with matching name
+                    const command = commands.find((cmd: any) => {
+                      const cmdName = cmd.name || cmd.command_name || cmd;
+                      return cmdName === commandName;
+                    });
 
-                  if (command && (command.friendly_name || command.display_name)) {
-                    displayName = command.friendly_name || command.display_name;
-                  } else {
-                    // Fallback: show device name + command name
-                    displayName = `${device.friendly_name || deviceId} - ${commandName}`;
+                    if (command && (command.friendly_name || command.display_name)) {
+                      displayName = command.friendly_name || command.display_name;
+                    } else {
+                      // Fallback: show device name + command name
+                      displayName = `${device.friendly_name || deviceId} - ${commandName}`;
+                    }
                   }
-                }
 
-                return (
-                  <div className="mt-1 text-xs text-gray-500 truncate">
-                    Execute: <span className="text-cyan-400">{displayName}</span>
-                    {block.action.delayMs! > 0 && <span className="text-gray-600"> (wait {block.action.delayMs}ms)</span>}
-                  </div>
-                );
-              })()}
+                  return (
+                    <div className="mt-1 text-xs text-gray-500 truncate">
+                      Execute: <span className="text-cyan-400">{displayName}</span>
+                      {block.action.delayMs! > 0 && (
+                        <span className="text-gray-600"> (wait {block.action.delayMs}ms)</span>
+                      )}
+                    </div>
+                  );
+                })()}
 
               {/* Audio block summary */}
-              {block.type === 'audio' && block.audioCue && (() => {
-                // Find the audio device
-                const device = availableDevices.find(d => d.device_id === block.audioDevice);
-                let displayName = block.audioCue; // fallback to cue ID
+              {block.type === 'audio' &&
+                block.audioCue &&
+                (() => {
+                  // Find the audio device
+                  const device = availableDevices.find((d) => d.device_id === block.audioDevice);
+                  let displayName = block.audioCue; // fallback to cue ID
 
-                if (device) {
-                  const commands = device.capabilities?.commands || [];
+                  if (device) {
+                    const commands = device.capabilities?.commands || [];
 
-                  // Find the command with matching name
-                  const command = commands.find((cmd: any) => {
-                    const cmdName = cmd.name || cmd.command_name || cmd;
-                    return cmdName === block.audioCue;
-                  });
+                    // Find the command with matching name
+                    const command = commands.find((cmd: any) => {
+                      const cmdName = cmd.name || cmd.command_name || cmd;
+                      return cmdName === block.audioCue;
+                    });
 
-                  if (command && (command.friendly_name || command.display_name)) {
-                    displayName = command.friendly_name || command.display_name;
-                  } else if (device.friendly_name) {
-                    // Fallback: show device name + cue
-                    displayName = `${device.friendly_name} - ${block.audioCue}`;
+                    if (command && (command.friendly_name || command.display_name)) {
+                      displayName = command.friendly_name || command.display_name;
+                    } else if (device.friendly_name) {
+                      // Fallback: show device name + cue
+                      displayName = `${device.friendly_name} - ${block.audioCue}`;
+                    }
                   }
-                }
 
-                return (
-                  <div className="mt-1 text-xs text-gray-500 truncate">
-                    Play: <span className="text-green-400">{displayName}</span>
-                  </div>
-                );
-              })()}
+                  return (
+                    <div className="mt-1 text-xs text-gray-500 truncate">
+                      Play: <span className="text-green-400">{displayName}</span>
+                    </div>
+                  );
+                })()}
 
               {/* Set Variable block summary */}
               {block.type === 'set_variable' && block.variableName && (
@@ -1486,11 +1552,7 @@ function ChildBlockComponent({
           onClick={() => setIsExpanded(!isExpanded)}
           className="text-gray-400 hover:text-white transition-colors"
         >
-          {isExpanded ? (
-            <ChevronDown className="w-4 h-4" />
-          ) : (
-            <ChevronRight className="w-4 h-4" />
-          )}
+          {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
         </button>
 
         {(block.type === 'action' || block.type === 'audio') && (
@@ -1519,10 +1581,7 @@ function ChildBlockComponent({
           </button>
         )}
 
-        <button
-          onClick={onDelete}
-          className="text-red-400 hover:text-red-300 transition-colors"
-        >
+        <button onClick={onDelete} className="text-red-400 hover:text-red-300 transition-colors">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -1580,7 +1639,7 @@ function ChildBlockComponent({
 function WatchBlockEditor({
   block,
   availableDevices,
-  onUpdate
+  onUpdate,
 }: {
   block: TimelineBlock;
   availableDevices: Device[];
@@ -1594,14 +1653,14 @@ function WatchBlockEditor({
       sensorName: '',
       field: 'value',
       operator: '==',
-      value: ''
+      value: '',
     };
 
     onUpdate({
       watchConditions: {
         logic: block.watchConditions?.logic || 'AND',
-        conditions: [...(block.watchConditions?.conditions || []), newCondition]
-      }
+        conditions: [...(block.watchConditions?.conditions || []), newCondition],
+      },
     });
   };
 
@@ -1612,8 +1671,8 @@ function WatchBlockEditor({
     onUpdate({
       watchConditions: {
         logic: block.watchConditions?.logic || 'AND',
-        conditions: newConditions
-      }
+        conditions: newConditions,
+      },
     });
   };
 
@@ -1621,8 +1680,8 @@ function WatchBlockEditor({
     onUpdate({
       watchConditions: {
         logic: block.watchConditions?.logic || 'AND',
-        conditions: (block.watchConditions?.conditions || []).filter((_, i) => i !== index)
-      }
+        conditions: (block.watchConditions?.conditions || []).filter((_, i) => i !== index),
+      },
     });
   };
 
@@ -1638,12 +1697,14 @@ function WatchBlockEditor({
           <label className="block text-xs text-gray-400 mb-2">Logic</label>
           <select
             value={block.watchConditions?.logic || 'AND'}
-            onChange={(e) => onUpdate({
-              watchConditions: {
-                ...block.watchConditions!,
-                logic: e.target.value as 'AND' | 'OR'
-              }
-            })}
+            onChange={(e) =>
+              onUpdate({
+                watchConditions: {
+                  ...block.watchConditions!,
+                  logic: e.target.value as 'AND' | 'OR',
+                },
+              })
+            }
             className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white"
           >
             <option value="AND">All conditions must be true (AND)</option>
@@ -1665,7 +1726,7 @@ function WatchBlockEditor({
           </button>
         </div>
 
-        {(!block.watchConditions?.conditions || block.watchConditions.conditions.length === 0) ? (
+        {!block.watchConditions?.conditions || block.watchConditions.conditions.length === 0 ? (
           <div className="text-center py-4 text-gray-500 text-xs">
             No conditions defined. Add a condition to start monitoring.
           </div>
@@ -1689,7 +1750,8 @@ function WatchBlockEditor({
         <div className="flex items-start gap-2">
           <Info className="w-4 h-4 text-cyan-400 flex-shrink-0 mt-0.5" />
           <div className="text-xs text-cyan-400">
-            <strong>Note:</strong> When all conditions are met, the puzzle will automatically continue to the next block in the timeline.
+            <strong>Note:</strong> When all conditions are met, the puzzle will automatically
+            continue to the next block in the timeline.
           </div>
         </div>
       </div>
@@ -1701,7 +1763,7 @@ function WatchBlockEditor({
 function ActionBlockEditor({
   block,
   availableDevices,
-  onUpdate
+  onUpdate,
 }: {
   block: TimelineBlock;
   availableDevices: Device[];
@@ -1709,7 +1771,7 @@ function ActionBlockEditor({
 }) {
   if (!block.action) {
     onUpdate({
-      action: { type: 'mqtt.publish', target: '', payload: {}, delayMs: 0 }
+      action: { type: 'mqtt.publish', target: '', payload: {}, delayMs: 0 },
     });
     return null;
   }
@@ -1730,7 +1792,7 @@ function ActionBlockEditor({
 function AudioBlockEditor({
   block,
   availableDevices,
-  onUpdate
+  onUpdate,
 }: {
   block: TimelineBlock;
   availableDevices: Device[];
@@ -1740,11 +1802,11 @@ function AudioBlockEditor({
   const [selectedCue, setSelectedCue] = useState(block.audioCue || '');
 
   // Filter to audio devices
-  const audioDevices = availableDevices.filter(d =>
-    d.device_type === 'audio_playback' || d.device_category === 'media_playback'
+  const audioDevices = availableDevices.filter(
+    (d) => d.device_type === 'audio_playback' || d.device_category === 'media_playback'
   );
 
-  const device = audioDevices.find(d => d.device_id === selectedDevice);
+  const device = audioDevices.find((d) => d.device_id === selectedDevice);
   const commands = device?.capabilities?.commands || [];
 
   const handleDeviceChange = (deviceId: string) => {
@@ -1803,7 +1865,7 @@ function CheckBlockEditor({
   block,
   availableDevices,
   allBlocks,
-  onUpdate
+  onUpdate,
 }: {
   block: TimelineBlock;
   availableDevices: Device[];
@@ -1816,14 +1878,14 @@ function CheckBlockEditor({
       sensorName: '',
       field: 'value',
       operator: '==',
-      value: ''
+      value: '',
     };
 
     onUpdate({
       checkConditions: {
         logic: block.checkConditions?.logic || 'AND',
-        conditions: [...(block.checkConditions?.conditions || []), newCondition]
-      }
+        conditions: [...(block.checkConditions?.conditions || []), newCondition],
+      },
     });
   };
 
@@ -1834,8 +1896,8 @@ function CheckBlockEditor({
     onUpdate({
       checkConditions: {
         logic: block.checkConditions?.logic || 'AND',
-        conditions: newConditions
-      }
+        conditions: newConditions,
+      },
     });
   };
 
@@ -1843,8 +1905,8 @@ function CheckBlockEditor({
     onUpdate({
       checkConditions: {
         logic: block.checkConditions?.logic || 'AND',
-        conditions: (block.checkConditions?.conditions || []).filter((_, i) => i !== index)
-      }
+        conditions: (block.checkConditions?.conditions || []).filter((_, i) => i !== index),
+      },
     });
   };
 
@@ -1856,12 +1918,14 @@ function CheckBlockEditor({
           <label className="block text-xs text-gray-400 mb-2">Logic</label>
           <select
             value={block.checkConditions?.logic || 'AND'}
-            onChange={(e) => onUpdate({
-              checkConditions: {
-                ...block.checkConditions!,
-                logic: e.target.value as 'AND' | 'OR'
-              }
-            })}
+            onChange={(e) =>
+              onUpdate({
+                checkConditions: {
+                  ...block.checkConditions!,
+                  logic: e.target.value as 'AND' | 'OR',
+                },
+              })
+            }
             className="bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white"
           >
             <option value="AND">All conditions must be true (AND)</option>
@@ -1883,7 +1947,7 @@ function CheckBlockEditor({
           </button>
         </div>
 
-        {(!block.checkConditions?.conditions || block.checkConditions.conditions.length === 0) ? (
+        {!block.checkConditions?.conditions || block.checkConditions.conditions.length === 0 ? (
           <div className="text-center py-4 text-gray-500 text-xs">
             No conditions defined. Add a condition to check.
           </div>
@@ -1912,8 +1976,10 @@ function CheckBlockEditor({
             className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-xs text-white"
           >
             <option value="">Continue to next block</option>
-            {allBlocks.map(b => (
-              <option key={b.id} value={b.id}>{b.name}</option>
+            {allBlocks.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
             ))}
           </select>
         </div>
@@ -1926,8 +1992,10 @@ function CheckBlockEditor({
             className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-xs text-white"
           >
             <option value="">Continue to next block</option>
-            {allBlocks.map(b => (
-              <option key={b.id} value={b.id}>{b.name}</option>
+            {allBlocks.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name}
+              </option>
             ))}
           </select>
         </div>
@@ -1941,7 +2009,7 @@ function SetVariableBlockEditor({
   block,
   availableDevices,
   puzzleVariables,
-  onUpdate
+  onUpdate,
 }: {
   block: TimelineBlock;
   availableDevices: Device[];
@@ -1958,8 +2026,10 @@ function SetVariableBlockEditor({
           className="w-full bg-gray-800 border border-gray-700 rounded px-3 py-2 text-sm text-white"
         >
           <option value="">Select variable...</option>
-          {puzzleVariables.map(v => (
-            <option key={v.name} value={v.name}>${v.name}</option>
+          {puzzleVariables.map((v) => (
+            <option key={v.name} value={v.name}>
+              ${v.name}
+            </option>
           ))}
         </select>
       </div>
@@ -2090,7 +2160,7 @@ function ConditionEditor({
   condition,
   availableDevices,
   onChange,
-  onDelete
+  onDelete,
 }: {
   condition: TimelineCondition;
   availableDevices: Device[];
@@ -2100,15 +2170,16 @@ function ConditionEditor({
   const [liveSensorValue, setLiveSensorValue] = useState<any>(null);
 
   // Filter devices to only show sensors (input devices or bidirectional)
-  const sensorDevices = availableDevices.filter(d =>
-    d.device_category === 'sensor' ||
-    d.device_category === 'input' ||  // Teensy controllers register sensors as 'input'
-    d.device_category === 'bidirectional' ||
-    (d.capabilities && typeof d.capabilities === 'object' && 'sensors' in d.capabilities)
+  const sensorDevices = availableDevices.filter(
+    (d) =>
+      d.device_category === 'sensor' ||
+      d.device_category === 'input' || // Teensy controllers register sensors as 'input'
+      d.device_category === 'bidirectional' ||
+      (d.capabilities && typeof d.capabilities === 'object' && 'sensors' in d.capabilities)
   );
 
   // Get selected device (the sensor itself)
-  const selectedDevice = sensorDevices.find(d => d.device_id === condition.deviceId);
+  const selectedDevice = sensorDevices.find((d) => d.device_id === condition.deviceId);
 
   // Get sensor output values from device capabilities
   // Some sensors output multiple values (e.g., color_temp AND lux)
@@ -2191,7 +2262,9 @@ function ConditionEditor({
                     type="text"
                     value={Array.isArray(condition.value) ? condition.value[0] || '' : ''}
                     onChange={(e) => {
-                      const currentValue = Array.isArray(condition.value) ? condition.value : ['', ''];
+                      const currentValue = Array.isArray(condition.value)
+                        ? condition.value
+                        : ['', ''];
                       onChange({ value: [e.target.value, currentValue[1] || ''] });
                     }}
                     placeholder="1600"
@@ -2204,7 +2277,9 @@ function ConditionEditor({
                     type="text"
                     value={Array.isArray(condition.value) ? condition.value[1] || '' : ''}
                     onChange={(e) => {
-                      const currentValue = Array.isArray(condition.value) ? condition.value : ['', ''];
+                      const currentValue = Array.isArray(condition.value)
+                        ? condition.value
+                        : ['', ''];
                       onChange({ value: [currentValue[0] || '', e.target.value] });
                     }}
                     placeholder="1800"
@@ -2235,7 +2310,9 @@ function ConditionEditor({
               <input
                 type="number"
                 value={condition.tolerance || ''}
-                onChange={(e) => onChange({ tolerance: e.target.value ? parseFloat(e.target.value) : undefined })}
+                onChange={(e) =>
+                  onChange({ tolerance: e.target.value ? parseFloat(e.target.value) : undefined })
+                }
                 placeholder="5"
                 className="w-full bg-gray-800 border border-gray-700 rounded px-2 py-1.5 text-xs text-white"
               />
@@ -2245,11 +2322,12 @@ function ConditionEditor({
           {/* Condition Summary */}
           {condition.deviceId && (
             <div className="text-xs text-gray-500 pt-2 border-t border-gray-700">
-              When <span className="text-cyan-400 font-mono">
+              When{' '}
+              <span className="text-cyan-400 font-mono">
                 {condition.deviceId}
                 {condition.sensorName && `.${condition.sensorName}`}
-              </span>
-              {' '}{condition.operator}{' '}
+              </span>{' '}
+              {condition.operator}{' '}
               <span className="text-yellow-400">
                 {Array.isArray(condition.value) ? condition.value.join(', ') : condition.value}
               </span>
@@ -2258,10 +2336,7 @@ function ConditionEditor({
           )}
         </div>
 
-        <button
-          onClick={onDelete}
-          className="text-red-400 hover:text-red-300 mt-6"
-        >
+        <button onClick={onDelete} className="text-red-400 hover:text-red-300 mt-6">
           <Trash2 className="w-4 h-4" />
         </button>
       </div>
@@ -2274,7 +2349,7 @@ function ActionEditor({
   action,
   availableDevices,
   onChange,
-  onDelete
+  onDelete,
 }: {
   action: TimelineAction;
   availableDevices: Device[];
@@ -2285,14 +2360,15 @@ function ActionEditor({
   const [selectedCommandName, setSelectedCommandName] = useState<string>('');
 
   // Filter to output devices only (devices that can receive commands)
-  const outputDevices = availableDevices.filter(d =>
-    d.device_category === 'output' ||
-    d.device_category === 'bidirectional' ||
-    (d.capabilities && typeof d.capabilities === 'object' && 'commands' in d.capabilities)
+  const outputDevices = availableDevices.filter(
+    (d) =>
+      d.device_category === 'output' ||
+      d.device_category === 'bidirectional' ||
+      (d.capabilities && typeof d.capabilities === 'object' && 'commands' in d.capabilities)
   );
 
   // Get selected device object
-  const selectedDevice = outputDevices.find(d => d.device_id === selectedDeviceId);
+  const selectedDevice = outputDevices.find((d) => d.device_id === selectedDeviceId);
 
   // Get commands from device (could be in capabilities.commands or device_commands)
   const deviceCommands = selectedDevice?.capabilities?.commands || [];
@@ -2356,7 +2432,9 @@ function ActionEditor({
                     </option>
                   ))
                 ) : (
-                  <option value="" disabled>No commands registered for this device</option>
+                  <option value="" disabled>
+                    No commands registered for this device
+                  </option>
                 )}
               </select>
             </div>
@@ -2377,7 +2455,8 @@ function ActionEditor({
           {/* Action Summary */}
           {selectedDeviceId && selectedCommandName && (
             <div className="text-xs text-gray-500 pt-2 border-t border-gray-700">
-              Execute: <span className="text-cyan-400 font-mono">
+              Execute:{' '}
+              <span className="text-cyan-400 font-mono">
                 {selectedDevice?.friendly_name || selectedDeviceId}.{selectedCommandName}
               </span>
               {action.delayMs! > 0 && <span> (wait {action.delayMs}ms after)</span>}
@@ -2386,10 +2465,7 @@ function ActionEditor({
         </div>
 
         {onDelete && (
-          <button
-            onClick={onDelete}
-            className="text-red-400 hover:text-red-300 mt-6"
-          >
+          <button onClick={onDelete} className="text-red-400 hover:text-red-300 mt-6">
             <Trash2 className="w-4 h-4" />
           </button>
         )}
@@ -2409,7 +2485,7 @@ function getBlockIcon(type: BlockType) {
     set_variable: Database,
     solve: CheckCircle,
     fail: AlertCircle,
-    reset: Activity
+    reset: Activity,
   };
   return icons[type];
 }
@@ -2424,7 +2500,7 @@ function getBlockColor(type: BlockType): string {
     set_variable: 'border-cyan-500/30 bg-cyan-500/10',
     solve: 'border-green-600/30 bg-green-600/10',
     fail: 'border-red-500/30 bg-red-500/10',
-    reset: 'border-gray-500/30 bg-gray-500/10'
+    reset: 'border-gray-500/30 bg-gray-500/10',
   };
   return colors[type];
 }

@@ -31,7 +31,7 @@ jobs:
             dockerfile: Dockerfile
           - name: web
             context: ./services/sentient-web
-            dockerfile: Dockerfile
+            dockerfile: Dockerfile.production
 
     steps:
       - name: Checkout code

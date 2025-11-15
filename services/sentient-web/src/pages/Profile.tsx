@@ -37,19 +37,20 @@ export default function Profile() {
     email: '',
     firstName: '',
     lastName: '',
-    phone: ''
+    phone: '',
   });
 
   const [passwordData, setPasswordData] = useState<PasswordFormData>({
     currentPassword: '',
     newPassword: '',
-    confirmPassword: ''
+    confirmPassword: '',
   });
 
   const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   useEffect(() => {
     loadProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadProfile = async () => {
@@ -64,7 +65,7 @@ export default function Profile() {
         email: userData.email || '',
         firstName: userData.first_name || '',
         lastName: userData.last_name || '',
-        phone: userData.phone || ''
+        phone: userData.phone || '',
       });
 
       // Update auth store with latest data
@@ -88,7 +89,7 @@ export default function Profile() {
         email: formData.email,
         firstName: formData.firstName,
         lastName: formData.lastName,
-        phone: formData.phone
+        phone: formData.phone,
       });
 
       setUser(updatedUser);
@@ -122,16 +123,13 @@ export default function Profile() {
     setSaving(true);
 
     try {
-      await auth.changePassword(
-        passwordData.currentPassword,
-        passwordData.newPassword
-      );
+      await auth.changePassword(passwordData.currentPassword, passwordData.newPassword);
 
       setSuccess('Password changed successfully');
       setPasswordData({
         currentPassword: '',
         newPassword: '',
-        confirmPassword: ''
+        confirmPassword: '',
       });
       setShowPasswordForm(false);
 
@@ -149,7 +147,7 @@ export default function Profile() {
     if (currentUser) {
       setUser({
         ...currentUser,
-        profile_photo_url: photoUrl
+        profile_photo_url: photoUrl,
       });
     }
     setSuccess('Profile photo updated successfully');
@@ -164,7 +162,7 @@ export default function Profile() {
         email: currentUser.email || '',
         firstName: currentUser.first_name || '',
         lastName: currentUser.last_name || '',
-        phone: currentUser.phone || ''
+        phone: currentUser.phone || '',
       });
     }
     setIsEditing(false);
@@ -194,296 +192,288 @@ export default function Profile() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-cyan-400">My Profile</h1>
-      </div>
-
-      {/* Messages */}
-      {error && (
-        <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
-          {error}
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-cyan-400">My Profile</h1>
         </div>
-      )}
 
-      {success && (
-        <div className="bg-green-500/10 border border-green-500 text-green-400 px-4 py-3 rounded-lg">
-          {success}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Photo */}
-        <div className="lg:col-span-1">
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
-            <h2 className="text-xl font-semibold text-cyan-400 mb-6 text-center">
-              Profile Photo
-            </h2>
-            <ProfilePhotoUpload
-              userId={currentUser.id}
-              currentPhotoUrl={currentUser.profile_photo_url}
-              onPhotoUpdated={handlePhotoUpdated}
-              size="lg"
-            />
+        {/* Messages */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500 text-red-400 px-4 py-3 rounded-lg">
+            {error}
           </div>
-        </div>
+        )}
 
-        {/* Right Column - Info */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Profile Information */}
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-cyan-400">
-                Profile Information
+        {success && (
+          <div className="bg-green-500/10 border border-green-500 text-green-400 px-4 py-3 rounded-lg">
+            {success}
+          </div>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left Column - Photo */}
+          <div className="lg:col-span-1">
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
+              <h2 className="text-xl font-semibold text-cyan-400 mb-6 text-center">
+                Profile Photo
               </h2>
-              {!isEditing ? (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
-                >
-                  Edit Profile
-                </button>
-              ) : (
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSaveProfile}
-                    disabled={saving}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    {saving ? 'Saving...' : 'Save'}
-                  </button>
-                  <button
-                    onClick={handleCancelEdit}
-                    disabled={saving}
-                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <X className="w-4 h-4" />
-                    Cancel
-                  </button>
-                </div>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Username */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  <UserIcon className="w-4 h-4 inline mr-2" />
-                  Username
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.username}
-                    onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                ) : (
-                  <div className="text-white">{formData.username}</div>
-                )}
-              </div>
-
-              {/* Email */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  <Mail className="w-4 h-4 inline mr-2" />
-                  Email
-                </label>
-                {isEditing ? (
-                  <input
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                ) : (
-                  <div className="text-white">{formData.email}</div>
-                )}
-              </div>
-
-              {/* First Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  First Name
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.firstName}
-                    onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                ) : (
-                  <div className="text-white">{formData.firstName || '-'}</div>
-                )}
-              </div>
-
-              {/* Last Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  Last Name
-                </label>
-                {isEditing ? (
-                  <input
-                    type="text"
-                    value={formData.lastName}
-                    onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                ) : (
-                  <div className="text-white">{formData.lastName || '-'}</div>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  <Phone className="w-4 h-4 inline mr-2" />
-                  Phone
-                </label>
-                {isEditing ? (
-                  <input
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                ) : (
-                  <div className="text-white">{formData.phone || '-'}</div>
-                )}
-              </div>
-
-              {/* Role (Read-only) */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  <Shield className="w-4 h-4 inline mr-2" />
-                  Role
-                </label>
-                <div className="text-white capitalize">{currentUser.role}</div>
-              </div>
-
-              {/* Last Login */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  <Calendar className="w-4 h-4 inline mr-2" />
-                  Last Login
-                </label>
-                <div className="text-white">
-                  {currentUser.last_login
-                    ? new Date(currentUser.last_login).toLocaleString()
-                    : 'Never'}
-                </div>
-              </div>
-
-              {/* Account Created */}
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">
-                  <Calendar className="w-4 h-4 inline mr-2" />
-                  Account Created
-                </label>
-                <div className="text-white">
-                  {currentUser.created_at
-                    ? new Date(currentUser.created_at).toLocaleDateString()
-                    : '-'}
-                </div>
-              </div>
+              <ProfilePhotoUpload
+                userId={currentUser.id}
+                currentPhotoUrl={currentUser.profile_photo_url}
+                onPhotoUpdated={handlePhotoUpdated}
+                size="lg"
+              />
             </div>
           </div>
 
-          {/* Password Section */}
-          <div className="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-cyan-400">Password</h2>
-              {!showPasswordForm && (
-                <button
-                  onClick={() => setShowPasswordForm(true)}
-                  className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
-                >
-                  Change Password
-                </button>
-              )}
-            </div>
-
-            {showPasswordForm ? (
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    value={passwordData.currentPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, currentPassword: e.target.value })
-                    }
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={passwordData.newPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, newPassword: e.target.value })
-                    }
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    value={passwordData.confirmPassword}
-                    onChange={(e) =>
-                      setPasswordData({ ...passwordData, confirmPassword: e.target.value })
-                    }
-                    className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
-                  />
-                </div>
-
-                <div className="flex gap-2">
+          {/* Right Column - Info */}
+          <div className="lg:col-span-2 space-y-6">
+            {/* Profile Information */}
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-cyan-400">Profile Information</h2>
+                {!isEditing ? (
                   <button
-                    onClick={handleChangePassword}
-                    disabled={saving}
-                    className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+                    onClick={() => setIsEditing(true)}
+                    className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
                   >
-                    <Save className="w-4 h-4" />
-                    {saving ? 'Changing...' : 'Change Password'}
+                    Edit Profile
                   </button>
-                  <button
-                    onClick={() => {
-                      setShowPasswordForm(false);
-                      setPasswordData({
-                        currentPassword: '',
-                        newPassword: '',
-                        confirmPassword: ''
-                      });
-                      setError('');
-                    }}
-                    disabled={saving}
-                    className="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
-                  >
-                    <X className="w-4 h-4" />
-                    Cancel
-                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSaveProfile}
+                      disabled={saving}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      {saving ? 'Saving...' : 'Save'}
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      disabled={saving}
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Username */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <UserIcon className="w-4 h-4 inline mr-2" />
+                    Username
+                  </label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formData.username}
+                      onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  ) : (
+                    <div className="text-white">{formData.username}</div>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <Mail className="w-4 h-4 inline mr-2" />
+                    Email
+                  </label>
+                  {isEditing ? (
+                    <input
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  ) : (
+                    <div className="text-white">{formData.email}</div>
+                  )}
+                </div>
+
+                {/* First Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">First Name</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formData.firstName}
+                      onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  ) : (
+                    <div className="text-white">{formData.firstName || '-'}</div>
+                  )}
+                </div>
+
+                {/* Last Name */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Last Name</label>
+                  {isEditing ? (
+                    <input
+                      type="text"
+                      value={formData.lastName}
+                      onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  ) : (
+                    <div className="text-white">{formData.lastName || '-'}</div>
+                  )}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <Phone className="w-4 h-4 inline mr-2" />
+                    Phone
+                  </label>
+                  {isEditing ? (
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  ) : (
+                    <div className="text-white">{formData.phone || '-'}</div>
+                  )}
+                </div>
+
+                {/* Role (Read-only) */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <Shield className="w-4 h-4 inline mr-2" />
+                    Role
+                  </label>
+                  <div className="text-white capitalize">{currentUser.role}</div>
+                </div>
+
+                {/* Last Login */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <Calendar className="w-4 h-4 inline mr-2" />
+                    Last Login
+                  </label>
+                  <div className="text-white">
+                    {currentUser.last_login
+                      ? new Date(currentUser.last_login).toLocaleString()
+                      : 'Never'}
+                  </div>
+                </div>
+
+                {/* Account Created */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                    <Calendar className="w-4 h-4 inline mr-2" />
+                    Account Created
+                  </label>
+                  <div className="text-white">
+                    {currentUser.created_at
+                      ? new Date(currentUser.created_at).toLocaleDateString()
+                      : '-'}
+                  </div>
                 </div>
               </div>
-            ) : (
-              <p className="text-gray-400">
-                Click "Change Password" to update your password
-              </p>
-            )}
+            </div>
+
+            {/* Password Section */}
+            <div className="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-cyan-400">Password</h2>
+                {!showPasswordForm && (
+                  <button
+                    onClick={() => setShowPasswordForm(true)}
+                    className="px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors"
+                  >
+                    Change Password
+                  </button>
+                )}
+              </div>
+
+              {showPasswordForm ? (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.currentPassword}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, currentPassword: e.target.value })
+                      }
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, newPassword: e.target.value })
+                      }
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-400 mb-2">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) =>
+                        setPasswordData({ ...passwordData, confirmPassword: e.target.value })
+                      }
+                      className="w-full bg-gray-800 border border-gray-700 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-cyan-500"
+                    />
+                  </div>
+
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleChangePassword}
+                      disabled={saving}
+                      className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <Save className="w-4 h-4" />
+                      {saving ? 'Changing...' : 'Change Password'}
+                    </button>
+                    <button
+                      onClick={() => {
+                        setShowPasswordForm(false);
+                        setPasswordData({
+                          currentPassword: '',
+                          newPassword: '',
+                          confirmPassword: '',
+                        });
+                        setError('');
+                      }}
+                      disabled={saving}
+                      className="px-4 py-2 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white rounded-lg transition-colors flex items-center gap-2"
+                    >
+                      <X className="w-4 h-4" />
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-gray-400">Click "Change Password" to update your password</p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </DashboardLayout>
   );
