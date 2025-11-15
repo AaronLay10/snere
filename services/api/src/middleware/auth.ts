@@ -3,12 +3,12 @@
  * Handles user authentication and token validation
  */
 
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import type { Request, Response, NextFunction } from 'express';
+import type { NextFunction, Response } from 'express';
+import jwt from 'jsonwebtoken';
 import { query } from '../config/database.js';
-import type { User, QueryResult } from '../types/database.js';
-import type { JwtPayload, AuthenticatedUser, AuthenticatedRequest } from '../types/auth.js';
+import type { AuthenticatedRequest, AuthenticatedUser, JwtPayload } from '../types/auth.js';
+import type { User } from '../types/database.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '24h';
@@ -43,12 +43,12 @@ export function generateToken(user: User | AuthenticatedUser): string {
     username: user.username,
     role: user.role,
     clientId: user.client_id,
-    permissions: []
+    permissions: [],
   };
 
   return jwt.sign(payload, JWT_SECRET!, {
     expiresIn: JWT_EXPIRES_IN,
-    issuer: 'sentient-api'
+    issuer: 'sentient-api',
   });
 }
 
@@ -58,7 +58,7 @@ export function generateToken(user: User | AuthenticatedUser): string {
 export function verifyToken(token: string): JwtPayload {
   try {
     return jwt.verify(token, JWT_SECRET!, {
-      issuer: 'sentient-api'
+      issuer: 'sentient-api',
     }) as JwtPayload;
   } catch (error) {
     throw new Error('Invalid or expired token');
@@ -85,8 +85,8 @@ export function extractToken(authHeader: string | undefined): string | null {
  * Authentication middleware - validates JWT and attaches user to request
  */
 export async function authenticate(
-  req: AuthenticatedRequest, 
-  res: Response, 
+  req: AuthenticatedRequest,
+  res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -96,7 +96,7 @@ export async function authenticate(
     if (!token) {
       res.status(401).json({
         error: 'Authentication required',
-        message: 'No token provided'
+        message: 'No token provided',
       });
       return;
     }
@@ -117,7 +117,7 @@ export async function authenticate(
     if (result.rows.length === 0) {
       res.status(401).json({
         error: 'Authentication failed',
-        message: 'User not found'
+        message: 'User not found',
       });
       return;
     }
@@ -128,7 +128,7 @@ export async function authenticate(
     if (!user.is_active) {
       res.status(403).json({
         error: 'Access denied',
-        message: 'User account is disabled'
+        message: 'User account is disabled',
       });
       return;
     }
@@ -143,7 +143,7 @@ export async function authenticate(
       client_name: user.client_name,
       client_slug: user.client_slug,
       is_active: user.is_active,
-      last_login: user.last_login
+      last_login: user.last_login,
     };
 
     next();
@@ -151,7 +151,7 @@ export async function authenticate(
     if (error instanceof Error && error.message === 'Invalid or expired token') {
       res.status(401).json({
         error: 'Authentication failed',
-        message: error.message
+        message: error.message,
       });
       return;
     }
@@ -159,7 +159,7 @@ export async function authenticate(
     console.error('Authentication middleware error:', error);
     res.status(500).json({
       error: 'Internal server error',
-      message: 'Authentication failed'
+      message: 'Authentication failed',
     });
   }
 }
@@ -168,8 +168,8 @@ export async function authenticate(
  * Optional authentication - attaches user if token is valid, but doesn't fail if missing
  */
 export async function optionalAuth(
-  req: AuthenticatedRequest, 
-  res: Response, 
+  req: AuthenticatedRequest,
+  _res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
@@ -198,7 +198,7 @@ export async function optionalAuth(
           client_name: user.client_name,
           client_slug: user.client_slug,
           is_active: user.is_active,
-          last_login: user.last_login
+          last_login: user.last_login,
         };
       }
     }

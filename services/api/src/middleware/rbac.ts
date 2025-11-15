@@ -3,7 +3,7 @@
  * Implements authorization based on user roles and permissions
  */
 
-import { Response, NextFunction } from 'express';
+import { NextFunction, Response } from 'express';
 import type { AuthenticatedRequest } from '../types/express.js';
 
 /**
@@ -14,38 +14,55 @@ export const ROLES = {
     level: 100,
     description: 'Full system access across all clients',
     canAccessAllClients: true,
-    capabilities: ['read', 'write', 'delete', 'manage_users', 'manage_clients', 'system_config', 'manage_devices', 'manage_scenes', 'manage_puzzles', 'control_room', 'view_status', 'emergency_stop', 'add_comments', 'view_analytics', 'test_devices', 'view_diagnostics']
+    capabilities: [
+      'read',
+      'write',
+      'delete',
+      'manage_users',
+      'manage_clients',
+      'system_config',
+      'manage_devices',
+      'manage_scenes',
+      'manage_puzzles',
+      'control_room',
+      'view_status',
+      'emergency_stop',
+      'add_comments',
+      'view_analytics',
+      'test_devices',
+      'view_diagnostics',
+    ],
   },
   editor: {
     level: 50,
     description: 'Can edit configurations within their client',
     canAccessAllClients: false,
-    capabilities: ['read', 'write', 'manage_devices', 'manage_scenes', 'manage_puzzles']
+    capabilities: ['read', 'write', 'manage_devices', 'manage_scenes', 'manage_puzzles'],
   },
   viewer: {
     level: 30,
     description: 'Read-only access to configurations',
     canAccessAllClients: false,
-    capabilities: ['read']
+    capabilities: ['read'],
   },
   game_master: {
     level: 40,
     description: 'Operational control during game sessions',
     canAccessAllClients: false,
-    capabilities: ['read', 'control_room', 'view_status', 'emergency_stop']
+    capabilities: ['read', 'control_room', 'view_status', 'emergency_stop'],
   },
   creative_director: {
     level: 45,
     description: 'Can view and provide feedback on experiences',
     canAccessAllClients: false,
-    capabilities: ['read', 'add_comments', 'view_analytics']
+    capabilities: ['read', 'add_comments', 'view_analytics'],
   },
   technician: {
     level: 35,
     description: 'Hardware maintenance and device management',
     canAccessAllClients: false,
-    capabilities: ['read', 'test_devices', 'view_diagnostics', 'manage_devices']
-  }
+    capabilities: ['read', 'test_devices', 'view_diagnostics', 'manage_devices'],
+  },
 } as const;
 
 type RoleKey = keyof typeof ROLES;
@@ -58,7 +75,7 @@ export function requireRole(...allowedRoles: string[]) {
     if (!req.user) {
       return res.status(401).json({
         error: 'Authentication required',
-        message: 'User not authenticated'
+        message: 'User not authenticated',
       });
     }
 
@@ -68,11 +85,11 @@ export function requireRole(...allowedRoles: string[]) {
       return res.status(403).json({
         error: 'Access denied',
         message: `Role '${userRole}' is not authorized for this action`,
-        requiredRoles: allowedRoles
+        requiredRoles: allowedRoles,
       });
     }
 
-    next();
+    return next();
   };
 }
 
@@ -84,7 +101,7 @@ export function requireCapability(...capabilities: string[]) {
     if (!req.user) {
       return res.status(401).json({
         error: 'Authentication required',
-        message: 'User not authenticated'
+        message: 'User not authenticated',
       });
     }
 
@@ -98,13 +115,13 @@ export function requireCapability(...capabilities: string[]) {
     if (!userRole) {
       return res.status(403).json({
         error: 'Invalid role',
-        message: `Role '${req.user.role}' is not recognized`
+        message: `Role '${req.user.role}' is not recognized`,
       });
     }
 
     // Check if user has all required capabilities
-    const hasAllCapabilities = capabilities.every(cap =>
-      userRole.capabilities.includes(cap)
+    const hasAllCapabilities = capabilities.every((cap) =>
+      userRole.capabilities.includes(cap as any)
     );
 
     if (!hasAllCapabilities) {
@@ -112,7 +129,7 @@ export function requireCapability(...capabilities: string[]) {
         error: 'Access denied',
         message: 'Insufficient permissions for this action',
         requiredCapabilities: capabilities,
-        userCapabilities: userRole.capabilities
+        userCapabilities: userRole.capabilities,
       });
     }
 
@@ -128,7 +145,7 @@ export function requireRoleLevel(minLevel: number) {
     if (!req.user) {
       return res.status(401).json({
         error: 'Authentication required',
-        message: 'User not authenticated'
+        message: 'User not authenticated',
       });
     }
 
@@ -139,11 +156,11 @@ export function requireRoleLevel(minLevel: number) {
         error: 'Access denied',
         message: 'Insufficient role level for this action',
         requiredLevel: minLevel,
-        userLevel: userRole ? userRole.level : 0
+        userLevel: userRole ? userRole.level : 0,
       });
     }
 
-    next();
+    return next();
   };
 }
 
@@ -156,7 +173,7 @@ export function requireClientAccess(paramName: string = 'client_id') {
     if (!req.user) {
       return res.status(401).json({
         error: 'Authentication required',
-        message: 'User not authenticated'
+        message: 'User not authenticated',
       });
     }
 
@@ -173,7 +190,7 @@ export function requireClientAccess(paramName: string = 'client_id') {
     if (!requestedClientId) {
       return res.status(400).json({
         error: 'Bad request',
-        message: 'Client ID is required'
+        message: 'Client ID is required',
       });
     }
 
@@ -183,7 +200,7 @@ export function requireClientAccess(paramName: string = 'client_id') {
         error: 'Access denied',
         message: 'You can only access resources within your client',
         userClient: req.user.client_id,
-        requestedClient: requestedClientId
+        requestedClient: requestedClientId,
       });
     }
 
@@ -199,7 +216,7 @@ export function requireOwnership(userIdField: string = 'userId') {
     if (!req.user) {
       return res.status(401).json({
         error: 'Authentication required',
-        message: 'User not authenticated'
+        message: 'User not authenticated',
       });
     }
 
@@ -211,12 +228,13 @@ export function requireOwnership(userIdField: string = 'userId') {
     }
 
     // Extract resource owner ID
-    const resourceOwnerId = req.params[userIdField] || req.query[userIdField] || req.body[userIdField];
+    const resourceOwnerId =
+      req.params[userIdField] || req.query[userIdField] || req.body[userIdField];
 
     if (!resourceOwnerId) {
       return res.status(400).json({
         error: 'Bad request',
-        message: 'Resource owner ID is required'
+        message: 'Resource owner ID is required',
       });
     }
 
@@ -224,7 +242,7 @@ export function requireOwnership(userIdField: string = 'userId') {
     if (req.user.id !== resourceOwnerId) {
       return res.status(403).json({
         error: 'Access denied',
-        message: 'You can only access your own resources'
+        message: 'You can only access your own resources',
       });
     }
 
@@ -238,8 +256,6 @@ export function requireOwnership(userIdField: string = 'userId') {
  */
 export function anyOf(...middlewares: any[]) {
   return async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    let lastError: any = null;
-
     for (const middleware of middlewares) {
       try {
         // Create mock response to capture authorization result
@@ -248,8 +264,8 @@ export function anyOf(...middlewares: any[]) {
           status: () => ({
             json: () => {
               passed = false;
-            }
-          })
+            },
+          }),
         };
 
         const mockNext = () => {
@@ -262,14 +278,14 @@ export function anyOf(...middlewares: any[]) {
           return next();
         }
       } catch (error) {
-        lastError = error;
+        // Continue to next middleware
       }
     }
 
     // None of the middlewares passed
     return res.status(403).json({
       error: 'Access denied',
-      message: 'You do not have permission to access this resource'
+      message: 'You do not have permission to access this resource',
     });
   };
 }
@@ -280,17 +296,21 @@ export function anyOf(...middlewares: any[]) {
  */
 export function requireInterface(interfaceType: string) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const requestedInterface = req.headers['x-interface'] ||
-                              (req.path.startsWith('/api/sentient') ? 'sentient' : 'mythra');
+    const requestedInterface =
+      req.headers['x-interface'] || (req.path.startsWith('/api/sentient') ? 'sentient' : 'mythra');
 
     if (interfaceType === 'sentient') {
       // Sentient interface - only admins, editors, viewers
-      if (!['admin', 'editor', 'viewer', 'technician', 'creative_director'].includes(req.user?.role || '')) {
+      if (
+        !['admin', 'editor', 'viewer', 'technician', 'creative_director'].includes(
+          req.user?.role || ''
+        )
+      ) {
         return res.status(403).json({
           error: 'Access denied',
           message: 'This interface is only accessible to Sentient users',
           interface: 'sentient',
-          userRole: req.user?.role
+          userRole: req.user?.role,
         });
       }
     } else if (interfaceType === 'mythra') {
@@ -300,13 +320,13 @@ export function requireInterface(interfaceType: string) {
           error: 'Access denied',
           message: 'This interface is only accessible to game masters',
           interface: 'mythra',
-          userRole: req.user?.role
+          userRole: req.user?.role,
         });
       }
     }
 
     req.interface = interfaceType;
-    next();
+    return next();
   };
 }
 
