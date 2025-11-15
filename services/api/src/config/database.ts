@@ -90,7 +90,7 @@ async function getClient(): Promise<PoolClient> {
 
   // Add query method with logging
   const originalQuery = client.query.bind(client);
-  client.query = async <T = any>(text: string, params?: any[]): Promise<QueryResult<T>> => {
+  client.query = (async <T = any>(text: string, params?: any[]): Promise<QueryResult<T>> => {
     const start = Date.now();
     try {
       const result = await originalQuery(text, params);
@@ -108,7 +108,7 @@ async function getClient(): Promise<PoolClient> {
       });
       throw error;
     }
-  };
+  }) as any;
 
   return client as PoolClient;
 }

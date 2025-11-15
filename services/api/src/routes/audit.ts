@@ -28,22 +28,22 @@ router.get('/logs', authenticate, requireCapability('read'), async (req, res) =>
       offset = 0,
     } = req.query;
 
-    const filters = {
-      limit: parseInt(limit),
-      offset: parseInt(offset),
+    const filters: any = {
+      limit: parseInt(limit as string),
+      offset: parseInt(offset as string),
     };
 
     // Non-admins can only see logs for their client
-    if (req.user.role !== 'admin') {
-      filters.client_id = req.user.client_id;
+    if (req.user?.role !== 'admin') {
+      filters.client_id = req.user?.client_id;
     }
 
     if (userId) filters.userId = userId;
     if (actionType) filters.actionType = actionType;
     if (resourceType) filters.resourceType = resourceType;
     if (resourceId) filters.resourceId = resourceId;
-    if (startDate) filters.startDate = new Date(startDate);
-    if (endDate) filters.endDate = new Date(endDate);
+    if (startDate) filters.startDate = new Date(startDate as string);
+    if (endDate) filters.endDate = new Date(endDate as string);
     if (success !== undefined) filters.success = success === 'true';
 
     const logs = await queryAuditLogs(filters);
@@ -102,12 +102,12 @@ router.get('/stats', authenticate, requireCapability('read'), async (req, res) =
     const filters = {};
 
     // Non-admins can only see stats for their client
-    if (req.user.role !== 'admin') {
-      filters.client_id = req.user.client_id;
+    if (req.user?.role !== 'admin') {
+      filters.client_id = req.user?.client_id;
     }
 
-    if (startDate) filters.startDate = new Date(startDate);
-    if (endDate) filters.endDate = new Date(endDate);
+    if (startDate) filters.startDate = new Date(startDate as string);
+    if (endDate) filters.endDate = new Date(endDate as string);
 
     const stats = await getAuditStats(filters);
 

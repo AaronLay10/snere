@@ -296,9 +296,6 @@ export function anyOf(...middlewares: any[]) {
  */
 export function requireInterface(interfaceType: string) {
   return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-    const requestedInterface =
-      req.headers['x-interface'] || (req.path.startsWith('/api/sentient') ? 'sentient' : 'mythra');
-
     if (interfaceType === 'sentient') {
       // Sentient interface - only admins, editors, viewers
       if (

@@ -48,7 +48,7 @@ export function authenticateService(
     email: 'service@sentient.internal',
     username: 'system-service',
     role: 'system',
-    client_id: null,
+    client_id: null as any,
     permissions: ['*'], // All permissions for internal services
     isService: true,
   };
