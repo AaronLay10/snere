@@ -513,7 +513,7 @@ router.post('/:id/logo', authenticate, requireRole('admin'), upload.single('logo
         await fs.unlink(oldLogoPath);
       } catch (err) {
         // Ignore if file doesn't exist
-        console.log('Old logo not found or already deleted:', err.message);
+        logger.debug('Old logo not found or already deleted', { error: err.message });
       }
     }
 

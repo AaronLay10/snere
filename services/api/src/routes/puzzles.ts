@@ -310,8 +310,6 @@ router.post('/:id/start', authenticate, requireCapability('control_room'), async
     const { id } = req.params;
     const { skip_safety } = req.body;
 
-    console.log(`Proxying puzzle start request to executor: ${id}`);
-
     const EXECUTOR_URL = process.env.SCENE_EXECUTOR_URL || 'http://localhost:3004';
 
     // Proxy request to executor engine
@@ -338,8 +336,6 @@ router.post('/:id/start', authenticate, requireCapability('control_room'), async
 router.post('/:id/reset', authenticate, requireCapability('control_room'), async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log(`Proxying puzzle reset request to executor: ${id}`);
 
     const EXECUTOR_URL = process.env.SCENE_EXECUTOR_URL || 'http://localhost:3004';
 

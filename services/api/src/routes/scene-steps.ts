@@ -251,8 +251,6 @@ router.put('/:id', authenticate, requireCapability('manage_scenes'), async (req,
   try {
     const { id } = req.params;
 
-    console.log('[Scene Step Update] Request body:', JSON.stringify(req.body, null, 2));
-
     const updateSchema = sceneStepSchema.fork(
       ['scene_id', 'step_number', 'step_type', 'name'],
       (schema) => schema.optional()
@@ -264,7 +262,6 @@ router.put('/:id', authenticate, requireCapability('manage_scenes'), async (req,
     });
 
     if (error) {
-      console.log('[Scene Step Update] Validation error:', error.details);
       return res.status(400).json({
         success: false,
         message: 'Validation error',
@@ -487,8 +484,6 @@ router.post('/:id/test', authenticate, requireCapability('control_room'), async 
 
     // Build the action string based on step type and config
     const actionData = buildStepAction(step);
-
-    console.log(`Testing step ${step.id} for scene ${step.scene_id}:`, actionData);
 
     // Call executor engine to test the step
     try {

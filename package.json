@@ -1,6 +1,6 @@
 {
   "name": "sentient-engine",
-  "version": "2.1.0",
+  "version": "1.2.0",
   "description": "Sentient Engine - Production Escape Room Orchestration Platform",
   "private": true,
   "type": "module",

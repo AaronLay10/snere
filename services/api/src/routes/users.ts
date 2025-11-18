@@ -275,13 +275,6 @@ router.put('/:id', authenticate, async (req, res) => {
 
     const { error, value } = updateSchema.validate(req.body);
     if (error) {
-      console.log('Validation error:', {
-        isSelfUpdate,
-        userId: id,
-        requestUserId: req.user.id,
-        body: req.body,
-        error: error.details[0],
-      });
       return res.status(400).json({
         error: 'Validation error',
         message: error.details[0].message,
@@ -490,7 +483,7 @@ router.post('/:id/photo', authenticate, upload.single('photo'), async (req, res)
         await fs.unlink(oldPhotoPath);
       } catch (err) {
         // Ignore if file doesn't exist
-        console.log('Old photo not found or already deleted:', err.message);
+        logger.debug('Old photo not found or already deleted', { error: err.message });
       }
     }
 
@@ -573,7 +566,7 @@ router.delete('/:id/photo', authenticate, async (req, res) => {
     try {
       await fs.unlink(photoPath);
     } catch (err) {
-      console.log('Photo file not found:', err.message);
+      logger.debug('Photo file not found', { error: err.message });
     }
 
     // Update database

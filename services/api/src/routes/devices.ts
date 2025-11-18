@@ -9,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import db from '../config/database.js';
 import { authenticate } from '../middleware/auth.js';
 import { requireCapability } from '../middleware/rbac.js';
-import type { AuthenticatedRequest } from '../types/express.js';
+import type { AuthenticatedRequest } from '../types/auth.js';
 const router = Router();
 
 /**

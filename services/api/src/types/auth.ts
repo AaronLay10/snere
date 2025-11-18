@@ -33,6 +33,7 @@ export interface AuthenticatedUser {
 // Extended Express Request with user
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
+  isServiceAuth?: boolean;
   interface?: 'sentient' | 'mythra';
 }
 

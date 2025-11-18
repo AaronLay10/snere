@@ -846,12 +846,14 @@ export default function TimelinePage() {
       // Note: This makes a direct call to scene-executor from the browser
       // CORS errors are expected and non-fatal - the backend API handles reload
       try {
-        const reloadResponse = await fetch('http://localhost:3004/configuration/reload', {
+        const executorUrl = import.meta.env.DEV 
+          ? 'http://localhost:3004'
+          : `${window.location.protocol}//${window.location.host}/scene-executor`;
+        const reloadResponse = await fetch(`${executorUrl}/configuration/reload`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           mode: 'no-cors', // Suppress CORS errors in console
         });
-        console.log('Scene-executor reload requested');
       } catch (reloadError) {
         // Silently fail - reload happens on backend anyway
       }

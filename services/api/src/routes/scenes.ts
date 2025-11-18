@@ -951,8 +951,6 @@ router.post('/:id/start', authenticate, requireCapability('control_room'), async
     const { id } = req.params;
     const { skipSafety } = req.body;
 
-    console.log(`Proxying scene start request to executor: ${id}`);
-
     // Proxy request to executor engine
     const response = await axios.post(
       `${EXECUTOR_URL}/scenes/${id}/start`,
@@ -982,8 +980,6 @@ router.post('/:id/start', authenticate, requireCapability('control_room'), async
 router.post('/:id/reset', authenticate, requireCapability('control_room'), async (req, res) => {
   try {
     const { id } = req.params;
-
-    console.log(`Proxying scene reset request to executor: ${id}`);
 
     // Proxy request to executor engine
     const response = await axios.post(

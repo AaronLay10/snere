@@ -8,13 +8,14 @@ import db from '../config/database.js';
 import { getAuditStats, queryAuditLogs } from '../middleware/audit.js';
 import { authenticate } from '../middleware/auth.js';
 import { requireCapability } from '../middleware/rbac.js';
+import type { AuthenticatedRequest } from '../types/auth.js';
 const router = Router();
 
 /**
  * GET /api/audit/logs
  * Query audit logs with filters
  */
-router.get('/logs', authenticate, requireCapability('read'), async (req, res) => {
+router.get('/logs', authenticate, requireCapability('read'), async (req: AuthenticatedRequest, res) => {
   try {
     const {
       userId,
@@ -95,7 +96,7 @@ router.get('/logs', authenticate, requireCapability('read'), async (req, res) =>
  * GET /api/audit/stats
  * Get audit log statistics
  */
-router.get('/stats', authenticate, requireCapability('read'), async (req, res) => {
+router.get('/stats', authenticate, requireCapability('read'), async (req: AuthenticatedRequest, res) => {
   try {
     const { startDate, endDate } = req.query;
 
@@ -128,18 +129,18 @@ router.get('/stats', authenticate, requireCapability('read'), async (req, res) =
  * GET /api/audit/recent
  * Get recent audit logs (last 24 hours)
  */
-router.get('/recent', authenticate, requireCapability('read'), async (req, res) => {
+router.get('/recent', authenticate, requireCapability('read'), async (req: AuthenticatedRequest, res) => {
   try {
     const { limit = 50 } = req.query;
 
-    const filters = {
-      limit: parseInt(limit),
+    const filters: any = {
+      limit: parseInt(limit as string),
       startDate: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
     };
 
     // Non-admins can only see logs for their client
-    if (req.user.role !== 'admin') {
-      filters.client_id = req.user.client_id;
+    if (req.user?.role !== 'admin') {
+      filters.client_id = req.user?.client_id;
     }
 
     const logs = await queryAuditLogs(filters);
@@ -161,28 +162,28 @@ router.get('/recent', authenticate, requireCapability('read'), async (req, res) 
  * GET /api/audit/user/:userId
  * Get audit logs for specific user
  */
-router.get('/user/:userId', authenticate, async (req, res) => {
+router.get('/user/:userId', authenticate, async (req: AuthenticatedRequest, res) => {
   try {
     const { userId } = req.params;
     const { limit = 100, offset = 0 } = req.query;
 
     // Users can view their own logs, admins can view all
-    if (req.user.role !== 'admin' && req.user.id !== userId) {
+    if (req.user?.role !== 'admin' && req.user?.id !== userId) {
       return res.status(403).json({
         error: 'Access denied',
         message: 'You can only view your own audit logs',
       });
     }
 
-    const filters = {
+    const filters: any = {
       userId: userId,
-      limit: parseInt(limit),
-      offset: parseInt(offset),
+      limit: parseInt(limit as string),
+      offset: parseInt(offset as string),
     };
 
     // Non-admins can only see logs for their client
-    if (req.user.role !== 'admin') {
-      filters.client_id = req.user.client_id;
+    if (req.user?.role !== 'admin') {
+      filters.client_id = req.user?.client_id;
     }
 
     const logs = await queryAuditLogs(filters);
@@ -208,21 +209,21 @@ router.get(
   '/resource/:resourceType/:resourceId',
   authenticate,
   requireCapability('read'),
-  async (req, res) => {
+  async (req: AuthenticatedRequest, res) => {
     try {
       const { resourceType, resourceId } = req.params;
       const { limit = 100, offset = 0 } = req.query;
 
-      const filters = {
+      const filters: any = {
         resourceType: resourceType,
         resourceId: resourceId,
-        limit: parseInt(limit),
-        offset: parseInt(offset),
+        limit: parseInt(limit as string),
+        offset: parseInt(offset as string),
       };
 
       // Non-admins can only see logs for their client
-      if (req.user.role !== 'admin') {
-        filters.client_id = req.user.client_id;
+      if (req.user?.role !== 'admin') {
+        filters.client_id = req.user?.client_id;
       }
 
       const logs = await queryAuditLogs(filters);
