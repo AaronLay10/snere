@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import db from '../config/database.js';
 import { authenticate } from '../middleware/auth.js';
 import { requireCapability } from '../middleware/rbac.js';
+import type { AuthenticatedRequest } from '../types/express.js';
 const router = Router();
 
 /**
@@ -58,7 +59,7 @@ const deviceSchema = Joi.object({
  * GET /api/sentient/devices
  * List devices
  */
-router.get('/', authenticate, requireCapability('read'), async (req, res) => {
+router.get('/', authenticate, requireCapability('read'), async (req: AuthenticatedRequest, res) => {
   try {
     const { room_id, category, emergency_stop_required } = req.query;
 
@@ -84,9 +85,9 @@ router.get('/', authenticate, requireCapability('read'), async (req, res) => {
     let paramIndex = 1;
 
     // Filter by client for non-admins
-    if (req.user.role !== 'admin') {
+    if (req.user?.role !== 'admin') {
       conditions.push(`r.client_id = $${paramIndex++}`);
-      params.push(req.user.client_id);
+      params.push(req.user?.client_id);
     }
 
     if (room_id) {
@@ -168,7 +169,7 @@ router.get('/', authenticate, requireCapability('read'), async (req, res) => {
  * GET /api/sentient/devices/:id
  * Get device details
  */
-router.get('/:id', authenticate, requireCapability('read'), async (req, res) => {
+router.get('/:id', authenticate, requireCapability('read'), async (req: AuthenticatedRequest, res) => {
   try {
     const { id } = req.params;
 
@@ -201,7 +202,7 @@ router.get('/:id', authenticate, requireCapability('read'), async (req, res) => 
     const device = result.rows[0];
 
     // Check client access
-    if (req.user.role !== 'admin' && device.client_id !== req.user.client_id) {
+    if (req.user?.role !== 'admin' && device.client_id !== req.user?.client_id) {
       return res.status(403).json({
         error: 'Access denied',
       });
