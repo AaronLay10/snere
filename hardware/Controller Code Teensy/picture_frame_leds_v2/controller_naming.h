@@ -11,15 +11,19 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "picture_frame_leds"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Picture Frame LEDs Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // TV LED devices (each TV has 8 strips)
+    constexpr const char *DEV_TV_VINCENT = "tv_vincent";
+    constexpr const char *DEV_TV_EDITH = "tv_edith";
+    constexpr const char *DEV_TV_MAKS = "tv_maks";
+    constexpr const char *DEV_TV_OLIVER = "tv_oliver";
+    constexpr const char *DEV_ALL_TVS = "all_tvs";
+
+    // Commands
+    constexpr const char *CMD_POWER_ON = "power_on";
+    constexpr const char *CMD_POWER_OFF = "power_off";
+    constexpr const char *CMD_SET_COLOR = "set_color";
+    constexpr const char *CMD_SET_BRIGHTNESS = "set_brightness";
+    constexpr const char *CMD_FLICKER = "flicker";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

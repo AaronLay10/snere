@@ -11,15 +11,13 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "vault"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Vault Puzzle Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // RFID Reader (sensor only)
+    constexpr const char *DEV_RFID_READER = "rfid_reader";
+    constexpr const char *FRIENDLY_RFID_READER = "RFID Reader";
+
+    // Sensors
+    constexpr const char *SENSOR_VAULT_NUMBER = "vault_number";
+    constexpr const char *SENSOR_TAG_ID = "tag_id";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

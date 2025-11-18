@@ -11,15 +11,20 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "vern"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Vern Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // Output devices
+    constexpr const char *DEV_OUTPUT_ONE = "output_one";
+    constexpr const char *DEV_OUTPUT_TWO = "output_two";
+    constexpr const char *DEV_OUTPUT_THREE = "output_three";
+    constexpr const char *DEV_OUTPUT_FOUR = "output_four";
+    constexpr const char *DEV_OUTPUT_FIVE = "output_five";
+    constexpr const char *DEV_OUTPUT_SIX = "output_six";
+    constexpr const char *DEV_OUTPUT_SEVEN = "output_seven";
+    constexpr const char *DEV_OUTPUT_EIGHT = "output_eight";
+    constexpr const char *DEV_POWER_SWITCH = "power_switch";
+
+    // Commands
+    constexpr const char *CMD_OUTPUT_ON = "on";
+    constexpr const char *CMD_OUTPUT_OFF = "off";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

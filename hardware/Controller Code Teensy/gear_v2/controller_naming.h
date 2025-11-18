@@ -11,15 +11,35 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "gear"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Gear Puzzle Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // ═══════════════════════════════════════════════════════════════════════════
+    // DEVICE IDENTIFIERS
+    // ═══════════════════════════════════════════════════════════════════════════
+
+    // Rotary encoders (sensors only)
+    constexpr const char *DEV_ENCODER_A = "encoder_a";
+    constexpr const char *FRIENDLY_ENCODER_A = "Encoder A";
+
+    constexpr const char *DEV_ENCODER_B = "encoder_b";
+    constexpr const char *FRIENDLY_ENCODER_B = "Encoder B";
+
+    // Controller device
+    constexpr const char *DEV_CONTROLLER = "gear";
+    constexpr const char *FRIENDLY_CONTROLLER = "Gear Puzzle Controller";
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // COMMANDS - Controller
+    // ═══════════════════════════════════════════════════════════════════════════
+    constexpr const char *CMD_LAB = "lab";
+    constexpr const char *CMD_STUDY = "study";
+    constexpr const char *CMD_BOILER = "boiler";
+    constexpr const char *CMD_RESET = "reset";
+
+    // ═══════════════════════════════════════════════════════════════════════════
+    // SENSORS - Encoders
+    // ═══════════════════════════════════════════════════════════════════════════
+    constexpr const char *SENSOR_ENCODER_A_COUNT = "encoder_a_count";
+    constexpr const char *SENSOR_ENCODER_B_COUNT = "encoder_b_count";
+    constexpr const char *SENSOR_COUNTERS = "counters";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

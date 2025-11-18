@@ -11,15 +11,29 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "study_d"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Study D Puzzle Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // Device IDs
+    constexpr const char *DEV_MOTOR_LEFT = "motor_left";
+    constexpr const char *DEV_MOTOR_RIGHT = "motor_right";
+    constexpr const char *DEV_PROXIMITY_SENSORS = "proximity_sensors";
+    constexpr const char *DEV_FOG_DMX = "fog_dmx";
+
+    // Sensor types
+    constexpr const char *SENSOR_LEFT_TOP_1 = "left_top_1";
+    constexpr const char *SENSOR_LEFT_TOP_2 = "left_top_2";
+    constexpr const char *SENSOR_LEFT_BOTTOM_1 = "left_bottom_1";
+    constexpr const char *SENSOR_LEFT_BOTTOM_2 = "left_bottom_2";
+    constexpr const char *SENSOR_RIGHT_TOP_1 = "right_top_1";
+    constexpr const char *SENSOR_RIGHT_TOP_2 = "right_top_2";
+    constexpr const char *SENSOR_RIGHT_BOTTOM_1 = "right_bottom_1";
+    constexpr const char *SENSOR_RIGHT_BOTTOM_2 = "right_bottom_2";
+
+    // Commands
+    constexpr const char *CMD_UP = "up";
+    constexpr const char *CMD_DOWN = "down";
+    constexpr const char *CMD_STOP = "stop";
+    constexpr const char *CMD_SET_VOLUME = "set_volume";
+    constexpr const char *CMD_SET_TIMER = "set_timer";
+    constexpr const char *CMD_SET_FAN_SPEED = "set_fan_speed";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

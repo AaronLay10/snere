@@ -18,8 +18,8 @@ namespace naming
     constexpr const char *DEV_RFID_D = "rfid_d";
     constexpr const char *DEV_RFID_E = "rfid_e";
     constexpr const char *DEV_RFID_F = "rfid_f";
-    constexpr const char *DEV_ACTUATOR = "actuator";
-    constexpr const char *DEV_MAGLOCKS = "maglocks";
+    constexpr const char *DEV_ACTUATOR = "engine_block_actuator";
+    constexpr const char *DEV_MAGLOCKS = "chest_maglocks";
 
     // Friendly names
     constexpr const char *FRIENDLY_RFID_A = "RFID Reader A";
@@ -28,26 +28,36 @@ namespace naming
     constexpr const char *FRIENDLY_RFID_D = "RFID Reader D";
     constexpr const char *FRIENDLY_RFID_E = "RFID Reader E";
     constexpr const char *FRIENDLY_RFID_F = "RFID Reader F";
-    constexpr const char *FRIENDLY_ACTUATOR = "Linear Actuator";
-    constexpr const char *FRIENDLY_MAGLOCKS = "Door Maglocks";
+    constexpr const char *FRIENDLY_ACTUATOR = "Engine Block Actuator";
+    constexpr const char *FRIENDLY_MAGLOCKS = "Chest Maglocks";
 
     // Commands
-    constexpr const char *CMD_ACTUATOR_FORWARD = "actuator_forward";
-    constexpr const char *CMD_ACTUATOR_REVERSE = "actuator_reverse";
+    constexpr const char *CMD_ACTUATOR_FORWARD = "actuator_up";
+    constexpr const char *CMD_ACTUATOR_REVERSE = "actuator_down";
     constexpr const char *CMD_ACTUATOR_STOP = "actuator_stop";
     constexpr const char *CMD_MAGLOCKS_LOCK = "lock";
     constexpr const char *CMD_MAGLOCKS_UNLOCK = "unlock";
 
     // Friendly command names
-    constexpr const char *FRIENDLY_CMD_ACTUATOR_FORWARD = "Actuator Forward";
-    constexpr const char *FRIENDLY_CMD_ACTUATOR_REVERSE = "Actuator Reverse";
+    constexpr const char *FRIENDLY_CMD_ACTUATOR_FORWARD = "Actuator Up";
+    constexpr const char *FRIENDLY_CMD_ACTUATOR_REVERSE = "Actuator Down";
     constexpr const char *FRIENDLY_CMD_ACTUATOR_STOP = "Actuator Stop";
     constexpr const char *FRIENDLY_CMD_LOCK = "Lock";
     constexpr const char *FRIENDLY_CMD_UNLOCK = "Unlock";
 
     // Sensors
-    constexpr const char *SENSOR_RFID_TAG = "rfid_tag";
-    constexpr const char *SENSOR_TIR = "tag_in_range";
+    constexpr const char *SENSOR_RFID_TAG_A = "rfid_tag_a";
+    constexpr const char *SENSOR_RFID_TAG_B = "rfid_tag_b";
+    constexpr const char *SENSOR_RFID_TAG_C = "rfid_tag_c";
+    constexpr const char *SENSOR_RFID_TAG_D = "rfid_tag_d";
+    constexpr const char *SENSOR_RFID_TAG_E = "rfid_tag_e";
+    constexpr const char *SENSOR_RFID_TAG_F = "rfid_tag_f";
+    constexpr const char *SENSOR_TIR_A = "tag_in_range_a";
+    constexpr const char *SENSOR_TIR_B = "tag_in_range_b";
+    constexpr const char *SENSOR_TIR_C = "tag_in_range_c";
+    constexpr const char *SENSOR_TIR_D = "tag_in_range_d";
+    constexpr const char *SENSOR_TIR_E = "tag_in_range_e";
+    constexpr const char *SENSOR_TIR_F = "tag_in_range_f";
 
     // Categories
     constexpr const char *CAT_COMMANDS = "commands";

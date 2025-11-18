@@ -11,15 +11,26 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "lab_rm_cage_a"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Lab Room Cage A Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // Door devices
+    constexpr const char *DEV_DOOR_ONE = "door_one";
+    constexpr const char *DEV_DOOR_TWO = "door_two";
+
+    // Canister charging
+    constexpr const char *DEV_CANISTER_CHARGING = "canister_charging";
+
+    // Sensor types
+    constexpr const char *SENSOR_DOOR_POSITION = "door_position";
+    constexpr const char *SENSOR_OPEN_A = "open_sensor_a";
+    constexpr const char *SENSOR_OPEN_B = "open_sensor_b";
+    constexpr const char *SENSOR_CLOSED_A = "closed_sensor_a";
+    constexpr const char *SENSOR_CLOSED_B = "closed_sensor_b";
+
+    // Commands
+    constexpr const char *CMD_DOOR_OPEN = "open";
+    constexpr const char *CMD_DOOR_CLOSE = "close";
+    constexpr const char *CMD_DOOR_STOP = "stop";
+    constexpr const char *CMD_CHARGING_ON = "on";
+    constexpr const char *CMD_CHARGING_OFF = "off";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

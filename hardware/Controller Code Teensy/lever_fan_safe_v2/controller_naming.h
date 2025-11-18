@@ -11,15 +11,36 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "lever_fan_safe"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Lever Fan Safe Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // Photocell sensors (input only)
+    constexpr const char *DEV_PHOTOCELL_SAFE = "photocell_safe";
+    constexpr const char *DEV_PHOTOCELL_FAN = "photocell_fan";
+
+    // IR receivers (input only)
+    constexpr const char *DEV_IR_SAFE = "ir_receiver_safe";
+    constexpr const char *DEV_IR_FAN = "ir_receiver_fan";
+
+    // Maglock (output device)
+    constexpr const char *DEV_MAGLOCK_FAN = "maglock_fan";
+
+    // Solenoid (output device)
+    constexpr const char *DEV_SOLENOID_SAFE = "solenoid_safe";
+
+    // Fan motor (output device)
+    constexpr const char *DEV_FAN_MOTOR = "fan_motor";
+
+    // Sensor types
+    constexpr const char *SENSOR_LEVER_POSITION = "lever_position";
+    constexpr const char *SENSOR_IR_CODE = "ir_code";
+
+    // Commands
+    constexpr const char *CMD_LOCK = "lock";
+    constexpr const char *CMD_UNLOCK = "unlock";
+    constexpr const char *CMD_OPEN = "open";
+    constexpr const char *CMD_CLOSE = "close";
+    constexpr const char *CMD_FAN_ON = "on";
+    constexpr const char *CMD_FAN_OFF = "off";
+    constexpr const char *CMD_IR_ENABLE = "enable";
+    constexpr const char *CMD_IR_DISABLE = "disable";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";

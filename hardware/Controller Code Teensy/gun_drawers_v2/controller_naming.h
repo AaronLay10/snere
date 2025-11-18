@@ -11,15 +11,25 @@ namespace naming
     constexpr const char *CONTROLLER_ID = firmware::UNIQUE_ID; // "gun_drawers"
     constexpr const char *CONTROLLER_FRIENDLY_NAME = "Gun Drawers Controller";
 
-    // TODO: Define device identifiers based on analysis of original .ino file
-    // Example:
-    // constexpr const char *DEV_DEVICE_NAME = "device_name";
-    // constexpr const char *FRIENDLY_DEVICE_NAME = "Device Friendly Name";
-    
-    // TODO: Define command slugs (snake_case)
-    // Example:
-    // constexpr const char *CMD_COMMAND_NAME = "command_name";
-    // constexpr const char *FRIENDLY_CMD_COMMAND_NAME = "Command Friendly Name";
+    // Drawer devices (electromagnets)
+    constexpr const char *DEV_DRAWER_ELEGANT = "drawer_elegant";
+    constexpr const char *DEV_DRAWER_ALCHEMIST = "drawer_alchemist";
+    constexpr const char *DEV_DRAWER_BOUNTY = "drawer_bounty";
+    constexpr const char *DEV_DRAWER_MECHANIC = "drawer_mechanic";
+
+    constexpr const char *FRIENDLY_DRAWER_ELEGANT = "Elegant Drawer";
+    constexpr const char *FRIENDLY_DRAWER_ALCHEMIST = "Alchemist Drawer";
+    constexpr const char *FRIENDLY_DRAWER_BOUNTY = "Bounty Drawer";
+    constexpr const char *FRIENDLY_DRAWER_MECHANIC = "Mechanic Drawer";
+
+    // Commands
+    constexpr const char *CMD_RELEASE_DRAWER = "release_drawer";
+    constexpr const char *CMD_LOCK_DRAWER = "lock_drawer";
+    constexpr const char *CMD_RELEASE_ALL = "release_all_drawers";
+
+    constexpr const char *FRIENDLY_CMD_RELEASE_DRAWER = "Release Drawer";
+    constexpr const char *FRIENDLY_CMD_LOCK_DRAWER = "Lock Drawer";
+    constexpr const char *FRIENDLY_CMD_RELEASE_ALL = "Release All Drawers";
 
     // Categories (fixed, lowercase)
     constexpr const char *CAT_COMMANDS = "commands";
