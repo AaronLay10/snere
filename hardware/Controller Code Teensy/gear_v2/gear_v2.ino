@@ -1,6 +1,6 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// Gear Puzzle Controller v2.1.0
-// Teensy 4.1 - Connected to Sentient System
+// Gear Puzzle Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 #include <SentientMQTT.h>

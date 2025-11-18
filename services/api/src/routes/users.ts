@@ -499,7 +499,9 @@ router.post('/:id/photo', authenticate, upload.single('photo'), async (req, res)
     const filepath = path.join(uploadsDir, filename);
 
     // Process and save image using sharp (resize to 400x400, convert to JPEG)
+    // rotate() with no args auto-rotates based on EXIF orientation
     await sharp(req.file.buffer)
+      .rotate() // Auto-rotate based on EXIF orientation
       .resize(400, 400, {
         fit: 'cover',
         position: 'center',
@@ -507,7 +509,8 @@ router.post('/:id/photo', authenticate, upload.single('photo'), async (req, res)
       .jpeg({ quality: 90 })
       .toFile(filepath);
 
-    // Update database with photo URL
+    // Update database with photo URL (use full URL for development CORS)
+    // In production, nginx will proxy both API and uploads from same domain
     const photoUrl = `/uploads/profile-photos/${filename}`;
     const result = await db.query(
       `UPDATE users

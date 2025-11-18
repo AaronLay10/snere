@@ -3,7 +3,7 @@
 
 namespace firmware
 {
-  constexpr const char *VERSION = "2.1.0";
+  constexpr const char *VERSION = "2.3.0";
   constexpr const char *BUILD_DATE = "2025-11-18";
   constexpr const char *UNIQUE_ID = "lever_riddle";
   constexpr const char *DESCRIPTION = "STATELESS EXECUTOR - Hall sensors, photocell, cube button, IR receiver, maglock, LEDs. Sentient makes all decisions.";

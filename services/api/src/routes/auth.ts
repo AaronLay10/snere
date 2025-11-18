@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
     // Find user by email
     const result = await db.query(
       `SELECT u.id, u.email, u.username, u.password_hash, u.role, u.client_id, u.is_active,
-              c.name as client_name, c.slug as client_slug
+              c.name as client_name, c.slug as client_slug, c.logo_url as client_logo_url
        FROM users u
        LEFT JOIN clients c ON u.client_id = c.id
        WHERE u.email = $1`,
@@ -146,7 +146,8 @@ router.post('/login', async (req, res) => {
         role: user.role,
         client_id: user.client_id,
         client_name: user.client_name,
-        client_slug: user.client_slug
+        client_slug: user.client_slug,
+        client_logo_url: user.client_logo_url
       },
       interface: interfaceType || 'unknown'
     });
@@ -198,7 +199,7 @@ router.get('/me', authenticate, async (req, res) => {
     const result = await db.query(
       `SELECT u.id, u.email, u.username, u.role, u.client_id, u.is_active,
               u.created_at, u.last_login,
-              c.name as client_name, c.slug as client_slug
+              c.name as client_name, c.slug as client_slug, c.logo_url as client_logo_url
        FROM users u
        LEFT JOIN clients c ON u.client_id = c.id
        WHERE u.id = $1`,
@@ -223,6 +224,7 @@ router.get('/me', authenticate, async (req, res) => {
         client_id: user.client_id,
         client_name: user.client_name,
         client_slug: user.client_slug,
+        client_logo_url: user.client_logo_url,
         is_active: user.is_active,
         created_at: user.created_at,
         last_login: user.last_login

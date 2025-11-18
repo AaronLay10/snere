@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Boiler Room Subpanel Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * BoilerRmA v2.0.8 - Boiler Room A Controller
+ * Boiler Room Subpanel Controller
  *
  * Controlled Systems:
  * - Intro TV Lift Control and Power

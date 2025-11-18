@@ -1,6 +1,6 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// Riddle Puzzle Controller v2.1.0
-// Teensy 4.1 - Connected to Sentient System
+// Riddle Puzzle Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 #define SUPPRESS_ERROR_MESSAGE_FOR_BEGIN
@@ -914,5 +914,3 @@ void run_motors()
         }
     }
 }
-
-

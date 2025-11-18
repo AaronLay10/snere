@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Chemical Puzzle Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * Chemical Puzzle v2.0.1 - RFID Tag Reader & Actuator Controller
+ * Chemical Puzzle - RFID Tag Reader & Actuator Controller
  *
  * Controlled Systems:
  * - 6 RFID Readers (Serial1-6) with Tag-in-Range (TIR) sensors

@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Main Lighting Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * MainLighting v2.0.1 - Room Lighting Controller
+ * Main Lighting Controller
  *
  * Controlled Systems:
  * - Study Lights (analog dimmer)

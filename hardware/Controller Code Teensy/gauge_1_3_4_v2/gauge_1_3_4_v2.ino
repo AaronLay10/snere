@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Gauge 1-3-4 Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * Gauge 1-3-4 Controller v2.0.1
+ * Gauge 1-3-4 Controller
  *
  * Hardware:
  * - 3x Stepper motors (gauges 1, 3, 4)

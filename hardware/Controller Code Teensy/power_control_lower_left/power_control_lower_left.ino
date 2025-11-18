@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Power Control Lower Left v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * Power Control Lower Left v2.0.1 - Zone Power Distribution Controller
+ * Power Control Lower Left - Zone Power Distribution Controller
  *
  * Controlled Systems:
  * - Lever Riddle Cube Power (24V, 12V, 5V)

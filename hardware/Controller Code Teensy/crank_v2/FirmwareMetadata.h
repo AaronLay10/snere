@@ -3,7 +3,7 @@
 
 namespace firmware
 {
-    constexpr const char *VERSION = "2.1.0";
+    constexpr const char *VERSION = "2.3.0";
     constexpr const char *BUILD_DATE = "2025-11-18";
     constexpr const char *UNIQUE_ID = "crank";
     constexpr const char *DESCRIPTION = "STATELESS EXECUTOR - Two rotary encoders as sensors only. Sentient backend makes all decisions.";

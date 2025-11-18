@@ -3,10 +3,10 @@
 
 namespace firmware
 {
-  constexpr const char *VERSION = "2.0.1";
-  constexpr const char *BUILD_DATE = "2025-10-29";
+  constexpr const char *VERSION = "2.3.0";
+  constexpr const char *BUILD_DATE = "2025-11-18";
   constexpr const char *UNIQUE_ID = "pilaster";
-  constexpr const char *DESCRIPTION = "Upgraded to v2 architecture with controller_naming.h and device-scoped command routing.";
+  constexpr const char *DESCRIPTION = "STATELESS EXECUTOR - 4 button sensors (Green/Silver/Red/Black) with pull-down resistors for active HIGH sensing. Publishes button state changes on press/release. Sentient makes all decisions.";
 }
 
 #endif // FIRMWARE_METADATA_H

@@ -69,6 +69,7 @@ export interface User {
   client_id: string;
   client_name: string;
   client_slug: string;
+  client_logo_url?: string;
   first_name?: string;
   last_name?: string;
   phone?: string;

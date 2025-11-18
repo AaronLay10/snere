@@ -4,12 +4,38 @@
  */
 
 import { Router } from 'express';
+import fs from 'fs/promises';
 import Joi from 'joi';
+import multer from 'multer';
+import path from 'path';
+import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../config/database.js';
 import { authenticate } from '../middleware/auth.js';
 import { requireClientAccess, requireRole } from '../middleware/rbac.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const router = Router();
+
+// Configure multer for file uploads (store in memory)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (allowedMimes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error('Invalid file type. Only JPEG, PNG, GIF, and WebP images are allowed.'));
+    }
+  },
+});
 
 /**
  * Client validation schema
@@ -448,6 +474,141 @@ router.delete('/:id', authenticate, requireRole('admin'), async (req, res) => {
     res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to delete client',
+    });
+  }
+});
+
+/**
+ * POST /api/sentient/clients/:id/logo
+ * Upload client logo (admin only)
+ */
+router.post('/:id/logo', authenticate, requireRole('admin'), upload.single('logo'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!req.file) {
+      return res.status(400).json({
+        error: 'Bad request',
+        message: 'No logo file provided',
+      });
+    }
+
+    // Check if client exists
+    const existing = await db.query('SELECT id, logo_url FROM clients WHERE id = $1', [id]);
+    if (existing.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Not found',
+        message: 'Client not found',
+      });
+    }
+
+    // Create uploads directory if it doesn't exist
+    const uploadsDir = path.join(__dirname, '../../uploads/client-logos');
+    await fs.mkdir(uploadsDir, { recursive: true });
+
+    // Delete old logo if exists
+    if (existing.rows[0].logo_url) {
+      const oldLogoPath = path.join(__dirname, '../..', existing.rows[0].logo_url);
+      try {
+        await fs.unlink(oldLogoPath);
+      } catch (err) {
+        // Ignore if file doesn't exist
+        console.log('Old logo not found or already deleted:', err.message);
+      }
+    }
+
+    // Generate unique filename
+    const filename = `${id}-${Date.now()}.png`;
+    const filepath = path.join(uploadsDir, filename);
+
+    // Process and save image using sharp (resize to 400x400, convert to PNG with transparency)
+    // rotate() with no args auto-rotates based on EXIF orientation
+    await sharp(req.file.buffer)
+      .rotate() // Auto-rotate based on EXIF orientation
+      .resize(400, 400, {
+        fit: 'contain',
+        background: { r: 0, g: 0, b: 0, alpha: 0 }, // Transparent background
+      })
+      .png()
+      .toFile(filepath);
+
+    // Update database with logo URL
+    const logoUrl = `/uploads/client-logos/${filename}`;
+    const result = await db.query(
+      `UPDATE clients
+       SET logo_url = $1, logo_filename = $2, updated_at = NOW()
+       WHERE id = $3
+       RETURNING id, logo_url, logo_filename`,
+      [logoUrl, req.file.originalname, id]
+    );
+
+    res.json({
+      success: true,
+      message: 'Client logo uploaded successfully',
+      logoUrl: logoUrl,
+      client: result.rows[0],
+    });
+  } catch (error) {
+    console.error('Upload logo error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: error.message || 'Failed to upload logo',
+    });
+  }
+});
+
+/**
+ * DELETE /api/sentient/clients/:id/logo
+ * Delete client logo (admin only)
+ */
+router.delete('/:id/logo', authenticate, requireRole('admin'), async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Get client logo info
+    const result = await db.query('SELECT id, logo_url FROM clients WHERE id = $1', [id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        error: 'Not found',
+        message: 'Client not found',
+      });
+    }
+
+    const client = result.rows[0];
+
+    if (!client.logo_url) {
+      return res.status(400).json({
+        error: 'Bad request',
+        message: 'Client has no logo to delete',
+      });
+    }
+
+    // Delete file from filesystem
+    const logoPath = path.join(__dirname, '../..', client.logo_url);
+    try {
+      await fs.unlink(logoPath);
+    } catch (err) {
+      console.log('Logo file not found or already deleted:', err.message);
+    }
+
+    // Update database
+    await db.query(
+      `UPDATE clients
+       SET logo_url = NULL, logo_filename = NULL, updated_at = NOW()
+       WHERE id = $1`,
+      [id]
+    );
+
+    res.json({
+      success: true,
+      message: 'Client logo deleted successfully',
+    });
+  } catch (error) {
+    console.error('Delete logo error:', error);
+    res.status(500).json({
+      error: 'Internal server error',
+      message: 'Failed to delete logo',
     });
   }
 });

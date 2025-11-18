@@ -8,6 +8,7 @@
 #include <SentientDeviceRegistry.h>
 #include <ArduinoJson.h>
 #include "controller_naming.h"
+#include "FirmwareMetadata.h"
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HARDWARE CONFIGURATION
@@ -350,11 +351,13 @@ void setup()
     deviceRegistry.addDevice(&dev_riddle_motor);
     deviceRegistry.addDevice(&dev_porthole_controller);
     deviceRegistry.addDevice(&dev_tentacle_sensors);
-    deviceRegistry.printSummary();
+    // deviceRegistry.printSummary(); // Commented out - causes crash with large sensor array
 
+    Serial.println(F("[Study A] Building manifest..."));
     manifest.set_controller_info(naming::CONTROLLER_ID, naming::CONTROLLER_FRIENDLY_NAME,
                                  firmware::VERSION, naming::ROOM_ID, naming::CONTROLLER_ID);
     deviceRegistry.buildManifest(manifest);
+    Serial.println(F("[Study A] Manifest built"));
 
     sentient.begin();
     sentient.setCommandCallback(handle_mqtt_command);

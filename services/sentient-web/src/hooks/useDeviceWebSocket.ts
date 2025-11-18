@@ -28,10 +28,19 @@ export interface ControllerRegisteredEvent {
   device_count: number;
 }
 
+export interface ControllerStatus {
+  controller_id: string;
+  status: 'online' | 'offline' | 'partial';
+  online_devices: number;
+  total_devices: number;
+  last_heartbeat?: number;
+}
+
 export interface UseDeviceWebSocketReturn {
   connected: boolean;
   deviceStates: Map<string, Record<string, any>>;
   deviceStatuses: Map<string, DeviceStatus>;
+  controllerStatuses: Map<string, ControllerStatus>;
   sensorData: Map<string, SensorData[]>;
   lastControllerRegistered: ControllerRegisteredEvent | null;
 }
@@ -55,6 +64,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
   const [connected, setConnected] = useState(false);
   const [deviceStates, setDeviceStates] = useState<Map<string, Record<string, any>>>(new Map());
   const [deviceStatuses, setDeviceStatuses] = useState<Map<string, DeviceStatus>>(new Map());
+  const [controllerStatuses, setControllerStatuses] = useState<Map<string, ControllerStatus>>(new Map());
   const [sensorData, setSensorData] = useState<Map<string, SensorData[]>>(new Map());
   const [lastControllerRegistered, setLastControllerRegistered] = useState<ControllerRegisteredEvent | null>(null);
 
@@ -62,6 +72,49 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
   const reconnectAttemptsRef = useRef(0);
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const disconnectDelayRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Function to aggregate device statuses by controller
+  const updateControllerStatuses = useCallback((deviceStatusesMap: Map<string, DeviceStatus>) => {
+    const controllerMap = new Map<string, ControllerStatus>();
+
+    deviceStatusesMap.forEach((device) => {
+      const controllerId = device.controller_id;
+      if (!controllerId) return;
+
+      const existing = controllerMap.get(controllerId) || {
+        controller_id: controllerId,
+        status: 'offline' as const,
+        online_devices: 0,
+        total_devices: 0,
+        last_heartbeat: undefined
+      };
+
+      existing.total_devices++;
+      if (device.status === 'online') {
+        existing.online_devices++;
+      }
+
+      // Update last heartbeat to the most recent
+      if (device.lastHeartbeat) {
+        existing.last_heartbeat = Math.max(existing.last_heartbeat || 0, device.lastHeartbeat);
+      }
+
+      controllerMap.set(controllerId, existing);
+    });
+
+    // Determine overall controller status
+    controllerMap.forEach((controller) => {
+      if (controller.online_devices === 0) {
+        controller.status = 'offline';
+      } else if (controller.online_devices === controller.total_devices) {
+        controller.status = 'online';
+      } else {
+        controller.status = 'partial';
+      }
+    });
+
+    setControllerStatuses(controllerMap);
+  }, []);
 
   const connect = useCallback(() => {
     // Clear any existing reconnect timeout
@@ -113,6 +166,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
                 });
               });
               setDeviceStatuses(statusMap);
+              updateControllerStatuses(statusMap);
             }
             break;
 
@@ -168,6 +222,8 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
                   status: device.status || 'offline',
                   lastHeartbeat: device.lastHeartbeat,
                 });
+                // Update controller statuses based on new device statuses
+                updateControllerStatuses(newMap);
                 return newMap;
               });
             }
@@ -237,6 +293,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
     connected,
     deviceStates,
     deviceStatuses,
+    controllerStatuses,
     sensorData,
     lastControllerRegistered,
   };

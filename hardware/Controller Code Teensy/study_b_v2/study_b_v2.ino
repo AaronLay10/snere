@@ -8,6 +8,7 @@
 #include <SentientDeviceRegistry.h>
 #include <ArduinoJson.h>
 #include "controller_naming.h"
+#include "FirmwareMetadata.h"
 
 // ══════════════════════════════════════════════════════════════════════════════
 // HARDWARE CONFIGURATION
@@ -240,11 +241,13 @@ void setup()
     deviceRegistry.addDevice(&dev_study_fan_light);
     deviceRegistry.addDevice(&dev_blacklights);
     deviceRegistry.addDevice(&dev_nixie_leds);
-    deviceRegistry.printSummary();
+    // deviceRegistry.printSummary(); // Commented out to prevent stack overflow
 
+    Serial.println(F("[Study B] Building manifest..."));
     manifest.set_controller_info(naming::CONTROLLER_ID, naming::CONTROLLER_FRIENDLY_NAME,
                                  firmware::VERSION, naming::ROOM_ID, naming::CONTROLLER_ID);
     deviceRegistry.buildManifest(manifest);
+    Serial.println(F("[Study B] Manifest built"));
 
     sentient.begin();
     sentient.setCommandCallback(handle_mqtt_command);

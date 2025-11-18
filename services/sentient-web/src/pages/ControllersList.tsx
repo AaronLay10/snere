@@ -18,20 +18,70 @@ export default function ControllersList() {
   const [filterStatus, setFilterStatus] = useState('all');
 
   // Connect to WebSocket for real-time updates
-  const { connected: wsConnected, lastControllerRegistered } = useDeviceWebSocket();
+  const { connected: wsConnected, lastControllerRegistered, controllerStatuses } = useDeviceWebSocket();
 
   useEffect(() => {
     loadData();
   }, []);
 
-  // Listen for controller registration events and auto-refresh
+  // Listen for controller registration events and auto-add new controllers
   useEffect(() => {
     if (lastControllerRegistered) {
-      console.log('[Controllers] New controller registered, refreshing list');
+      console.log('[Controllers] New controller registered:', lastControllerRegistered.controller_id);
       toast.success(`Controller ${lastControllerRegistered.controller_id} registered`);
-      loadData(); // Refresh the list
+
+      // Add the new controller to the list if not already present
+      setControllersList((prev) => {
+        const exists = prev.find(c => c.id === lastControllerRegistered.id);
+        if (!exists) {
+          // Find room name
+          const room = roomsList.find(r => r.id === lastControllerRegistered.room_id);
+          const newController: Controller = {
+            id: lastControllerRegistered.id,
+            controller_id: lastControllerRegistered.controller_id,
+            room_id: lastControllerRegistered.room_id,
+            room_name: room?.name || lastControllerRegistered.room_id,
+            status: 'online',
+            device_count: lastControllerRegistered.device_count,
+            last_heartbeat: new Date().toISOString(),
+          } as Controller;
+          return [...prev, newController];
+        }
+        return prev;
+      });
     }
-  }, [lastControllerRegistered]);
+  }, [lastControllerRegistered, roomsList]);
+
+  // Update controller statuses in real-time from WebSocket
+  useEffect(() => {
+    if (controllerStatuses.size === 0) return;
+
+    setControllersList((prev) => {
+      return prev.map((controller) => {
+        const wsStatus = controllerStatuses.get(controller.controller_id);
+        if (wsStatus) {
+          // Map WebSocket status to controller status
+          let status = controller.status;
+          if (wsStatus.status === 'online') {
+            status = 'online';
+          } else if (wsStatus.status === 'offline') {
+            status = 'offline';
+          } else if (wsStatus.status === 'partial') {
+            status = 'online'; // Show as online if at least some devices are online
+          }
+
+          return {
+            ...controller,
+            status,
+            last_heartbeat: wsStatus.last_heartbeat
+              ? new Date(wsStatus.last_heartbeat).toISOString()
+              : controller.last_heartbeat,
+          };
+        }
+        return controller;
+      });
+    });
+  }, [controllerStatuses]);
 
   const loadData = async () => {
     try {
@@ -124,9 +174,18 @@ export default function ControllersList() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">Controllers</h1>
-          <p className="text-gray-500">Microcontroller nodes (Teensy 4.1 and others) registered to rooms</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-light text-gradient-cyan-magenta mb-2">Controllers</h1>
+            <p className="text-gray-500">Microcontroller nodes (Teensy 4.1 and others) registered to rooms</p>
+          </div>
+          {/* WebSocket Status Indicator */}
+          <div className="flex items-center gap-2">
+            <div className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-400 animate-pulse' : 'bg-red-400'}`} />
+            <span className="text-xs text-gray-500">
+              {wsConnected ? 'Live updates active' : 'Reconnecting...'}
+            </span>
+          </div>
         </div>
 
         {/* Stats */}

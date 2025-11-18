@@ -3,7 +3,7 @@
 
 namespace firmware
 {
-  constexpr const char *VERSION = "2.0.3";
+  constexpr const char *VERSION = "2.3.0";
   constexpr const char *BUILD_DATE = "2025-10-29";
   constexpr const char *UNIQUE_ID = "keys";
   constexpr const char *DESCRIPTION = "Upgraded to v2 architecture with controller_naming.h and device-scoped command routing.";

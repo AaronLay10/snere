@@ -3,10 +3,10 @@
 
 namespace firmware
 {
-  constexpr const char *VERSION = "2.0.1";
-  constexpr const char *BUILD_DATE = "2025-10-29";
+  constexpr const char *VERSION = "2.3.0";
+  constexpr const char *BUILD_DATE = "2025-11-18";
   constexpr const char *UNIQUE_ID = "kraken";
-  constexpr const char *DESCRIPTION = "Upgraded to v2 architecture with controller_naming.h and device-scoped command routing.";
+  constexpr const char *DESCRIPTION = "STATELESS EXECUTOR - Rotary encoder captain wheel with dual interrupt tracking and 7-position throttle handle (FWD3/2/1/NEUTRAL/REV1/2/3). Publishes combined telemetry (wheel_counter:throttle_position). Sentient makes all decisions.";
 }
 
 #endif // FIRMWARE_METADATA_H

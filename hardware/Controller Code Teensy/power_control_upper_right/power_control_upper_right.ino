@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Power Control Upper Right v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * Power Control Upper Right v2.0.1 - Zone Power Distribution Controller
+ * Power Control Upper Right - Zone Power Distribution Controller
  *
  * Controlled Systems:
  * - Main Lighting (24V, 12V, 5V rails)

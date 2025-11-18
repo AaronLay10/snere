@@ -3,7 +3,7 @@
 
 namespace firmware
 {
-  constexpr const char *VERSION = "2.1.0";
+  constexpr const char *VERSION = "2.3.0";
   constexpr const char *BUILD_DATE = "2025-11-18";
   constexpr const char *UNIQUE_ID = "picture_frame_leds";
   constexpr const char *DESCRIPTION = "STATELESS EXECUTOR - 32 NeoPixel LED strips for 4 picture frame TVs. Sentient makes all decisions.";

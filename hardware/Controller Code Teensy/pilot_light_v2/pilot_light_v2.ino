@@ -1,9 +1,10 @@
 // ══════════════════════════════════════════════════════════════════════════════
-// SECTION 1: INCLUDES AND GLOBAL DECLARATIONS
+// Pilot Light Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
 // ══════════════════════════════════════════════════════════════════════════════
 
 /*
- * Pilot Light v2.0.1 - Boiler Fire Animation Controller
+ * Pilot Light Controller
  *
  * Controlled Systems:
  * - Boiler Fire LED Animation (6 strips WS2812B in two banks)

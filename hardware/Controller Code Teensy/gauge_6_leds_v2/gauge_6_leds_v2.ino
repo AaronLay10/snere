@@ -1,7 +1,10 @@
+// ══════════════════════════════════════════════════════════════════════════════
+// Gauge 6 + LEDs Controller v2.3.0
+// Teensy 4.1 - Connected to Sentient System (STATELESS EXECUTOR)
+// ══════════════════════════════════════════════════════════════════════════════
+
 /**
- * ============================================================================
- * Gauge 6 + LEDs Controller v2
- * ============================================================================
+ * Gauge 6 + LEDs Controller
  *
  * HARDWARE:
  * - 1x AccelStepper gauge motor (Gauge 6) with valve potentiometer sensor

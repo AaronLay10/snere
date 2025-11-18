@@ -19,6 +19,14 @@ export default defineConfig({
       usePolling: true, // Required for Docker
       interval: 1000,
     },
+    proxy: {
+      // Proxy /uploads requests to the API server
+      // In Docker: use service name, outside Docker: use localhost
+      '/uploads': {
+        target: 'http://sentient-api:3000',
+        changeOrigin: true,
+      },
+    },
   },
   preview: {
     port,
