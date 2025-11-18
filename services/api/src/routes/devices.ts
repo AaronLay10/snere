@@ -66,9 +66,17 @@ router.get('/', authenticate, requireCapability('read'), async (req, res) => {
       SELECT
         d.*,
         r.name as room_name,
-        r.client_id
+        r.client_id,
+        c.friendly_name as controller_name,
+        c.controller_id as controller_identifier,
+        (
+          SELECT ARRAY_AGG(dc.command_name)
+          FROM device_commands dc
+          WHERE dc.device_id = d.id AND dc.enabled = true
+        ) AS command_names
       FROM devices d
       INNER JOIN rooms r ON d.room_id = r.id
+      LEFT JOIN controllers c ON d.controller_id = c.id
     `;
 
     let conditions = [];
@@ -104,7 +112,7 @@ router.get('/', authenticate, requireCapability('read'), async (req, res) => {
 
     const result = await db.query(query, params);
 
-    // Enrich capabilities - commands are stored in the capabilities JSON field
+    // Enrich capabilities - merge commands from device_commands table
     const devices = result.rows.map((row) => {
       let capabilities = row.capabilities;
 
@@ -120,13 +128,25 @@ router.get('/', authenticate, requireCapability('read'), async (req, res) => {
         capabilities = {};
       }
 
-      // Ensure commands array exists
-      if (!capabilities.commands || !Array.isArray(capabilities.commands)) {
-        capabilities.commands = [];
+      // Get commands from device_commands table
+      const commandsFromTable = Array.isArray(row.command_names)
+        ? row.command_names.filter(Boolean)
+        : [];
+
+      // Only use commands from device_commands table if capabilities doesn't already have commands
+      if (
+        !capabilities.commands ||
+        !Array.isArray(capabilities.commands) ||
+        capabilities.commands.length === 0
+      ) {
+        capabilities.commands = commandsFromTable;
       }
 
       // Assign back parsed capabilities
       row.capabilities = capabilities;
+
+      // Remove the temporary field
+      delete row.command_names;
 
       return row;
     });
@@ -157,6 +177,8 @@ router.get('/:id', authenticate, requireCapability('read'), async (req, res) => 
          d.*,
          r.name as room_name,
          r.client_id,
+         c.friendly_name as controller_name,
+         c.controller_id as controller_identifier,
          (
            SELECT ARRAY_AGG(dc.command_name)
            FROM device_commands dc
@@ -164,6 +186,7 @@ router.get('/:id', authenticate, requireCapability('read'), async (req, res) => 
          ) AS command_names
        FROM devices d
        INNER JOIN rooms r ON d.room_id = r.id
+       LEFT JOIN controllers c ON d.controller_id = c.id
        WHERE d.id = $1`,
       [id]
     );

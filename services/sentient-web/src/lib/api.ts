@@ -93,6 +93,7 @@ export interface Client {
   contact_email?: string;
   contact_phone?: string;
   status?: string;
+  logo_url?: string;
   created_at: string;
   updated_at: string;
   created_by?: string;
@@ -163,6 +164,8 @@ export interface Device {
   hardware_version?: string;
   firmware_version?: string;
   controller_id?: string;
+  controller_name?: string;
+  controller_identifier?: string;
   serial_number?: string;
   network_segment?: string;
   capabilities?: any;

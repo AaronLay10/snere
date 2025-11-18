@@ -41,10 +41,17 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname;
-  const { user, logout } = useAuthStore();
+  const { user, logout, refreshUser } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [serviceVersions, setServiceVersions] = useState<ServiceStatus[]>([]);
+
+  // Refresh user data on mount to get latest client info including logo
+  useEffect(() => {
+    refreshUser().catch((err) => {
+      console.error('Failed to refresh user data:', err);
+    });
+  }, [refreshUser]);
 
   // Fetch service versions
   useEffect(() => {

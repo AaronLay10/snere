@@ -20,8 +20,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import ClientLogoUpload from '../components/ClientLogoUpload';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import { clients, type Client } from '../lib/api';
-import apiClient from '../lib/api';
+import apiClient, { clients, type Client } from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 
 interface ClientFormData {

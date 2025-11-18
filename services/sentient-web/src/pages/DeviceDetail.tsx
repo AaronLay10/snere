@@ -155,6 +155,12 @@ export default function DeviceDetail() {
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
               <div className="flex items-center gap-2"><Cpu className="w-4 h-4 text-cyan-400" /><span>{device.device_id}</span></div>
               <div className="flex items-center gap-2"><DoorOpen className="w-4 h-4 text-gray-500" /><span>{(device as unknown as { room_name?: string }).room_name || device.room_id}</span></div>
+              {(device as unknown as { controller_name?: string }).controller_name && (
+                <div className="flex items-center gap-2">
+                  <Cpu className="w-4 h-4 text-purple-400" />
+                  <span>{(device as unknown as { controller_name?: string }).controller_name}</span>
+                </div>
+              )}
               <div className={`inline-flex items-center gap-2 px-2 py-1 rounded text-xs ${online ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
                 {online ? <Wifi className="w-3 h-3" /> : <WifiOff className="w-3 h-3" />}
                 {online ? 'Online' : 'Offline'}

@@ -27,6 +27,8 @@ interface Device {
   room_name?: string;
   mqtt_topic?: string;
   emergency_stop_required?: boolean;
+  controller_name?: string;
+  controller_identifier?: string;
 }
 
 export default function AllDevicesPage() {
@@ -274,6 +276,13 @@ export default function AllDevicesPage() {
                     <DoorOpen className="w-4 h-4 text-gray-500" />
                     <span className="text-sm text-gray-400">{device.room_name}</span>
                   </div>
+
+                  {device.controller_name && (
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-400">{device.controller_name}</span>
+                    </div>
+                  )}
 
                   {device.device_type && (
                     <div className="flex items-center gap-2">

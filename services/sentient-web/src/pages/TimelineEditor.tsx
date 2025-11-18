@@ -1190,9 +1190,12 @@ export default function TimelinePage() {
       const availableCommands = selectedDevice?.capabilities?.commands || [];
 
       // Filter devices and commands by search term
-      const filteredDevices = effectDevices.filter((dev) =>
-        (dev.friendly_name || dev.device_id).toLowerCase().includes(deviceSearch.toLowerCase())
-      );
+      const filteredDevices = effectDevices.filter((dev) => {
+        const searchTerm = deviceSearch.toLowerCase();
+        const deviceName = (dev.friendly_name || dev.device_id).toLowerCase();
+        const controllerName = ((dev as any).controller_name || '').toLowerCase();
+        return deviceName.includes(searchTerm) || controllerName.includes(searchTerm);
+      });
 
       const filteredCommands = availableCommands.filter((cmd: string) =>
         cmd.toLowerCase().includes(commandSearch.toLowerCase())
@@ -1224,12 +1227,31 @@ export default function TimelinePage() {
               size={8}
             >
               <option value="">Select Device...</option>
-              {filteredDevices.map((device) => (
-                <option key={device.id} value={device.device_id}>
-                  {device.friendly_name || device.device_id}
-                </option>
-              ))}
+              {filteredDevices.map((device) => {
+                const displayName = device.friendly_name || device.device_id;
+                const controllerSuffix = (device as any).controller_name 
+                  ? ` [${(device as any).controller_name}]` 
+                  : '';
+                return (
+                  <option key={device.id} value={device.device_id}>
+                    {displayName}{controllerSuffix}
+                  </option>
+                );
+              })}
             </select>
+            {newStep.config.device_id && (() => {
+              const selectedDev = filteredDevices.find(d => d.device_id === newStep.config.device_id) || 
+                                  effectDevices.find(d => d.device_id === newStep.config.device_id);
+              const displayName = selectedDev?.friendly_name || newStep.config.device_id;
+              const controllerSuffix = (selectedDev as any)?.controller_name 
+                ? ` [${(selectedDev as any).controller_name}]` 
+                : '';
+              return (
+                <div className="mt-2 p-2 bg-green-500/10 border border-green-500/30 rounded text-sm text-green-400">
+                  ✓ Selected: <span className="font-semibold">{displayName}{controllerSuffix}</span>
+                </div>
+              );
+            })()}
             {effectDevices.length === 0 && (
               <p className="text-xs text-yellow-500 mt-1">
                 No effect devices found. Please ensure devices have commands registered.
@@ -1270,6 +1292,11 @@ export default function TimelinePage() {
                   </option>
                 ))}
               </select>
+              {newStep.config.command && (
+                <div className="mt-2 p-2 bg-green-500/10 border border-green-500/30 rounded text-sm text-green-400">
+                  ✓ Selected: <span className="font-semibold">{newStep.config.command}</span>
+                </div>
+              )}
               {availableCommands.length === 0 && (
                 <p className="text-xs text-yellow-500 mt-1">
                   No commands available for this device.
