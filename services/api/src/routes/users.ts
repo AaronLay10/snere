@@ -13,6 +13,12 @@ import { v4 as uuidv4 } from 'uuid';
 import db from '../config/database.js';
 import { authenticate, hashPassword } from '../middleware/auth.js';
 import { canManageRole, requireCapability } from '../middleware/rbac.js';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const router = Router();
 
 const userSchema = Joi.object({
@@ -383,8 +389,7 @@ router.delete('/:id', authenticate, requireCapability('manage_users'), async (re
       `SELECT
         (SELECT COUNT(*) FROM room_sessions WHERE game_master_id = $1) as room_sessions_count,
         (SELECT COUNT(*) FROM emergency_stop_events WHERE triggered_by_user_id = $1 OR inspected_by_user_id = $1 OR reset_by_user_id = $1) as emergency_stop_count,
-        (SELECT COUNT(*) FROM configuration_versions WHERE approved_by_user_id = $1 OR created_by = $1) as config_versions_count,
-        (SELECT COUNT(*) FROM controllers WHERE created_by = $1 OR updated_by = $1) as controllers_count`,
+        (SELECT COUNT(*) FROM configuration_versions WHERE approved_by_user_id = $1 OR created_by = $1) as config_versions_count`,
       [id]
     );
 
@@ -399,7 +404,6 @@ router.delete('/:id', authenticate, requireCapability('manage_users'), async (re
           roomSessions: parseInt(deps.room_sessions_count),
           emergencyStops: parseInt(deps.emergency_stop_count),
           configVersions: parseInt(deps.config_versions_count),
-          controllers: parseInt(deps.controllers_count),
         },
       });
     }

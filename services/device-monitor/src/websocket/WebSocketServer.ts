@@ -134,7 +134,7 @@ export class WebSocketServer {
     });
   }
 
-  private broadcast(message: any): void {
+  public broadcast(message: any): void {
     const payload = JSON.stringify(message);
     let sent = 0;
 

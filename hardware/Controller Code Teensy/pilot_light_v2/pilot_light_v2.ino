@@ -76,12 +76,11 @@ const int lux_threshold = 10;        // Change detection threshold for lux
 // ──────────────────────────────────────────────────────────────────────────────
 // MQTT Configuration
 // ──────────────────────────────────────────────────────────────────────────────
-const IPAddress mqtt_broker_ip(192, 168, 20, 3);
-// const char *mqtt_host = "sentientengine.ai";  // DISABLED: Controllers must use local IP, not public domain
-const char *mqtt_host = nullptr; // Use IP address only to keep traffic on LAN
+const IPAddress mqtt_broker_ip(192, 168, 2, 3);
+const char *mqtt_host = "mqtt.sentientengine.ai";
 const int mqtt_port = 1883;
-const char *mqtt_username = nullptr; // DEBUG: Try anonymous connection
-const char *mqtt_password = nullptr;
+const char *mqtt_username = "paragon_devices";
+const char *mqtt_password = "wF9Wwejkjdml3EA599e1fTOb9xyAixaduEMID7UfDDs=";
 static const size_t metadata_json_capacity = 1024;
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -242,9 +241,12 @@ void debug_network()
     // Simple /24 subnet mismatch detection vs broker IP (192.168.X.0/24)
 #if SENTIENT_HAS_NATIVE_ETHERNET
     IPAddress ip = Ethernet.localIP();
-    if (ip[0] == 0 && ip[1] == 0 && ip[2] == 0) {
+    if (ip[0] == 0 && ip[1] == 0 && ip[2] == 0)
+    {
         Serial.println(F("[NetDiag] WARNING: No valid IP address assigned (DHCP failed?)"));
-    } else if (ip[0] != mqtt_broker_ip[0] || ip[1] != mqtt_broker_ip[1] || ip[2] != mqtt_broker_ip[2]) {
+    }
+    else if (ip[0] != mqtt_broker_ip[0] || ip[1] != mqtt_broker_ip[1] || ip[2] != mqtt_broker_ip[2])
+    {
         Serial.print(F("[NetDiag] WARNING: Controller subnet ("));
         Serial.print(ip);
         Serial.print(F(") differs from broker subnet ("));

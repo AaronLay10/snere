@@ -1,7 +1,0 @@
-#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Pilaster/arduino.json"
-{
-  "sketch": "Pillister.ino",
-  "board": "teensy:avr:teensy41",
-  "port": "",
-  "output": "build"
-}

@@ -356,6 +356,8 @@ CREATE TABLE users (
   first_name VARCHAR(100),
   last_name VARCHAR(100),
   phone VARCHAR(50),
+  profile_photo_url VARCHAR(500),
+  profile_photo_filename VARCHAR(255),
 
   -- Role & Access
   role VARCHAR(50) NOT NULL, -- admin, editor, viewer, game_master, creative_director, technician

@@ -1,6 +1,0 @@
-#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Systems/StudyD/arduino.json"
-{
-    "configuration": "teensy41",
-    "board": "teensy:avr:teensy41",
-    "sketch": "StudyD.ino"
-}

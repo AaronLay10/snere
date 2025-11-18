@@ -31,6 +31,7 @@
 #else
 #include <NativeEthernet.h>
 #include <TeensyID.h>
+#include <fnet.h>
 #define SENTIENT_NETWORK_CLIENT EthernetClient
 #endif
 
@@ -47,6 +48,7 @@ struct SentientMQTTConfig
   const char *puzzleId = nullptr;
   const char *deviceId = nullptr;
   const char *displayName = nullptr;
+  const char *hostnamePrefix = nullptr; // Optional prefix for network hostname (e.g., "CL" for Clockwork)
 
   uint16_t keepAliveSeconds = 60;
   uint32_t reconnectDelayMs = 5'000;
@@ -119,6 +121,8 @@ private:
 
 #if !defined(ESP32)
   uint8_t _macAddress[6] = {0};
+  fnet_mdns_desc_t _mdnsService = nullptr;
+  fnet_llmnr_desc_t _llmnrService = nullptr;
 #endif
 
   SentientCommandCallback _commandCallback = nullptr;

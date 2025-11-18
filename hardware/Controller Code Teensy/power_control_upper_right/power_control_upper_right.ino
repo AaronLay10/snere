@@ -98,9 +98,11 @@ static const size_t metadata_json_capacity = 1024;
 // ──────────────────────────────────────────────────────────────────────────────
 // MQTT Configuration
 // ──────────────────────────────────────────────────────────────────────────────
-const IPAddress mqtt_broker_ip(192, 168, 2, 3); // Dev environment
-const char *mqtt_host = "sentientengine.ai";
+const IPAddress mqtt_broker_ip(192, 168, 2, 3);
+const char *mqtt_host = "mqtt.sentientengine.ai";
 const int mqtt_port = 1883;
+const char *mqtt_user = "paragon_devices";
+const char *mqtt_password = "wF9Wwejkjdml3EA599e1fTOb9xyAixaduEMID7UfDDs=";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Hardware State Variables (relay states: true = ON/energized, false = OFF)
@@ -1077,6 +1079,8 @@ SentientMQTTConfig build_mqtt_config()
     }
     cfg.brokerIp = mqtt_broker_ip;
     cfg.brokerPort = mqtt_port;
+    cfg.username = mqtt_user;
+    cfg.password = mqtt_password;
     cfg.namespaceId = naming::CLIENT_ID;
     cfg.roomId = naming::ROOM_ID;
     cfg.puzzleId = naming::CONTROLLER_ID;

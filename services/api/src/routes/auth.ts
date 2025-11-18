@@ -20,7 +20,7 @@ import { createAuditLog } from '../middleware/audit.js';
  * Login validation schema
  */
 const loginSchema = Joi.object({
-  email: Joi.string().email().required(),
+  email: Joi.string().email({ tlds: { allow: false } }).required(),
   password: Joi.string().required(),
   interface: Joi.string().valid('sentient', 'mythra').optional()
 });

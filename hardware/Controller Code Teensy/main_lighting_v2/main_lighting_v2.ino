@@ -156,10 +156,10 @@ static const size_t metadata_json_capacity = 1024;
 // MQTT CONFIGURATION
 // ============================================================================
 const IPAddress mqtt_broker_ip(192, 168, 2, 3);
-const char *mqtt_host = nullptr;  // Use IP address only, not domain
+const char *mqtt_host = "mqtt.sentientengine.ai";
 const int mqtt_port = 1883;
 const char *mqtt_user = "paragon_devices";
-const char *mqtt_password = "T@t0nk@-93";
+const char *mqtt_password = "wF9Wwejkjdml3EA599e1fTOb9xyAixaduEMID7UfDDs=";
 const char *mqtt_namespace = naming::CLIENT_ID;
 const char *room_id = naming::ROOM_ID;
 // Single source of truth: controller_id comes from firmware::UNIQUE_ID

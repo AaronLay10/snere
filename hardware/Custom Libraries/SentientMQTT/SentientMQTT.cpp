@@ -107,6 +107,9 @@ void SentientMQTT::loop()
   {
     Ethernet.maintain();
   }
+
+  // Poll FNET services (mDNS, etc.)
+  fnet_service_poll();
 #endif
 
   ensureConnected();
@@ -355,6 +358,66 @@ bool SentientMQTT::configureNetwork()
   delay(500);
   Serial.print(F("[SentientMQTT] Ethernet up, IP="));
   Serial.println(Ethernet.localIP());
+
+  // Initialize mDNS for network identification
+  if (_config.displayName && _config.displayName[0] != '\0')
+  {
+    // Build hostname with optional prefix
+    char mdnsName[64];
+    if (_config.hostnamePrefix && _config.hostnamePrefix[0] != '\0')
+    {
+      snprintf(mdnsName, sizeof(mdnsName), "%s-%s", _config.hostnamePrefix, _config.displayName);
+    }
+    else
+    {
+      strncpy(mdnsName, _config.displayName, sizeof(mdnsName) - 1);
+    }
+    mdnsName[sizeof(mdnsName) - 1] = '\0';
+
+    // Convert to lowercase and replace spaces with hyphens
+    for (char *p = mdnsName; *p; ++p)
+    {
+      if (*p == ' ')
+        *p = '-';
+      else
+        *p = tolower(*p);
+    }
+
+    fnet_mdns_params_t mdnsParams;
+    mdnsParams.netif_desc = fnet_netif_get_default();
+    mdnsParams.addr_family = AF_INET;
+    mdnsParams.name = mdnsName;
+
+    _mdnsService = fnet_mdns_init(&mdnsParams);
+    if (_mdnsService)
+    {
+      Serial.print(F("[SentientMQTT] mDNS started: "));
+      Serial.print(mdnsName);
+      Serial.println(F(".local"));
+    }
+    else
+    {
+      Serial.println(F("[SentientMQTT] mDNS initialization failed"));
+    }
+
+    // Also start LLMNR for Windows/UniFi hostname resolution
+    fnet_llmnr_params_t llmnrParams;
+    llmnrParams.netif_desc = fnet_netif_get_default();
+    llmnrParams.addr_family = AF_INET;
+    llmnrParams.host_name = mdnsName;
+
+    _llmnrService = fnet_llmnr_init(&llmnrParams);
+    if (_llmnrService)
+    {
+      Serial.print(F("[SentientMQTT] LLMNR started: "));
+      Serial.println(mdnsName);
+    }
+    else
+    {
+      Serial.println(F("[SentientMQTT] LLMNR initialization failed"));
+    }
+  }
+
   return true;
 #endif
 }

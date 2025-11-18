@@ -5,6 +5,7 @@
 
 import { NextFunction, Response } from 'express';
 import type { AuthenticatedRequest } from '../types/express.js';
+import { authenticate } from './auth.js';
 
 const SERVICE_AUTH_TOKEN = process.env.SERVICE_AUTH_TOKEN;
 
@@ -75,6 +76,5 @@ export function authenticateServiceOrUser(
   }
 
   // Fall back to normal user authentication
-  const { authenticate } = require('./auth.js');
   return authenticate(req, res, next);
 }

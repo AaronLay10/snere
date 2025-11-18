@@ -29,10 +29,12 @@ using namespace naming;
 // MQTT CONFIGURATION
 // =============================================================================
 
-const IPAddress mqtt_broker_ip(192, 168, 20, 3);
-const char *mqtt_host = "sentientengine.ai";
+const IPAddress mqtt_broker_ip(192, 168, 2, 3);
+const char *mqtt_host = "mqtt.sentientengine.ai";
 const int mqtt_port = 1883;
-const unsigned long heartbeat_interval_ms = 300000; // 5 minutes
+const char *mqtt_user = "paragon_devices";
+const char *mqtt_password = "wF9Wwejkjdml3EA599e1fTOb9xyAixaduEMID7UfDDs=";
+const unsigned long heartbeat_interval_ms = 5000; // 5 seconds
 
 // =============================================================================
 // PIN DEFINITIONS (from legacy LeverBoiler_v2.1)
@@ -365,6 +367,8 @@ SentientMQTTConfig build_mqtt_config()
         cfg.brokerHost = mqtt_host;
     cfg.brokerIp = mqtt_broker_ip;
     cfg.brokerPort = mqtt_port;
+    cfg.username = mqtt_user;
+    cfg.password = mqtt_password;
     cfg.namespaceId = CLIENT_ID;
     cfg.roomId = ROOM_ID;
     cfg.puzzleId = CONTROLLER_ID;

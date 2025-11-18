@@ -15,6 +15,7 @@ const ConfigSchema = z.object({
   MQTT_PASSWORD: z.string().optional(),
   MQTT_CLIENT_ID: z.string().optional(),
   MQTT_TOPIC_FILTER: z.string().default('#'),  // Listen to ALL topics (includes paragon/# AND sentient/#)
+  DATABASE_URL: z.string(), // Required for split registration handler
   DEVICE_HEARTBEAT_TIMEOUT_MS: z
     .string()
     .transform((value) => parseInt(value, 10))

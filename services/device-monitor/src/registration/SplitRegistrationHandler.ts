@@ -57,6 +57,7 @@ interface PendingRegistration {
 export interface SplitRegistrationOptions {
   registrationTimeoutMs?: number;  // How long to wait for all devices (default 10s)
   databaseUrl: string;  // Direct database connection (required)
+  wsServer?: any;  // WebSocket server for real-time updates (optional)
 }
 
 /**
@@ -71,10 +72,12 @@ export interface SplitRegistrationOptions {
 export class SplitRegistrationHandler {
   private readonly registrationTimeoutMs: number;
   private readonly dbPool: Pool;
+  private readonly wsServer?: any;
   private pendingRegistrations = new Map<string, PendingRegistration>();
 
   constructor(options: SplitRegistrationOptions) {
     this.registrationTimeoutMs = options.registrationTimeoutMs || 10000;
+    this.wsServer = options.wsServer;
 
     // Initialize database pool (required)
     this.dbPool = new Pool({
@@ -294,6 +297,13 @@ export class SplitRegistrationHandler {
    */
   private async getRoomUUID(room_identifier: string): Promise<string | null> {
     try {
+      logger.info({ 
+        room_identifier, 
+        pool_total: this.dbPool.totalCount,
+        pool_idle: this.dbPool.idleCount,
+        pool_waiting: this.dbPool.waitingCount 
+      }, 'Looking up room UUID');
+      
       const query = `
         SELECT id FROM rooms
         WHERE slug = $1
@@ -302,6 +312,12 @@ export class SplitRegistrationHandler {
       `;
       const result = await this.dbPool.query(query, [room_identifier]);
 
+      logger.info({ 
+        room_identifier, 
+        rows_found: result.rows.length,
+        first_row: result.rows[0] 
+      }, 'Room query result');
+
       if (result.rows.length === 0) {
         logger.warn({ room_identifier }, 'Room not found by slug or mqtt_topic_base');
         return null;
@@ -309,7 +325,13 @@ export class SplitRegistrationHandler {
 
       return result.rows[0].id;
     } catch (error: any) {
-      logger.error({ error: error.message, room_identifier }, 'Failed to lookup room UUID');
+      logger.error({ 
+        error: error.message, 
+        error_stack: error.stack,
+        error_code: error.code,
+        error_details: JSON.stringify(error),
+        room_identifier 
+      }, 'Failed to lookup room UUID');
       return null;
     }
   }
@@ -518,8 +540,9 @@ export class SplitRegistrationHandler {
           config,
           status
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-        ON CONFLICT (room_slug_old, device_id)
+        ON CONFLICT (room_id, device_id)
         DO UPDATE SET
+          room_slug_old = EXCLUDED.room_slug_old,
           friendly_name = EXCLUDED.friendly_name,
           device_type = EXCLUDED.device_type,
           device_category = EXCLUDED.device_category,

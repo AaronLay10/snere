@@ -56,9 +56,11 @@ static const size_t metadata_json_capacity = 1024;
 // ──────────────────────────────────────────────────────────────────────────────
 // MQTT Configuration
 // ──────────────────────────────────────────────────────────────────────────────
-const IPAddress mqtt_broker_ip(192, 168, 20, 3);
-const char *mqtt_host = "sentientengine.ai";
+const IPAddress mqtt_broker_ip(192, 168, 2, 3);
+const char *mqtt_host = "mqtt.sentientengine.ai";
 const int mqtt_port = 1883;
+const char *mqtt_user = "paragon_devices";
+const char *mqtt_password = "wF9Wwejkjdml3EA599e1fTOb9xyAixaduEMID7UfDDs=";
 
 // ──────────────────────────────────────────────────────────────────────────────
 // Hardware State Variables (relay states: true = ON/energized, false = OFF)
@@ -271,27 +273,33 @@ void handle_mqtt_command(char *topic, uint8_t *payload, unsigned int length)
     size_t segLen[8] = {0};
     segStart[0] = p;
 
-    while (*p && seg < 8) {
-        if (*p == '/') {
+    while (*p && seg < 8)
+    {
+        if (*p == '/')
+        {
             segLen[seg] = p - segStart[seg];
             seg++;
-            if (seg < 8) segStart[seg] = p + 1;
+            if (seg < 8)
+                segStart[seg] = p + 1;
         }
         p++;
     }
-    if (seg < 8 && segStart[seg]) {
+    if (seg < 8 && segStart[seg])
+    {
         segLen[seg] = p - segStart[seg];
         seg++;
     }
 
-    auto equalsSeg = [&](int idx, const char *lit) -> bool {
+    auto equalsSeg = [&](int idx, const char *lit) -> bool
+    {
         size_t litLen = strlen(lit);
         return segLen[idx] == litLen && strncmp(segStart[idx], lit, litLen) == 0;
     };
 
     // Validate topic structure and extract device/command
     if (seg >= 6 && equalsSeg(0, naming::CLIENT_ID) && equalsSeg(1, naming::ROOM_ID) &&
-        equalsSeg(2, "commands") && equalsSeg(3, naming::CONTROLLER_ID)) {
+        equalsSeg(2, "commands") && equalsSeg(3, naming::CONTROLLER_ID))
+    {
         device = String(segStart[4]).substring(0, segLen[4]);
         command = String(segStart[5]).substring(0, segLen[5]);
 
@@ -301,53 +309,77 @@ void handle_mqtt_command(char *topic, uint8_t *payload, unsigned int length)
         Serial.println(command);
 
         // Route to device-specific handlers
-        if (device == naming::DEV_LEVER_RIDDLE_CUBE_24V) {
-            if (command == "power_on") set_relay_state(lever_riddle_cube_24v_pin, true, lever_riddle_cube_24v_state, "Lever Riddle Cube 24V", naming::DEV_LEVER_RIDDLE_CUBE_24V);
-            else if (command == "power_off") set_relay_state(lever_riddle_cube_24v_pin, false, lever_riddle_cube_24v_state, "Lever Riddle Cube 24V", naming::DEV_LEVER_RIDDLE_CUBE_24V);
+        if (device == naming::DEV_LEVER_RIDDLE_CUBE_24V)
+        {
+            if (command == "power_on")
+                set_relay_state(lever_riddle_cube_24v_pin, true, lever_riddle_cube_24v_state, "Lever Riddle Cube 24V", naming::DEV_LEVER_RIDDLE_CUBE_24V);
+            else if (command == "power_off")
+                set_relay_state(lever_riddle_cube_24v_pin, false, lever_riddle_cube_24v_state, "Lever Riddle Cube 24V", naming::DEV_LEVER_RIDDLE_CUBE_24V);
         }
-        else if (device == naming::DEV_LEVER_RIDDLE_CUBE_12V) {
-            if (command == "power_on") set_relay_state(lever_riddle_cube_12v_pin, true, lever_riddle_cube_12v_state, "Lever Riddle Cube 12V", naming::DEV_LEVER_RIDDLE_CUBE_12V);
-            else if (command == "power_off") set_relay_state(lever_riddle_cube_12v_pin, false, lever_riddle_cube_12v_state, "Lever Riddle Cube 12V", naming::DEV_LEVER_RIDDLE_CUBE_12V);
+        else if (device == naming::DEV_LEVER_RIDDLE_CUBE_12V)
+        {
+            if (command == "power_on")
+                set_relay_state(lever_riddle_cube_12v_pin, true, lever_riddle_cube_12v_state, "Lever Riddle Cube 12V", naming::DEV_LEVER_RIDDLE_CUBE_12V);
+            else if (command == "power_off")
+                set_relay_state(lever_riddle_cube_12v_pin, false, lever_riddle_cube_12v_state, "Lever Riddle Cube 12V", naming::DEV_LEVER_RIDDLE_CUBE_12V);
         }
-        else if (device == naming::DEV_LEVER_RIDDLE_CUBE_5V) {
-            if (command == "power_on") set_relay_state(lever_riddle_cube_5v_pin, true, lever_riddle_cube_5v_state, "Lever Riddle Cube 5V", naming::DEV_LEVER_RIDDLE_CUBE_5V);
-            else if (command == "power_off") set_relay_state(lever_riddle_cube_5v_pin, false, lever_riddle_cube_5v_state, "Lever Riddle Cube 5V", naming::DEV_LEVER_RIDDLE_CUBE_5V);
+        else if (device == naming::DEV_LEVER_RIDDLE_CUBE_5V)
+        {
+            if (command == "power_on")
+                set_relay_state(lever_riddle_cube_5v_pin, true, lever_riddle_cube_5v_state, "Lever Riddle Cube 5V", naming::DEV_LEVER_RIDDLE_CUBE_5V);
+            else if (command == "power_off")
+                set_relay_state(lever_riddle_cube_5v_pin, false, lever_riddle_cube_5v_state, "Lever Riddle Cube 5V", naming::DEV_LEVER_RIDDLE_CUBE_5V);
         }
-        else if (device == naming::DEV_CLOCK_24V) {
-            if (command == "power_on") set_relay_state(clock_24v_pin, true, clock_24v_state, "Clock 24V", naming::DEV_CLOCK_24V);
-            else if (command == "power_off") set_relay_state(clock_24v_pin, false, clock_24v_state, "Clock 24V", naming::DEV_CLOCK_24V);
+        else if (device == naming::DEV_CLOCK_24V)
+        {
+            if (command == "power_on")
+                set_relay_state(clock_24v_pin, true, clock_24v_state, "Clock 24V", naming::DEV_CLOCK_24V);
+            else if (command == "power_off")
+                set_relay_state(clock_24v_pin, false, clock_24v_state, "Clock 24V", naming::DEV_CLOCK_24V);
         }
-        else if (device == naming::DEV_CLOCK_12V) {
-            if (command == "power_on") set_relay_state(clock_12v_pin, true, clock_12v_state, "Clock 12V", naming::DEV_CLOCK_12V);
-            else if (command == "power_off") set_relay_state(clock_12v_pin, false, clock_12v_state, "Clock 12V", naming::DEV_CLOCK_12V);
+        else if (device == naming::DEV_CLOCK_12V)
+        {
+            if (command == "power_on")
+                set_relay_state(clock_12v_pin, true, clock_12v_state, "Clock 12V", naming::DEV_CLOCK_12V);
+            else if (command == "power_off")
+                set_relay_state(clock_12v_pin, false, clock_12v_state, "Clock 12V", naming::DEV_CLOCK_12V);
         }
-        else if (device == naming::DEV_CLOCK_5V) {
-            if (command == "power_on") set_relay_state(clock_5v_pin, true, clock_5v_state, "Clock 5V", naming::DEV_CLOCK_5V);
-            else if (command == "power_off") set_relay_state(clock_5v_pin, false, clock_5v_state, "Clock 5V", naming::DEV_CLOCK_5V);
+        else if (device == naming::DEV_CLOCK_5V)
+        {
+            if (command == "power_on")
+                set_relay_state(clock_5v_pin, true, clock_5v_state, "Clock 5V", naming::DEV_CLOCK_5V);
+            else if (command == "power_off")
+                set_relay_state(clock_5v_pin, false, clock_5v_state, "Clock 5V", naming::DEV_CLOCK_5V);
         }
-        else if (device == naming::DEV_CONTROLLER) {
+        else if (device == naming::DEV_CONTROLLER)
+        {
             // Controller-level commands
-            if (command == naming::CMD_ALL_ON) {
+            if (command == naming::CMD_ALL_ON)
+            {
                 Serial.println(F("[PowerCtrl] ALL ON command"));
                 all_relays_on();
                 publish_hardware_status();
             }
-            else if (command == naming::CMD_ALL_OFF) {
+            else if (command == naming::CMD_ALL_OFF)
+            {
                 Serial.println(F("[PowerCtrl] ALL OFF command"));
                 all_relays_off();
                 publish_hardware_status();
             }
-            else if (command == naming::CMD_EMERGENCY_OFF) {
+            else if (command == naming::CMD_EMERGENCY_OFF)
+            {
                 Serial.println(F("[PowerCtrl] EMERGENCY OFF command"));
                 emergency_power_off();
                 publish_hardware_status();
             }
-            else if (command == naming::CMD_RESET) {
+            else if (command == naming::CMD_RESET)
+            {
                 Serial.println(F("[PowerCtrl] RESET command"));
                 all_relays_off();
                 publish_hardware_status();
             }
-            else if (command == naming::CMD_REQUEST_STATUS) {
+            else if (command == naming::CMD_REQUEST_STATUS)
+            {
                 Serial.println(F("[PowerCtrl] Status requested"));
                 publish_full_status();
             }
@@ -398,7 +430,8 @@ void set_relay_state(int pin, bool state, bool &state_var, const char *device_na
     Serial.println(state ? F("ON") : F("OFF"));
 
     // Publish individual relay state to MQTT for real-time UI updates
-    if (mqtt.isConnected()) {
+    if (mqtt.isConnected())
+    {
         publish_relay_state(device_id, state);
     }
 }
@@ -448,7 +481,8 @@ void emergency_power_off()
     clock_5v_state = false;
 
     // Publish individual relay OFF states for real-time UI updates
-    if (mqtt.isConnected()) {
+    if (mqtt.isConnected())
+    {
         publish_relay_state(naming::DEV_LEVER_RIDDLE_CUBE_24V, false);
         publish_relay_state(naming::DEV_LEVER_RIDDLE_CUBE_12V, false);
         publish_relay_state(naming::DEV_LEVER_RIDDLE_CUBE_5V, false);
@@ -569,6 +603,8 @@ SentientMQTTConfig build_mqtt_config()
     }
     cfg.brokerIp = mqtt_broker_ip;
     cfg.brokerPort = mqtt_port;
+    cfg.username = mqtt_user;
+    cfg.password = mqtt_password;
     cfg.namespaceId = naming::CLIENT_ID;
     cfg.roomId = naming::ROOM_ID;
     cfg.puzzleId = naming::CONTROLLER_ID;

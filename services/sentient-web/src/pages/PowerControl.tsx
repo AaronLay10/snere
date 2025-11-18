@@ -59,8 +59,8 @@ export default function PowerControlPage() {
 
   // Get real-time power state for a device from WebSocket
   const getDevicePowerState = (device: PowerDevice): { isOn: boolean; hasState: boolean } => {
-    // Use the original UUID for WebSocket lookups, not the remapped controller_id
-    const key = `${device.controller_uuid}/${device.device_id}`;
+    // Use controller_id for WebSocket lookups (matches what device-monitor publishes)
+    const key = `${device.controller_id}/${device.device_id}`;
     const state = deviceStates.get(key);
 
     if (!state) {

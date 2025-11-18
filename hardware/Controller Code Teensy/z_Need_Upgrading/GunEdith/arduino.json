@@ -1,6 +1,0 @@
-{
-  "sketch": "GunEdith.ino",
-  "board": "esp32:esp32:esp32c6",
-  "port": "",
-  "output": "build"
-}

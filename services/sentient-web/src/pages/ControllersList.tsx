@@ -5,6 +5,7 @@ import { controllers, rooms, type Room, type Controller } from '../lib/api';
 import { motion } from 'framer-motion';
 import { Cpu, Search, Wifi, WifiOff, Filter, DoorOpen, Clock } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useDeviceWebSocket } from '../hooks/useDeviceWebSocket';
 
 export default function ControllersList() {
   const navigate = useNavigate();
@@ -16,9 +17,21 @@ export default function ControllersList() {
   const [filterRoom, setFilterRoom] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
 
+  // Connect to WebSocket for real-time updates
+  const { connected: wsConnected, lastControllerRegistered } = useDeviceWebSocket();
+
   useEffect(() => {
     loadData();
   }, []);
+
+  // Listen for controller registration events and auto-refresh
+  useEffect(() => {
+    if (lastControllerRegistered) {
+      console.log('[Controllers] New controller registered, refreshing list');
+      toast.success(`Controller ${lastControllerRegistered.controller_id} registered`);
+      loadData(); // Refresh the list
+    }
+  }, [lastControllerRegistered]);
 
   const loadData = async () => {
     try {

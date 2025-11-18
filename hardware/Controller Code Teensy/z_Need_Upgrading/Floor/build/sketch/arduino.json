@@ -1,7 +1,0 @@
-#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/Floor/arduino.json"
-{
-  "sketch": "Floor.ino",
-  "board": "teensy:avr:teensy41",
-  "port": "",
-  "output": "build"
-}

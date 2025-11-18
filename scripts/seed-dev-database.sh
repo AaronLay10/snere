@@ -32,15 +32,12 @@ BEGIN;
 
 -- Clean existing data (preserve structure)
 TRUNCATE TABLE
-  audit_logs,
-  sessions,
+  audit_log,
+  user_sessions,
   users,
-  puzzle_states,
   scene_steps,
   scenes,
-  device_commands,
   devices,
-  controllers,
   rooms,
   clients
 CASCADE;
@@ -58,10 +55,10 @@ INSERT INTO clients (id, name, slug, description, mqtt_namespace, status) VALUES
 -- ============================================================================
 
 -- Password: 'password' (bcrypt hash with 10 rounds)
-INSERT INTO users (id, client_id, username, email, password_hash, role, is_active) VALUES
-  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'admin', 'admin@paragon.local', '$2b$10$rMvNqVLqHqYxGqYb8xN5/.Ky0LQhZhX5qN7kGvJ5FLJwGQ5F4KLHm', 'admin', true),
-  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'gamemaster', 'gm@paragon.local', '$2b$10$rMvNqVLqHqYxGqYb8xN5/.Ky0LQhZhX5qN7kGvJ5FLJwGQ5F4KLHm', 'game_master', true),
-  ('cccccccc-cccc-cccc-cccc-cccccccccccc', '11111111-1111-1111-1111-111111111111', 'editor', 'editor@paragon.local', '$2b$10$rMvNqVLqHqYxGqYb8xN5/.Ky0LQhZhX5qN7kGvJ5FLJwGQ5F4KLHm', 'editor', true);
+INSERT INTO users (id, client_id, username, email, password_hash, role, first_name, last_name, is_active) VALUES
+  ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', '11111111-1111-1111-1111-111111111111', 'admin', 'admin@paragon.local', '$2b$10$mWpu37GpJ4lFREugknh9WOnOtqt3vMjMlX3KMTv1VyA1VaZfAZsWq', 'admin', 'Admin', 'User', true),
+  ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', '11111111-1111-1111-1111-111111111111', 'gamemaster', 'gm@paragon.local', '$2b$10$mWpu37GpJ4lFREugknh9WOnOtqt3vMjMlX3KMTv1VyA1VaZfAZsWq', 'game_master', 'Game', 'Master', true),
+  ('cccccccc-cccc-cccc-cccc-cccccccccccc', '11111111-1111-1111-1111-111111111111', 'editor', 'editor@paragon.local', '$2b$10$mWpu37GpJ4lFREugknh9WOnOtqt3vMjMlX3KMTv1VyA1VaZfAZsWq', 'editor', 'Content', 'Editor', true);
 
 -- ============================================================================
 -- ROOMS
@@ -75,9 +72,9 @@ INSERT INTO rooms (id, client_id, name, slug, description, min_players, max_play
 -- ============================================================================
 
 INSERT INTO controllers (id, room_id, controller_id, friendly_name, hardware_type, firmware_version, ip_address, status) VALUES
-  ('c0000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'boiler_room_subpanel', 'Boiler Room Subpanel', 'teensy41', 'v2.0.1', '192.168.3.101', 'online'),
-  ('c0000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'chemical_controller', 'Chemical Station', 'teensy41', 'v2.0.1', '192.168.3.102', 'online'),
-  ('c0000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 'clock_controller', 'Clock Mechanism', 'teensy41', 'v2.0.1', '192.168.3.103', 'online');
+  ('c0000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 'boiler_room_subpanel', 'Boiler Room Subpanel', 'teensy41', 'v2.0.1', '192.168.3.101', 'active'),
+  ('c0000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 'chemical_controller', 'Chemical Station', 'teensy41', 'v2.0.1', '192.168.3.102', 'active'),
+  ('c0000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 'clock_controller', 'Clock Mechanism', 'teensy41', 'v2.0.1', '192.168.3.103', 'active');
 
 -- ============================================================================
 -- DEVICES
@@ -92,29 +89,29 @@ INSERT INTO devices (id, room_id, controller_id, device_id, friendly_name, devic
 -- DEVICE COMMANDS
 -- ============================================================================
 
-INSERT INTO device_commands (id, device_id, command_name, friendly_name, description, mqtt_payload, display_order) VALUES
-  ('cmd00000-0000-0000-0000-000000000001', 'd0000000-0000-0000-0000-000000000001', 'power_tv_on', 'Power On', 'Turn on introduction TV', '{"command": "power_tv_on"}', 1),
-  ('cmd00000-0000-0000-0000-000000000002', 'd0000000-0000-0000-0000-000000000001', 'power_tv_off', 'Power Off', 'Turn off introduction TV', '{"command": "power_tv_off"}', 2),
-  ('cmd00000-0000-0000-0000-000000000003', 'd0000000-0000-0000-0000-000000000003', 'pump_start', 'Start Pump', 'Activate chemical pump', '{"command": "pump_start"}', 1),
-  ('cmd00000-0000-0000-0000-000000000004', 'd0000000-0000-0000-0000-000000000003', 'pump_stop', 'Stop Pump', 'Deactivate chemical pump', '{"command": "pump_stop"}', 2);
+INSERT INTO device_commands (id, device_id, command_name, specific_command, friendly_name, mqtt_topic_suffix) VALUES
+  ('00000000-0000-0000-0000-000000000001', 'd0000000-0000-0000-0000-000000000001', 'powerOn', 'power_tv_on', 'Power On', 'commands/power_tv_on'),
+  ('00000000-0000-0000-0000-000000000002', 'd0000000-0000-0000-0000-000000000001', 'powerOff', 'power_tv_off', 'Power Off', 'commands/power_tv_off'),
+  ('00000000-0000-0000-0000-000000000003', 'd0000000-0000-0000-0000-000000000003', 'pumpStart', 'pump_start', 'Start Pump', 'commands/pump_start'),
+  ('00000000-0000-0000-0000-000000000004', 'd0000000-0000-0000-0000-000000000003', 'pumpStop', 'pump_stop', 'Stop Pump', 'commands/pump_stop');
 
 -- ============================================================================
 -- SCENES
 -- ============================================================================
 
-INSERT INTO scenes (id, room_id, scene_number, name, description, timeout_seconds) VALUES
-  ('s0000000-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 1, 'Introduction', 'Welcome players and set the scene', 300),
-  ('s0000000-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 2, 'Boiler Room Puzzle', 'Activate the boiler system', 600),
-  ('s0000000-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 3, 'Chemical Laboratory', 'Mix the correct chemical formula', 900);
+INSERT INTO scenes (id, room_id, scene_number, name, slug, description, estimated_duration_seconds) VALUES
+  ('00000001-0000-0000-0000-000000000001', '10000000-0000-0000-0000-000000000001', 1, 'Introduction', 'introduction', 'Welcome players and set the scene', 300),
+  ('00000001-0000-0000-0000-000000000002', '10000000-0000-0000-0000-000000000001', 2, 'Boiler Room Puzzle', 'boiler_room_puzzle', 'Activate the boiler system', 600),
+  ('00000001-0000-0000-0000-000000000003', '10000000-0000-0000-0000-000000000001', 3, 'Chemical Laboratory', 'chemical_laboratory', 'Mix the correct chemical formula', 900);
 
 -- ============================================================================
 -- SCENE STEPS
 -- ============================================================================
 
-INSERT INTO scene_steps (id, scene_id, step_number, name, action_type, action_config) VALUES
-  ('step0000-0000-0000-0000-000000000001', 's0000000-0000-0000-0000-000000000001', 1, 'Power on intro TV', 'mqtt_command', '{"device_id": "d0000000-0000-0000-0000-000000000001", "command": "power_tv_on"}'),
-  ('step0000-0000-0000-0000-000000000002', 's0000000-0000-0000-0000-000000000001', 2, 'Wait for video', 'wait', '{"duration_seconds": 120}'),
-  ('step0000-0000-0000-0000-000000000003', 's0000000-0000-0000-0000-000000000002', 1, 'Activate pilot light', 'mqtt_command', '{"device_id": "d0000000-0000-0000-0000-000000000002", "state": "on"}');
+INSERT INTO scene_steps (id, scene_id, step_number, step_type, name, config) VALUES
+  ('00000002-0000-0000-0000-000000000001', '00000001-0000-0000-0000-000000000001', 1, 'mqtt_command', 'Power on intro TV', '{"device_id": "intro_tv", "command": "powerOn"}'),
+  ('00000002-0000-0000-0000-000000000002', '00000001-0000-0000-0000-000000000001', 2, 'wait', 'Wait for video', '{"duration_seconds": 120}'),
+  ('00000002-0000-0000-0000-000000000003', '00000001-0000-0000-0000-000000000002', 1, 'mqtt_command', 'Activate pilot light', '{"device_id": "pilot_light", "state": "on"}');
 
 COMMIT;
 

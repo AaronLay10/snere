@@ -21,6 +21,7 @@ import toast from 'react-hot-toast';
 import ClientLogoUpload from '../components/ClientLogoUpload';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import { clients, type Client } from '../lib/api';
+import apiClient from '../lib/api';
 import { useAuthStore } from '../store/authStore';
 
 interface ClientFormData {
@@ -130,7 +131,36 @@ export default function ClientsList() {
       loadClients();
     } catch (err: any) {
       console.error('Delete client error:', err);
-      toast.error(err.response?.data?.message || 'Failed to delete client');
+      const errorData = err.response?.data;
+      
+      // Check if this is the "has rooms" conflict error
+      if (err.response?.status === 409 && errorData?.roomCount > 0) {
+        const roomCount = errorData.roomCount;
+        const confirmCascade = confirm(
+          `⚠️ This client has ${roomCount} room(s) with associated devices and data.\n\n` +
+          `Do you want to DELETE EVERYTHING including:\n` +
+          `- ${roomCount} room(s)\n` +
+          `- All devices\n` +
+          `- All controllers\n` +
+          `- All sensor data\n` +
+          `- All users\n\n` +
+          `This CANNOT be undone!`
+        );
+        
+        if (confirmCascade) {
+          try {
+            // Retry with cascade=true
+            await apiClient.delete(`/api/sentient/clients/${id}?cascade=true`);
+            toast.success(`Client "${name}" and all associated data deleted successfully`);
+            loadClients();
+          } catch (cascadeErr: any) {
+            console.error('Cascade delete error:', cascadeErr);
+            toast.error(cascadeErr.response?.data?.message || 'Failed to delete client');
+          }
+        }
+      } else {
+        toast.error(errorData?.message || 'Failed to delete client');
+      }
     }
   };
 

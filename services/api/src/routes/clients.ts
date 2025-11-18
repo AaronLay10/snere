@@ -312,45 +312,137 @@ router.put('/:id', authenticate, requireRole('admin'), async (req, res) => {
 /**
  * DELETE /api/sentient/clients/:id
  * Delete client (admin only, soft delete)
+ * Query params: cascade=true to also delete all associated rooms/devices/users
  */
 router.delete('/:id', authenticate, requireRole('admin'), async (req, res) => {
   try {
     const { id } = req.params;
+    const { cascade } = req.query;
 
     // Check if client has rooms
     const roomsResult = await db.query('SELECT COUNT(*) as count FROM rooms WHERE client_id = $1', [
       id,
     ]);
 
-    if (parseInt(roomsResult.rows[0].count) > 0) {
+    const roomCount = parseInt(roomsResult.rows[0].count);
+
+    // If client has rooms and cascade is not enabled, return error with room count
+    if (roomCount > 0 && cascade !== 'true') {
       return res.status(409).json({
         error: 'Conflict',
-        message: 'Cannot delete client with existing rooms',
-        roomCount: parseInt(roomsResult.rows[0].count),
+        message: 'Cannot delete client with existing rooms. Use cascade=true to delete all associated data.',
+        roomCount: roomCount,
+        hint: 'Add ?cascade=true to delete this client and all associated rooms, devices, and users',
       });
     }
 
-    // Soft delete - mark as inactive
-    const result = await db.query(
-      `UPDATE clients
-       SET is_active = false, updated_at = NOW()
-       WHERE id = $1
-       RETURNING *`,
-      [id]
-    );
+    // If cascade is enabled, delete all associated data in correct order
+    if (cascade === 'true' && roomCount > 0) {
+      // Start transaction
+      const client = await db.getClient();
+      
+      try {
+        await client.query('BEGIN');
 
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: 'Not found',
-        message: 'Client not found',
+        // Delete in correct order to handle foreign key constraints
+        // 1. Device sensor data
+        await client.query(
+          `DELETE FROM device_sensor_data WHERE device_id IN (
+            SELECT d.id FROM devices d
+            JOIN rooms r ON d.room_id = r.id
+            WHERE r.client_id = $1
+          )`,
+          [id]
+        );
+
+        // 2. Device commands
+        await client.query(
+          `DELETE FROM device_commands WHERE device_id IN (
+            SELECT d.id FROM devices d
+            JOIN rooms r ON d.room_id = r.id
+            WHERE r.client_id = $1
+          )`,
+          [id]
+        );
+
+        // 3. Devices
+        await client.query(
+          `DELETE FROM devices WHERE room_id IN (
+            SELECT id FROM rooms WHERE client_id = $1
+          )`,
+          [id]
+        );
+
+        // 4. Controllers
+        await client.query(
+          `DELETE FROM controllers WHERE room_id IN (
+            SELECT id FROM rooms WHERE client_id = $1
+          )`,
+          [id]
+        );
+
+        // 5. Scenes
+        await client.query('DELETE FROM scenes WHERE client_id = $1', [id]);
+
+        // 6. Rooms
+        await client.query('DELETE FROM rooms WHERE client_id = $1', [id]);
+
+        // 7. Users associated with this client
+        await client.query('DELETE FROM users WHERE client_id = $1', [id]);
+
+        // 8. Finally, soft delete the client
+        const result = await client.query(
+          `UPDATE clients
+           SET is_active = false, updated_at = NOW()
+           WHERE id = $1
+           RETURNING *`,
+          [id]
+        );
+
+        await client.query('COMMIT');
+        client.release();
+
+        if (result.rows.length === 0) {
+          return res.status(404).json({
+            error: 'Not found',
+            message: 'Client not found',
+          });
+        }
+
+        res.json({
+          success: true,
+          message: 'Client and all associated data deleted successfully',
+          client: result.rows[0],
+          deletedRooms: roomCount,
+        });
+      } catch (error) {
+        await client.query('ROLLBACK');
+        client.release();
+        throw error;
+      }
+    } else {
+      // Simple soft delete - no rooms to cascade
+      const result = await db.query(
+        `UPDATE clients
+         SET is_active = false, updated_at = NOW()
+         WHERE id = $1
+         RETURNING *`,
+        [id]
+      );
+
+      if (result.rows.length === 0) {
+        return res.status(404).json({
+          error: 'Not found',
+          message: 'Client not found',
+        });
+      }
+
+      res.json({
+        success: true,
+        message: 'Client deactivated successfully',
+        client: result.rows[0],
       });
     }
-
-    res.json({
-      success: true,
-      message: 'Client deactivated successfully',
-      client: result.rows[0],
-    });
   } catch (error) {
     console.error('Delete client error:', error);
     res.status(500).json({

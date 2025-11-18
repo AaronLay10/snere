@@ -1,7 +1,0 @@
-#line 1 "/Users/aaron/Documents/ParagonEscape/Clockwork/Puzzles/LeverFanSafe/arduino.json"
-{
-  "sketch": "LeverFanSafe.ino",
-  "board": "teensy:avr:teensy41",
-  "port": "",
-  "output": "build"
-}

@@ -44,45 +44,6 @@ services:
         max-file: "3"
         labels: "service=postgres-dev"
 
-  # Mosquitto MQTT Broker - Local development
-  mosquitto:
-    image: eclipse-mosquitto:2
-    container_name: sentient-mosquitto
-    restart: unless-stopped
-    environment:
-      MQTT_USER: sentient_monitor
-      MQTT_PASSWORD: ${MQTT_SENTIENT_MONITOR_PASSWORD}
-    ports:
-      - "1883:1883"
-      - "9001:9001"
-    volumes:
-      - ./config/mosquitto-dev/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
-      - ./config/mosquitto-dev/mosquitto_passwd:/mosquitto/config/mosquitto_passwd:ro
-      - ./config/mosquitto-dev/mosquitto.acl:/mosquitto/config/mosquitto.acl:ro
-      - ./volumes/mosquitto-data-dev:/mosquitto/data
-      - ./volumes/mosquitto-logs:/mosquitto/log
-    networks:
-      - sentient-local
-    healthcheck:
-      test: ["CMD-SHELL", "mosquitto_pub -h localhost -p 1883 -u $${MQTT_USER} -P $${MQTT_PASSWORD} -t 'healthcheck/ping' -m 'ping' || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 128M
-        reservations:
-          cpus: '0.1'
-          memory: 32M
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
-        labels: "service=mosquitto-dev"
-
   ################################################################################
   # SHARED INFRASTRUCTURE (Nginx only)
   ################################################################################
@@ -100,6 +61,11 @@ services:
       - ./config/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./config/nginx/ssl:/etc/nginx/ssl:ro
       - ./volumes/nginx-logs:/var/log/nginx
+    depends_on:
+      - sentient-api
+      - sentient-web
+      - executor-engine
+      - device-monitor
     networks:
       - sentient-local
     healthcheck:
@@ -138,11 +104,13 @@ services:
       DB_NAME: sentient_dev
       DB_USER: sentient_dev
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      MQTT_URL: mqtt://mosquitto:1883
-      MQTT_USERNAME: sentient_api
+      MQTT_URL: mqtt://mqtt.sentientengine.ai:1883
+      MQTT_USERNAME: sentient_api_dev
       MQTT_PASSWORD: ${MQTT_SENTIENT_API_PASSWORD}
       JWT_SECRET: ${JWT_SECRET_DEV}
       SESSION_SECRET: ${SESSION_SECRET_DEV}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS:-60000}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS:-10000}
     ports:
       - "3000:3000"
       - "9229:9229"  # Debug port
@@ -151,8 +119,6 @@ services:
       - /app/node_modules
     depends_on:
       postgres:
-        condition: service_healthy
-      mosquitto:
         condition: service_healthy
     networks:
       - sentient-local
@@ -187,8 +153,8 @@ services:
       SERVICE_PORT: 3004
       CONFIG_PATH: /opt/sentient/config
       DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres:5432/sentient_dev
-      MQTT_URL: mqtt://mosquitto:1883
-      MQTT_USERNAME: sentient_executor
+      MQTT_URL: mqtt://mqtt.sentientengine.ai:1883
+      MQTT_USERNAME: sentient_executor_dev
       MQTT_PASSWORD: ${MQTT_SENTIENT_EXECUTOR_PASSWORD}
     ports:
       - "3004:3004"
@@ -199,8 +165,6 @@ services:
       - ./config:/opt/sentient/config:ro
     depends_on:
       postgres:
-        condition: service_healthy
-      mosquitto:
         condition: service_healthy
     networks:
       - sentient-local
@@ -226,8 +190,8 @@ services:
       NODE_ENV: development
       SERVICE_PORT: 3003
       DATABASE_URL: postgresql://sentient_dev:${POSTGRES_PASSWORD}@postgres:5432/sentient_dev
-      MQTT_URL: mqtt://mosquitto:1883
-      MQTT_USERNAME: sentient_monitor
+      MQTT_URL: mqtt://mqtt.sentientengine.ai:1883
+      MQTT_USERNAME: sentient_monitor_dev
       MQTT_PASSWORD: ${MQTT_SENTIENT_MONITOR_PASSWORD}
     ports:
       - "3003:3003"
@@ -237,8 +201,6 @@ services:
       - /app/node_modules
     depends_on:
       postgres:
-        condition: service_healthy
-      mosquitto:
         condition: service_healthy
     networks:
       - sentient-local
@@ -455,8 +417,6 @@ networks:
 
 volumes:
   postgres-data-dev:
-    driver: local
-  mosquitto-data-dev:
     driver: local
   prometheus-data-dev:
     driver: local

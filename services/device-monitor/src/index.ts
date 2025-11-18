@@ -45,10 +45,8 @@ if (!process.env.DATABASE_URL) {
   process.exit(1);
 }
 
-const splitRegistration = new SplitRegistrationHandler({
-  registrationTimeoutMs: 10000,
-  databaseUrl: process.env.DATABASE_URL
-});
+// Will be initialized after WebSocket server is created
+let splitRegistration: SplitRegistrationHandler;
 
 // Initialize device state manager for sensor/state tracking
 const stateManager = new DeviceStateManager({
@@ -132,6 +130,13 @@ const server = app.listen(config.SERVICE_PORT, () => {
 
 // Initialize WebSocket server with state manager
 const wsServer = new WebSocketServer(server, registry, stateManager);
+
+// Pass WebSocket server to registration handler for real-time updates
+splitRegistration = new SplitRegistrationHandler({
+  databaseUrl: config.DATABASE_URL,
+  registrationTimeoutMs: 10000,
+  wsServer
+});
 
 const HEALTH_SWEEP_INTERVAL = config.HEALTH_SWEEP_INTERVAL_MS;
 const healthInterval = setInterval(() => registry.performHealthSweep(), HEALTH_SWEEP_INTERVAL);

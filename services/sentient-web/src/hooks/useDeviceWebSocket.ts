@@ -21,11 +21,19 @@ export interface DeviceStatus {
   lastHeartbeat?: number;
 }
 
+export interface ControllerRegisteredEvent {
+  id: string;
+  controller_id: string;
+  room_id: string;
+  device_count: number;
+}
+
 export interface UseDeviceWebSocketReturn {
   connected: boolean;
   deviceStates: Map<string, Record<string, any>>;
   deviceStatuses: Map<string, DeviceStatus>;
   sensorData: Map<string, SensorData[]>;
+  lastControllerRegistered: ControllerRegisteredEvent | null;
 }
 
 // Dynamically determine WebSocket URL based on environment
@@ -48,6 +56,7 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
   const [deviceStates, setDeviceStates] = useState<Map<string, Record<string, any>>>(new Map());
   const [deviceStatuses, setDeviceStatuses] = useState<Map<string, DeviceStatus>>(new Map());
   const [sensorData, setSensorData] = useState<Map<string, SensorData[]>>(new Map());
+  const [lastControllerRegistered, setLastControllerRegistered] = useState<ControllerRegisteredEvent | null>(null);
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptsRef = useRef(0);
@@ -164,6 +173,14 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
             }
             break;
 
+          case 'controller-registered':
+            // Controller registration event (new controller added)
+            console.log('[useDeviceWebSocket] Controller registered:', message.data);
+            if (message.data) {
+              setLastControllerRegistered(message.data);
+            }
+            break;
+
           default:
             console.log('[useDeviceWebSocket] Unknown message type:', message.type);
         }
@@ -221,5 +238,6 @@ export function useDeviceWebSocket(): UseDeviceWebSocketReturn {
     deviceStates,
     deviceStatuses,
     sensorData,
+    lastControllerRegistered,
   };
 }
