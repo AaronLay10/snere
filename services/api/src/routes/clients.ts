@@ -27,7 +27,7 @@ const upload = multer({
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
-  fileFilter: (req, file, cb) => {
+  fileFilter: (_req, file, cb) => {
     const allowedMimes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (allowedMimes.includes(file.mimetype)) {
       cb(null, true);
@@ -91,7 +91,7 @@ router.get('/', authenticate, requireRole('admin'), async (req, res) => {
     }
 
     query += ` ORDER BY name ASC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-    params.push(parseInt(limit), parseInt(offset));
+    params.push(parseInt(String(limit)), parseInt(String(offset)));
 
     const result = await db.query(query, params);
 
@@ -103,18 +103,18 @@ router.get('/', authenticate, requireRole('admin'), async (req, res) => {
     const countParams = active !== undefined ? [active === 'true' ? 'active' : 'inactive'] : [];
     const countResult = await db.query(countQuery, countParams);
 
-    res.json({
+    return res.json({
       success: true,
       clients: result.rows,
       pagination: {
         total: parseInt(countResult.rows[0].count),
-        limit: parseInt(limit),
-        offset: parseInt(offset),
+        limit: parseInt(String(limit)),
+        offset: parseInt(String(offset)),
       },
     });
   } catch (error) {
     console.error('List clients error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to retrieve clients',
     });
@@ -163,13 +163,13 @@ router.get('/:id', authenticate, requireClientAccess('id'), async (req, res) => 
       users: parseInt(usersResult.rows[0].user_count),
     };
 
-    res.json({
+    return res.json({
       success: true,
       client: client,
     });
   } catch (error) {
     console.error('Get client error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to retrieve client',
     });
@@ -201,11 +201,7 @@ router.post('/', authenticate, requireRole('admin'), async (req, res) => {
       contact_email,
       contactPhone,
       contact_phone,
-      address,
-      timezone,
-      settings,
       status,
-      isActive = true,
     } = value;
 
     // Auto-generate slug from name if not provided
@@ -248,13 +244,13 @@ router.post('/', authenticate, requireRole('admin'), async (req, res) => {
       ]
     );
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       client: result.rows[0],
     });
   } catch (error) {
     console.error('Create client error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to create client',
     });
@@ -322,13 +318,13 @@ router.put('/:id', authenticate, requireRole('admin'), async (req, res) => {
 
     const result = await db.query(query, params);
 
-    res.json({
+    return res.json({
       success: true,
       client: result.rows[0],
     });
   } catch (error) {
     console.error('Update client error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to update client',
     });
@@ -435,7 +431,7 @@ router.delete('/:id', authenticate, requireRole('admin'), async (req, res) => {
           });
         }
 
-        res.json({
+        return res.json({
           success: true,
           message: 'Client and all associated data deleted successfully',
           client: result.rows[0],
@@ -463,7 +459,7 @@ router.delete('/:id', authenticate, requireRole('admin'), async (req, res) => {
         });
       }
 
-      res.json({
+      return res.json({
         success: true,
         message: 'Client deactivated successfully',
         client: result.rows[0],
@@ -471,7 +467,7 @@ router.delete('/:id', authenticate, requireRole('admin'), async (req, res) => {
     }
   } catch (error) {
     console.error('Delete client error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to delete client',
     });
@@ -512,8 +508,7 @@ router.post('/:id/logo', authenticate, requireRole('admin'), upload.single('logo
       try {
         await fs.unlink(oldLogoPath);
       } catch (err) {
-        // Ignore if file doesn't exist
-        logger.debug('Old logo not found or already deleted', { error: err.message });
+        // Ignore if file doesn't exist - non-critical
       }
     }
 
@@ -542,7 +537,7 @@ router.post('/:id/logo', authenticate, requireRole('admin'), upload.single('logo
       [logoUrl, req.file.originalname, id]
     );
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Client logo uploaded successfully',
       logoUrl: logoUrl,
@@ -550,9 +545,9 @@ router.post('/:id/logo', authenticate, requireRole('admin'), upload.single('logo
     });
   } catch (error) {
     console.error('Upload logo error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
-      message: error.message || 'Failed to upload logo',
+      message: error instanceof Error ? error.message : 'Failed to upload logo',
     });
   }
 });
@@ -589,7 +584,7 @@ router.delete('/:id/logo', authenticate, requireRole('admin'), async (req, res) 
     try {
       await fs.unlink(logoPath);
     } catch (err) {
-      console.log('Logo file not found or already deleted:', err.message);
+      // Ignore if file doesn't exist - non-critical
     }
 
     // Update database
@@ -600,13 +595,13 @@ router.delete('/:id/logo', authenticate, requireRole('admin'), async (req, res) 
       [id]
     );
 
-    res.json({
+    return res.json({
       success: true,
-      message: 'Client logo deleted successfully',
+      message: 'Logo deleted successfully',
     });
   } catch (error) {
     console.error('Delete logo error:', error);
-    res.status(500).json({
+    return res.status(500).json({
       error: 'Internal server error',
       message: 'Failed to delete logo',
     });

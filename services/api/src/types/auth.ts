@@ -34,7 +34,7 @@ export interface AuthenticatedUser {
 export interface AuthenticatedRequest extends Request {
   user?: AuthenticatedUser;
   isServiceAuth?: boolean;
-  interface?: 'sentient' | 'mythra';
+  interface?: string; // Can be 'sentient' | 'mythra' but must accept any string from req
 }
 
 // Role-based permissions
