@@ -93,9 +93,8 @@ jobs:
 
       - name: Sync code to deployment directory
         run: |
-          # Create deployment directory if it doesn't exist
-          sudo mkdir -p /opt/sentient
-          sudo chown -R techadmin:techadmin /opt/sentient
+          # Create deployment directory if it doesn't exist (runner user should have access)
+          mkdir -p /opt/sentient
 
           # Sync code (excluding sensitive files)
           rsync -av --delete \
