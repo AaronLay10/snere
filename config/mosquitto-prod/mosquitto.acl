@@ -6,13 +6,13 @@ user admin
 topic readwrite #
 
 # Sentient services - full access for all clients
-user sentient_api
+user sentient_api_prod
 topic readwrite #
 
-user sentient_executor
+user sentient_executor_prod
 topic readwrite #
 
-user sentient_monitor
+user sentient_monitor_prod
 topic readwrite #
 
 # Paragon client devices - restricted to paragon topics
