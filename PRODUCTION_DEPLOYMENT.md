@@ -1,13 +1,33 @@
 # Production Deployment Guide
 
-This guide walks you through deploying Sentient Engine v1.2.0 to production.
+This guide walks you through deploying Sentient Engine to production.
 
 ## Prerequisites
 
-- ✅ Docker and Docker Compose installed
-- ✅ MQTT broker running at `mqtt.sentientengine.ai:1883`
+- ✅ Docker and Docker Compose v2 installed
+- ✅ MQTT broker running at `192.168.2.3:1883` (see Step 0 below)
 - ✅ GitHub Container Registry access
-- ✅ Production server with sufficient resources
+- ✅ Production server (Ubuntu 24.04 LTS) with sufficient resources (16GB+ RAM recommended)
+
+## Step 0: Deploy Standalone MQTT Broker (REQUIRED)
+
+**CRITICAL:** The MQTT broker must be running BEFORE deploying other services.
+
+```bash
+# Navigate to repository root
+cd /opt/sentient
+
+# Start standalone MQTT broker
+docker compose -f docker-compose.mqtt.yml up -d
+
+# Verify it's running
+docker ps | grep mosquitto-shared
+
+# Test connectivity
+mosquitto_sub -h 192.168.2.3 -p 1883 -t test
+```
+
+See [docs/MQTT_STANDALONE_SETUP.md](docs/MQTT_STANDALONE_SETUP.md) for detailed MQTT configuration.
 
 ## Step 1: Configure Production Environment
 
@@ -55,7 +75,7 @@ The Docker images are stored in GitHub Container Registry and may be private. Yo
 ### Option A: Make Packages Public (Recommended for simpler deployment)
 
 1. Go to https://github.com/AaronLay10?tab=packages
-2. For each package (sentient-api, sentient-executor-engine, sentient-device-monitor, sentient-web):
+2. For each package (snere-api, snere-executor-engine, snere-device-monitor, snere-web):
    - Click on the package
    - Go to "Package settings"
    - Scroll to "Danger Zone"
@@ -268,10 +288,10 @@ docker compose -f docker-compose.prod.yml down
    ```
 
 2. **Verify images exist:**
-   - https://github.com/AaronLay10/sentient/pkgs/container/sentient-api
-   - https://github.com/AaronLay10/sentient/pkgs/container/executor-engine
-   - https://github.com/AaronLay10/sentient/pkgs/container/device-monitor
-   - https://github.com/AaronLay10/sentient/pkgs/container/sentient-web
+   - https://github.com/AaronLay10/snere/pkgs/container/snere-api
+   - https://github.com/AaronLay10/snere/pkgs/container/snere-executor-engine
+   - https://github.com/AaronLay10/snere/pkgs/container/snere-device-monitor
+   - https://github.com/AaronLay10/snere/pkgs/container/snere-web
 
 ## Security Checklist
 

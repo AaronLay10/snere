@@ -17,7 +17,7 @@ BLUE='\033[0;34m'
 NC='\033[0m'
 
 REGISTRY="ghcr.io"
-REPO="aaronlay10/sentient"
+REPO="aaronlay10/snere"
 
 log_info() {
     echo -e "${BLUE}[INFO]${NC} $1"

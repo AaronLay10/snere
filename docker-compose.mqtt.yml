@@ -1,0 +1,56 @@
+version: '3.8'
+
+################################################################################
+# Sentient Engine - Standalone MQTT Broker
+################################################################################
+#
+# This docker-compose file runs the MQTT broker as a standalone service
+# accessible by both development and production environments.
+#
+# Usage:
+#   Start:  docker compose -f docker-compose.mqtt.yml up -d
+#   Stop:   docker compose -f docker-compose.mqtt.yml down
+#   Logs:   docker compose -f docker-compose.mqtt.yml logs -f
+#
+# Network Access:
+#   - MQTT Protocol: 192.168.2.3:1883
+#   - WebSocket:     192.168.2.3:9001
+#
+################################################################################
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: mosquitto-shared
+    restart: unless-stopped
+
+    ports:
+      - "1883:1883"   # MQTT protocol
+      - "9001:9001"   # WebSocket
+
+    volumes:
+      # Configuration (read-only)
+      - ./config/mosquitto-prod/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./config/mosquitto-prod/mosquitto_passwd:/mosquitto/config/mosquitto_passwd:ro
+      - ./config/mosquitto-prod/mosquitto.acl:/mosquitto/config/mosquitto.acl:ro
+
+      # Data persistence
+      - ./volumes/mosquitto-data-shared:/mosquitto/data
+
+      # Logs
+      - ./volumes/mosquitto-logs-shared:/mosquitto/log
+
+    healthcheck:
+      test: ["CMD-SHELL", "mosquitto_sub -h localhost -p 1883 -t '$$SYS/#' -C 1 -W 1 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+    networks:
+      - mqtt-shared
+
+networks:
+  mqtt-shared:
+    driver: bridge
+    name: mqtt-shared
