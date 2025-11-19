@@ -111,11 +111,7 @@ jobs:
             if [ -f "$file" ]; then
               cp "$file" /opt/sentient/
             fi
-          done
-
-      - name: Login to GitHub Container Registry
-        run: |
-          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          fi
 
       - name: Deploy with deployment script
         working-directory: /opt/sentient
