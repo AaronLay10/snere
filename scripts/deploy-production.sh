@@ -100,7 +100,7 @@ pull_images() {
     log_info "Pulling latest Docker images from GHCR..."
     
     cd "$PROJECT_ROOT"
-    docker compose -f docker-compose.prod.yml pull
+    docker compose -f docker-compose.prod.yml --env-file .env.production pull
     
     log_success "Images pulled successfully"
 }
@@ -113,11 +113,11 @@ deploy_services() {
     
     # Stop old containers
     log_info "Stopping old containers..."
-    docker compose -f docker-compose.prod.yml down || true
+    docker compose -f docker-compose.prod.yml --env-file .env.production down || true
     
     # Start new containers
     log_info "Starting new containers..."
-    docker compose -f docker-compose.prod.yml up -d
+    docker compose -f docker-compose.prod.yml --env-file .env.production up -d
     
     log_success "Services deployed"
 }
@@ -130,11 +130,11 @@ deploy_with_observability() {
     
     # Stop old containers
     log_info "Stopping old containers..."
-    docker compose -f docker-compose.prod.yml --profile observability down || true
+    docker compose -f docker-compose.prod.yml --env-file .env.production --profile observability down || true
     
     # Start new containers
     log_info "Starting new containers..."
-    docker compose -f docker-compose.prod.yml --profile observability up -d
+    docker compose -f docker-compose.prod.yml --env-file .env.production --profile observability up -d
     
     log_success "Services deployed with observability"
 }
@@ -147,7 +147,7 @@ wait_for_services() {
     local attempt=0
     
     while [ $attempt -lt $max_attempts ]; do
-        if docker compose -f "$PROJECT_ROOT/docker-compose.prod.yml" ps | grep -q "healthy"; then
+        if docker compose -f "$PROJECT_ROOT/docker-compose.prod.yml" --env-file "$PROJECT_ROOT/.env.production" ps | grep -q "healthy"; then
             log_success "Services are healthy"
             return 0
         fi
@@ -164,7 +164,7 @@ wait_for_services() {
 show_status() {
     log_info "Service Status:"
     echo ""
-    docker compose -f "$PROJECT_ROOT/docker-compose.prod.yml" ps
+    docker compose -f "$PROJECT_ROOT/docker-compose.prod.yml" --env-file "$PROJECT_ROOT/.env.production" ps
     echo ""
 }
 
@@ -244,8 +244,8 @@ main() {
     fi
     
     echo ""
-    log_info "To view logs: docker compose -f docker-compose.prod.yml logs -f"
-    log_info "To stop services: docker compose -f docker-compose.prod.yml down"
+    log_info "To view logs: docker compose -f docker-compose.prod.yml --env-file .env.production logs -f"
+    log_info "To stop services: docker compose -f docker-compose.prod.yml --env-file .env.production down"
     echo ""
 }
 
