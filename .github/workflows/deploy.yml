@@ -111,7 +111,7 @@ jobs:
             if [ -f "$file" ]; then
               cp "$file" /opt/sentient/
             fi
-          fi
+          done
 
       - name: Deploy with deployment script
         working-directory: /opt/sentient
