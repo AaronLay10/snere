@@ -88,7 +88,7 @@ router.get('/', authenticate, requireCapability('read'), async (req, res) => {
     }
 
     query += ` ORDER BY r.name ASC LIMIT $${paramIndex++} OFFSET $${paramIndex++}`;
-    params.push(parseInt(limit), parseInt(offset));
+    params.push(parseInt(String(limit)), parseInt(String(offset)));
 
     const result = await db.query(query, params);
 

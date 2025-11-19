@@ -12,6 +12,7 @@ import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 import db from '../config/database.js';
 import { authenticate, hashPassword } from '../middleware/auth.js';
+import logger from '../utils/logger.js';
 import { canManageRole, requireCapability } from '../middleware/rbac.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -302,12 +303,12 @@ router.put('/:id', authenticate, async (req, res) => {
 
         // Handle password separately (needs hashing)
         if (key === 'password') {
-          const passwordHash = await hashPassword(val);
+          const passwordHash = await hashPassword(String(val));
           updates.push(`password_hash = $${paramIndex++}`);
           params.push(passwordHash);
         } else if (key === 'email') {
           updates.push(`${dbKey} = $${paramIndex++}`);
-          params.push(val.toLowerCase());
+          params.push(String(val).toLowerCase());
         } else {
           updates.push(`${dbKey} = $${paramIndex++}`);
           params.push(val);
@@ -387,7 +388,7 @@ router.delete('/:id', authenticate, requireCapability('manage_users'), async (re
     );
 
     const deps = depsCheck.rows[0];
-    const hasDependencies = Object.values(deps).some((count) => parseInt(count) > 0);
+    const hasDependencies = Object.values(deps).some((count) => parseInt(String(count)) > 0);
 
     if (hasDependencies) {
       return res.status(409).json({

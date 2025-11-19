@@ -721,6 +721,7 @@ router.post(
 
         // Handle puzzle steps - create separate puzzle JSON
         if (step.step_type === 'puzzle') {
+          const sceneIdSnakeCase = scene.name.toLowerCase().replace(/[^a-z0-9]+/g, '_');
           const puzzleId =
             step.config?.puzzle_id || `${sceneIdSnakeCase}_puzzle_${step.step_number}`;
           const puzzleFileName = `${puzzleId}.json`;
@@ -799,21 +800,21 @@ router.post(
 
         // Add duration if applicable
         if (stepDuration > 0) {
-          timelineStep.duration = stepDuration;
+          (timelineStep as any).duration = stepDuration;
         }
 
         // Add execution config for loops
-        if (step.execution_mode === 'loop' && step.loop_id) {
-          timelineStep.execution = {
+        if (step.execution_mode === 'loop' && (step as any).loop_id) {
+          (timelineStep as any).execution = {
             mode: 'loop',
-            interval: step.execution_interval,
-            loopId: step.loop_id,
+            interval: (step as any).execution_interval,
+            loopId: (step as any).loop_id,
           };
         }
 
         // Add params if available
         if (step.config?.params) {
-          timelineStep.params = step.config.params;
+          (timelineStep as any).params = step.config.params;
         }
 
         timeline.push(timelineStep);

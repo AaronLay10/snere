@@ -3,8 +3,7 @@
  * Handles login, logout, password reset, and token refresh
  */
 
-import express from 'express';
-import { Router, Request, Response } from 'express';
+import { Router } from 'express';
 const router = Router();
 import Joi from 'joi';
 import db from '../config/database.js';

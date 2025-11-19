@@ -30,15 +30,14 @@ router.post('/publish', authenticate, async (req, res) => {
 
   try {
     // Use the singleton MQTT client's publishCommand method
-    await mqttClient.publishCommand(topic, payload, { qos: parseInt(qos) });
+    await mqttClient.publishCommand(topic, payload, { qos: parseInt(qos) as 0 | 1 | 2 });
 
-    logger.info(
-      {
-        topic,
-        payload,
-        user: req.user?.username,
-        client_id: req.user?.client_id,
-      },
+    logger.info({
+      topic,
+      payload,
+      user: req.user?.username,
+      client_id: req.user?.client_id,
+    } as any,
       'MQTT message published via API'
     );
 
@@ -52,7 +51,7 @@ router.post('/publish', authenticate, async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error({ err: error, topic }, 'Error publishing MQTT message');
+    logger.error('Error publishing MQTT message', { err: error, topic } as any);
     res.status(500).json({
       success: false,
       error: {
@@ -89,7 +88,7 @@ router.post('/touchscreen/publish', async (req, res) => {
   const isAllowed = allowedTopicPrefixes.some((prefix) => topic.startsWith(prefix));
 
   if (!isAllowed) {
-    logger.warn({ topic }, 'Touchscreen attempted to publish to unauthorized topic');
+    logger.warn('Touchscreen attempted to publish to unauthorized topic', { topic } as any);
     return res.status(403).json({
       success: false,
       error: {
@@ -103,14 +102,11 @@ router.post('/touchscreen/publish', async (req, res) => {
     // Use the singleton MQTT client's publishCommand method
     await mqttClient.publishCommand(topic, payload, { qos: 1 });
 
-    logger.info(
-      {
+    logger.info('MQTT message published via touchscreen', {
         topic,
         payload,
         source: 'touchscreen',
-      },
-      'MQTT message published via touchscreen'
-    );
+      } as any);
 
     res.json({
       success: true,
@@ -122,7 +118,7 @@ router.post('/touchscreen/publish', async (req, res) => {
       },
     });
   } catch (error) {
-    logger.error({ err: error, topic }, 'Error publishing MQTT message from touchscreen');
+    logger.error('Error publishing MQTT message from touchscreen', { err: error, topic } as any);
     res.status(500).json({
       success: false,
       error: {

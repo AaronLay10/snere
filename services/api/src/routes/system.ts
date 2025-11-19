@@ -3,7 +3,6 @@
  * Health checks and service status for all microservices
  */
 
-import express from 'express';
 import { Router } from 'express';
 const router = Router();
 import axios from 'axios';
@@ -45,7 +44,9 @@ router.get('/status', authenticate, async (req, res) => {
       })
     );
 
-    const services = serviceStatuses.map((result) => result.value);
+    const services = serviceStatuses
+      .filter((result): result is PromiseFulfilledResult<any> => result.status === 'fulfilled')
+      .map((result) => result.value);
 
     res.json({
       success: true,

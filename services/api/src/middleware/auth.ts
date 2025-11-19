@@ -46,10 +46,10 @@ export function generateToken(user: User | AuthenticatedUser): string {
     permissions: [],
   };
 
-  return jwt.sign(payload, JWT_SECRET!, {
+  return jwt.sign(payload, JWT_SECRET as string, {
     expiresIn: JWT_EXPIRES_IN,
     issuer: 'sentient-api',
-  });
+  } as jwt.SignOptions);
 }
 
 /**

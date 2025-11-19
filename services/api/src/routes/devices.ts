@@ -502,11 +502,11 @@ router.get('/:id/sensors', authenticate, requireCapability('read'), async (req, 
 
     if (sensorName) {
       query += ` AND sensor_name = $2`;
-      params.push(sensorName);
+      params.push(String(sensorName));
     }
 
     query += ` ORDER BY received_at DESC LIMIT $${params.length + 1}`;
-    params.push(parseInt(limit, 10));
+    params.push(String(parseInt(String(limit), 10)));
 
     const result = await db.query(query, params);
 
@@ -580,7 +580,7 @@ router.get('/:id/state', authenticate, requireCapability('read'), async (req, re
 router.get('/:id/sensor-data', authenticate, async (req, res) => {
   try {
     const { id } = req.params;
-    const limit = parseInt(req.query.limit) || 50;
+    const limit = parseInt(String(req.query.limit)) || 50;
 
     // Get recent sensor data for this device
     const query = `
