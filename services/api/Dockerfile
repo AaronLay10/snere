@@ -8,11 +8,11 @@ RUN apk add --no-cache curl
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+# Copy package files (service-level package.json only, no lockfile needed for individual service)
+COPY package.json ./
 
-# Install production dependencies only
-RUN npm ci --only=production
+# Install production dependencies directly (no lockfile verification)
+RUN npm install --omit=dev --no-package-lock
 
 # Copy application source
 COPY src ./src
