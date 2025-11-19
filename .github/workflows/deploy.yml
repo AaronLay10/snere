@@ -81,50 +81,44 @@ jobs:
 
   deploy-production:
     name: Deploy to Production
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, production, sentient]
     needs: build-and-push
     environment:
       name: production
-      url: https://sentientengine.ai
+      url: http://192.168.2.3:3002
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy to production server
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.PROD_HOST }}
-          username: ${{ secrets.PROD_USER }}
-          key: ${{ secrets.PROD_SSH_KEY }}
-          port: ${{ secrets.PROD_SSH_PORT || 22 }}
-          script: |
-            cd ${{ secrets.PROD_DEPLOY_PATH || '/opt/sentient' }}
+      - name: Login to GitHub Container Registry
+        run: |
+          echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-            # Login to GitHub Container Registry
-            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Deploy with deployment script
+        working-directory: /opt/sentient
+        run: |
+          # Pull latest code
+          git fetch origin
+          git reset --hard origin/main
 
-            # Pull latest images
-            docker compose -f docker-compose.prod.yml pull
+          # Run deployment script
+          ./scripts/deploy-production.sh
 
-            # Restart services with zero-downtime
-            docker compose -f docker-compose.prod.yml up -d --no-deps --build
-
-            # Clean up old images
-            docker image prune -af --filter "until=24h"
-
-            # Health check
-            sleep 10
-            curl -f http://localhost:3000/health || exit 1
-
-            echo "✅ Deployment successful!"
+      - name: Health check
+        run: |
+          sleep 15
+          curl -f http://localhost:3000/health || exit 1
+          curl -f http://localhost:3002 || exit 1
+          curl -f http://localhost:3003/health || exit 1
+          curl -f http://localhost:3004/health || exit 1
 
       - name: Deployment summary
         run: |
           echo "### 🚀 Production Deployment Complete" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Environment:** Production" >> $GITHUB_STEP_SUMMARY
-          echo "**URL:** https://sentientengine.ai" >> $GITHUB_STEP_SUMMARY
+          echo "**Environment:** Production (Self-Hosted)" >> $GITHUB_STEP_SUMMARY
+          echo "**Server:** 192.168.2.3" >> $GITHUB_STEP_SUMMARY
           echo "**Images Deployed:**" >> $GITHUB_STEP_SUMMARY
           echo "- \`ghcr.io/${{ github.repository }}-api:latest\`" >> $GITHUB_STEP_SUMMARY
           echo "- \`ghcr.io/${{ github.repository }}-executor-engine:latest\`" >> $GITHUB_STEP_SUMMARY
