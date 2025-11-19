@@ -32,7 +32,7 @@ class MQTTClientManager {
 
     if (process.env.MQTT_USERNAME) {
       options.username = process.env.MQTT_USERNAME;
-      options.password = process.env.MQTT_PASSWORD;
+      options.password = process.env.MQTT_PASSWORD?.trim();
     }
 
     logger.info(`Connecting to MQTT broker at ${brokerUrl}...`);
@@ -67,8 +67,8 @@ class MQTTClientManager {
    * Publish a command to a device
    */
   async publishCommand(
-    topic: string, 
-    payload: Record<string, any> | string, 
+    topic: string,
+    payload: Record<string, any> | string,
     options: MqttPublishOptions = {}
   ): Promise<void> {
     if (!this.client || !this.connected) {

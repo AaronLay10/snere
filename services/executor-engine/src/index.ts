@@ -49,8 +49,8 @@ const io = new SocketIOServer(server, {
   path: '/socket.io',
   cors: {
     origin: config.CORS_ORIGIN === '*' ? true : config.CORS_ORIGIN.split(','),
-    methods: ['GET', 'POST', 'PATCH', 'DELETE']
-  }
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  },
 });
 
 const startedAt = Date.now();
@@ -101,9 +101,9 @@ if (config.MQTT_URL) {
   mqttClient = new MQTTClientManager({
     url: config.MQTT_URL,
     username: config.MQTT_USERNAME,
-    password: config.MQTT_PASSWORD,
+    password: config.MQTT_PASSWORD?.trim(),
     clientId: 'scene-orchestrator',
-    topicFilter: config.MQTT_TOPIC_FILTER || 'paragon/#'
+    topicFilter: config.MQTT_TOPIC_FILTER || 'paragon/#',
   });
 }
 
@@ -162,7 +162,7 @@ if (mqttClient) {
     conditionEvaluator.updateSensorData(message);
 
     // Evaluate all active puzzles
-    const activePuzzles = scenes.list().filter(s => s.type === 'puzzle' && s.state === 'active');
+    const activePuzzles = scenes.list().filter((s) => s.type === 'puzzle' && s.state === 'active');
 
     for (const puzzle of activePuzzles) {
       const isSolved = conditionEvaluator.evaluatePuzzle(puzzle);
@@ -248,7 +248,10 @@ const timelineExecutor = orchestrator.getTimelineExecutor();
 
 timelineExecutor.on('timeline-block-started', (data) => {
   io.emit('timeline-block-started', data);
-  logger.debug({ sceneId: data.sceneId, blockId: data.block.id }, 'Timeline block started broadcast');
+  logger.debug(
+    { sceneId: data.sceneId, blockId: data.block.id },
+    'Timeline block started broadcast'
+  );
 });
 
 timelineExecutor.on('timeline-block-active', (data) => {
@@ -258,7 +261,10 @@ timelineExecutor.on('timeline-block-active', (data) => {
 
 timelineExecutor.on('timeline-block-completed', (data) => {
   io.emit('timeline-block-completed', data);
-  logger.debug({ sceneId: data.sceneId, blockId: data.blockId }, 'Timeline block completed broadcast');
+  logger.debug(
+    { sceneId: data.sceneId, blockId: data.blockId },
+    'Timeline block completed broadcast'
+  );
 });
 
 timelineExecutor.on('timeline-completed', (data) => {
@@ -281,16 +287,18 @@ app.use(
     origin: config.CORS_ORIGIN === '*' ? '*' : config.CORS_ORIGIN.split(','),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 app.use(express.json());
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }
-}));
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: 'cross-origin' },
+  })
+);
 app.use(
   pinoHttp({
-    logger
+    logger,
   } as any)
 );
 
@@ -307,19 +315,22 @@ app.get('/', (_req, res) => {
       sceneOrchestrator: true,
       cutscenes: true,
       directorControls: true,
-      safetyChecks: true
+      safetyChecks: true,
     },
     stats: {
       scenes: scenes.list().length,
       puzzles: scenes.listByType('puzzle').length,
       cutscenes: scenes.listByType('cutscene').length,
-      sessions: sessions.list().length
-    }
+      sessions: sessions.list().length,
+    },
   });
 });
 
 // Health check
-app.use('/health', healthRouter({ puzzles: scenes as unknown as PuzzleRegistry, sessions, startedAt }));
+app.use(
+  '/health',
+  healthRouter({ puzzles: scenes as unknown as PuzzleRegistry, sessions, startedAt })
+);
 
 // Scene Orchestrator Routes
 app.use('/scenes', scenesRouter(scenes, orchestrator));
@@ -389,7 +400,7 @@ const startup = async () => {
       {
         totalScenes: allScenes.length,
         puzzles: allScenes.filter((s) => s.type === 'puzzle').length,
-        cutscenes: allScenes.filter((s) => s.type === 'cutscene').length
+        cutscenes: allScenes.filter((s) => s.type === 'cutscene').length,
       },
       'Scenes loaded into registry'
     );
@@ -401,7 +412,9 @@ const startup = async () => {
       const stats = conditionEvaluator.getCacheStats();
       logger.info({ ...stats }, 'Puzzle condition evaluator initialized');
     } else {
-      logger.warn('MQTT_URL not configured - sensor monitoring disabled (puzzles will not auto-solve)');
+      logger.warn(
+        'MQTT_URL not configured - sensor monitoring disabled (puzzles will not auto-solve)'
+      );
     }
 
     // Start HTTP server

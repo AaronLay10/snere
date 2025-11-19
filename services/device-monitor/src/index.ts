@@ -21,14 +21,14 @@ const app = express();
 const startedAt = Date.now();
 
 const registry = new DeviceRegistry({
-  heartbeatTimeoutMs: config.DEVICE_HEARTBEAT_TIMEOUT_MS
+  heartbeatTimeoutMs: config.DEVICE_HEARTBEAT_TIMEOUT_MS,
 });
 const mqtt = new MQTTManager({
   url: config.MQTT_URL,
   username: config.MQTT_USERNAME,
-  password: config.MQTT_PASSWORD,
+  password: config.MQTT_PASSWORD?.trim(),
   clientId: config.MQTT_CLIENT_ID,
-  topicFilter: config.MQTT_TOPIC_FILTER
+  topicFilter: config.MQTT_TOPIC_FILTER,
 });
 const topicBuilder = new TopicBuilder();
 const alerts = new AlertManager();
@@ -36,7 +36,7 @@ const alerts = new AlertManager();
 // Initialize controller registration handler (legacy single-message format)
 const controllerRegistration = new ControllerRegistration({
   apiBaseUrl: process.env.API_BASE_URL || 'http://localhost:3000',
-  serviceToken: process.env.SERVICE_AUTH_TOKEN
+  serviceToken: process.env.SERVICE_AUTH_TOKEN,
 });
 
 // Initialize split registration handler (v2.0.7+ format)
@@ -50,20 +50,20 @@ let splitRegistration: SplitRegistrationHandler;
 
 // Initialize device state manager for sensor/state tracking
 const stateManager = new DeviceStateManager({
-  databaseUrl: process.env.DATABASE_URL || ''
+  databaseUrl: process.env.DATABASE_URL || '',
 });
 
 // Initialize heartbeat writer to persist controller status to database
 const heartbeatWriter = new HeartbeatWriter({
   databaseUrl: process.env.DATABASE_URL || '',
   batchSize: 50,
-  flushIntervalMs: 2000 // Flush every 2 seconds
+  flushIntervalMs: 2000, // Flush every 2 seconds
 });
 heartbeatWriter.start();
 
 if (config.PUZZLE_ENGINE_URL) {
   const bridge = new PuzzleEngineBridge(registry, {
-    baseUrl: config.PUZZLE_ENGINE_URL
+    baseUrl: config.PUZZLE_ENGINE_URL,
   });
   bridge.start();
 } else {
@@ -78,8 +78,8 @@ registry.on('device-offline', ({ device }) => {
       id: device.id,
       roomId: device.roomId,
       puzzleId: device.puzzleId,
-      status: device.status
-    }
+      status: device.status,
+    },
   });
 
   // Write offline status to database
@@ -97,12 +97,12 @@ app.use(express.json());
 app.use(helmet());
 app.use(
   cors({
-    origin: '*'
+    origin: '*',
   })
 );
 app.use(
   pinoHttp({
-    logger
+    logger,
   } as any)
 );
 
@@ -112,7 +112,7 @@ app.use(
     mqtt,
     topicBuilder,
     startedAt,
-    stateManager
+    stateManager,
   })
 );
 
@@ -120,7 +120,7 @@ app.get('/', (_req, res) => {
   res.json({
     service: config.SERVICE_NAME,
     status: 'ok',
-    startedAt: new Date(startedAt).toISOString()
+    startedAt: new Date(startedAt).toISOString(),
   });
 });
 
@@ -135,7 +135,7 @@ const wsServer = new WebSocketServer(server, registry, stateManager);
 splitRegistration = new SplitRegistrationHandler({
   databaseUrl: config.DATABASE_URL,
   registrationTimeoutMs: 10000,
-  wsServer
+  wsServer,
 });
 
 const HEALTH_SWEEP_INTERVAL = config.HEALTH_SWEEP_INTERVAL_MS;
@@ -143,7 +143,10 @@ const healthInterval = setInterval(() => registry.performHealthSweep(), HEALTH_S
 
 mqtt.on('message', (message) => {
   // Check if this is a split controller registration message (v2.0.7+)
-  if (message.topic === 'sentient/system/register/controller' || message.topic.endsWith('/system/register/controller')) {
+  if (
+    message.topic === 'sentient/system/register/controller' ||
+    message.topic.endsWith('/system/register/controller')
+  ) {
     const controllerData = SplitRegistrationHandler.parseControllerMessage(message.payload);
     if (controllerData) {
       splitRegistration.handleControllerMessage(controllerData).catch((error) => {
@@ -152,7 +155,10 @@ mqtt.on('message', (message) => {
     }
   }
   // Check if this is a split device registration message (v2.0.7+)
-  else if (message.topic === 'sentient/system/register/device' || message.topic.endsWith('/system/register/device')) {
+  else if (
+    message.topic === 'sentient/system/register/device' ||
+    message.topic.endsWith('/system/register/device')
+  ) {
     const deviceData = SplitRegistrationHandler.parseDeviceMessage(message.payload);
     if (deviceData) {
       splitRegistration.handleDeviceMessage(deviceData).catch((error) => {
@@ -161,7 +167,10 @@ mqtt.on('message', (message) => {
     }
   }
   // Legacy single-message registration format (pre-v2.0.7)
-  else if (message.topic === 'sentient/system/register' || message.topic.endsWith('/system/register')) {
+  else if (
+    message.topic === 'sentient/system/register' ||
+    message.topic.endsWith('/system/register')
+  ) {
     const registrationData = ControllerRegistration.parseMessage(message.payload);
     if (registrationData) {
       controllerRegistration.handleRegistration(registrationData).catch((error) => {
@@ -174,7 +183,10 @@ mqtt.on('message', (message) => {
 
     // Also check if this is sensor/state data
     stateManager.handleMessage(message).catch((error) => {
-      logger.error({ error: error.message, topic: message.topic }, 'Failed to process sensor/state data');
+      logger.error(
+        { error: error.message, topic: message.topic },
+        'Failed to process sensor/state data'
+      );
     });
   }
 });
@@ -199,8 +211,12 @@ const shutdown = async (signal: string) => {
   clearInterval(healthInterval);
 
   wsServer.close();
-  await heartbeatWriter.close().catch((error) => logger.error({ err: error }, 'Error closing heartbeat writer'));
-  await stateManager.close().catch((error) => logger.error({ err: error }, 'Error closing state manager'));
+  await heartbeatWriter
+    .close()
+    .catch((error) => logger.error({ err: error }, 'Error closing heartbeat writer'));
+  await stateManager
+    .close()
+    .catch((error) => logger.error({ err: error }, 'Error closing state manager'));
   await mqtt.stop().catch((error) => logger.error({ err: error }, 'Error stopping MQTT manager'));
 
   server.close((error) => {
