@@ -90,8 +90,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          path: /opt/sentient
+
+      - name: Sync code to deployment directory
+        run: |
+          # Create deployment directory if it doesn't exist
+          sudo mkdir -p /opt/sentient
+          sudo chown -R techadmin:techadmin /opt/sentient
+
+          # Sync code (excluding sensitive files)
+          rsync -av --delete \
+            --exclude='.git' \
+            --exclude='node_modules' \
+            --exclude='.env.production' \
+            --exclude='volumes/' \
+            ./ /opt/sentient/
 
       - name: Login to GitHub Container Registry
         run: |
