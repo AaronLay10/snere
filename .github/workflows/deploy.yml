@@ -96,13 +96,22 @@ jobs:
           # Create deployment directory if it doesn't exist (runner user should have access)
           mkdir -p /opt/sentient
 
-          # Sync code (excluding sensitive files)
-          rsync -av --delete \
-            --exclude='.git' \
-            --exclude='node_modules' \
-            --exclude='.env.production' \
-            --exclude='volumes/' \
-            ./ /opt/sentient/
+          # Copy all files except excluded ones
+          find . -maxdepth 1 ! -name '.' ! -name '.git' ! -name 'node_modules' ! -name 'volumes' -exec cp -r {} /opt/sentient/ \;
+
+          # Copy subdirectories but exclude patterns
+          for dir in services scripts config docker docs hardware bin .github; do
+            if [ -d "$dir" ]; then
+              cp -r "$dir" /opt/sentient/
+            fi
+          done
+
+          # Copy files in root
+          for file in *.md *.yml *.yaml *.json *.js *.sh *.txt; do
+            if [ -f "$file" ]; then
+              cp "$file" /opt/sentient/
+            fi
+          done
 
       - name: Login to GitHub Container Registry
         run: |
