@@ -4,7 +4,7 @@
  */
 
 // dotenv loaded in index.ts
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
@@ -16,7 +16,6 @@ import { auditLog } from './middleware/audit.js';
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 // Configure logger
 const logger = winston.createLogger({

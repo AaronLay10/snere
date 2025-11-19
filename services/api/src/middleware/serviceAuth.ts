@@ -67,14 +67,14 @@ export function authenticateServiceOrUser(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
-): void | Response {
+): Promise<void> | Response {
   const serviceToken = req.headers['x-service-token'];
 
   // Try service authentication first
   if (serviceToken) {
-    return authenticateService(req, res, next);
+    return authenticateService(req, res, next) as unknown as Promise<void>;
   }
 
   // Fall back to normal user authentication
-  return authenticate(req, res, next);
+  return authenticate(req, res, next) as unknown as Promise<void>;
 }

@@ -1,0 +1,341 @@
+Run npm run build
+  npm run build
+  shell: /usr/bin/bash -e {0}
+
+> sentient-engine@1.2.0 build
+> npm run build --workspaces --if-present
+
+
+> sentient-api@1.2.0 build
+> tsc
+
+Error: src/middleware/auth.ts(49,14): error TS2769: No overload matches this call.
+  Overload 1 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: null, options?: (SignOptions & { algorithm: "none"; }) | undefined): string', gave the following error.
+    Argument of type 'string' is not assignable to parameter of type 'null'.
+  Overload 2 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Buffer<ArrayBufferLike> | Secret | PrivateKeyInput | JsonWebKeyInput, options?: SignOptions | undefined): string', gave the following error.
+    Type 'string' is not assignable to type 'number | StringValue | undefined'.
+  Overload 3 of 5, '(payload: string | object | Buffer<ArrayBufferLike>, secretOrPrivateKey: Buffer<ArrayBufferLike> | Secret | PrivateKeyInput | JsonWebKeyInput, callback: SignCallback): void', gave the following error.
+    Object literal may only specify known properties, and 'expiresIn' does not exist in type 'SignCallback'.
+Error: src/middleware/serviceAuth.ts(79,3): error TS2322: Type 'Promise<void>' is not assignable to type 'void | Response<any, Record<string, any>>'.
+Error: src/routes/audit.ts(165,43): error TS7030: Not all code paths return a value.
+Error: src/routes/auth.ts(6,1): error TS6133: 'express' is declared but its value is never read.
+Error: src/routes/auth.ts(7,18): error TS6133: 'Request' is declared but its value is never read.
+Error: src/routes/auth.ts(7,27): error TS6133: 'Response' is declared but its value is never read.
+Error: src/routes/auth.ts(47,23): error TS7030: Not all code paths return a value.
+Error: src/routes/auth.ts(171,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(172,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(173,18): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(196,33): error TS7030: Not all code paths return a value.
+Error: src/routes/auth.ts(206,8): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(246,47): error TS7030: Not all code paths return a value.
+Error: src/routes/auth.ts(262,8): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(288,25): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(293,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(294,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(295,18): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(298,19): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/auth.ts(319,39): error TS7030: Not all code paths return a value.
+Error: src/routes/auth.ts(326,8): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/controllers.ts(274,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(283,74): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(328,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(341,3): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(528,11): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/controllers.ts(529,11): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/controllers.ts(541,11): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(552,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(566,3): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(641,25): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ room_id: string; controller_id: string; friendly_name: string; description: string; hardware_type: string; hardware_version: string; mcu_model: string; clock_speed_mhz: string; ip_address: string; ... 38 more ...; capabilityManifest: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ room_id: string; controller_id: string; friendly_name: string; description: string; hardware_type: string; hardware_version: string; mcu_model: string; clock_speed_mhz: string; ip_address: string; ... 38 more ...; capabilityManifest: string; }'.
+Error: src/routes/controllers.ts(662,19): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/controllers.ts(694,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(704,74): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(745,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(772,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(785,3): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(818,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(832,3): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(865,61): error TS7006: Parameter 't' implicitly has an 'any' type.
+Error: src/routes/controllers.ts(930,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(944,3): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(979,45): error TS7006: Parameter 'a' implicitly has an 'any' type.
+Error: src/routes/controllers.ts(1046,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/controllers.ts(1060,3): error TS7030: Not all code paths return a value.
+Error: src/routes/controllers.ts(1090,53): error TS7006: Parameter 'd' implicitly has an 'any' type.
+Error: src/routes/controllers.ts(1181,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/device-commands.ts(24,3): error TS7030: Not all code paths return a value.
+Error: src/routes/device-commands.ts(53,11): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(53,61): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(107,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(127,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/device-commands.ts(142,3): error TS7030: Not all code paths return a value.
+Error: src/routes/device-commands.ts(166,11): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(166,65): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(182,45): error TS7006: Parameter 'a' implicitly has an 'any' type.
+Error: src/routes/device-commands.ts(248,18): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(249,21): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(256,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(274,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/device-commands.ts(289,3): error TS7030: Not all code paths return a value.
+Error: src/routes/device-commands.ts(319,53): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(320,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/device-commands.ts(340,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/devices.ts(172,61): error TS7030: Not all code paths return a value.
+Error: src/routes/devices.ts(254,69): error TS7030: Not all code paths return a value.
+Error: src/routes/devices.ts(284,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(284,71): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(327,71): error TS7030: Not all code paths return a value.
+Error: src/routes/devices.ts(347,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(347,69): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(419,74): error TS7030: Not all code paths return a value.
+Error: src/routes/devices.ts(439,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(439,69): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(464,69): error TS7030: Not all code paths return a value.
+Error: src/routes/devices.ts(488,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(488,59): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(505,19): error TS2345: Argument of type 'string | ParsedQs | (string | ParsedQs)[]' is not assignable to parameter of type 'string'.
+  Type 'ParsedQs' is not assignable to type 'string'.
+Error: src/routes/devices.ts(509,17): error TS2345: Argument of type 'number' is not assignable to parameter of type 'string'.
+Error: src/routes/devices.ts(509,26): error TS2345: Argument of type 'string | 100 | ParsedQs | (string | ParsedQs)[]' is not assignable to parameter of type 'string'.
+  Type 'number' is not assignable to type 'string'.
+Error: src/routes/devices.ts(532,67): error TS7030: Not all code paths return a value.
+Error: src/routes/devices.ts(555,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(555,59): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/devices.ts(583,28): error TS2345: Argument of type 'string | ParsedQs | (string | ParsedQs)[] | undefined' is not assignable to parameter of type 'string'.
+  Type 'undefined' is not assignable to type 'string'.
+Error: src/routes/mqtt.ts(18,39): error TS7030: Not all code paths return a value.
+Error: src/routes/mqtt.ts(33,55): error TS2322: Type 'number' is not assignable to type '0 | 1 | 2 | undefined'.
+Error: src/routes/mqtt.ts(36,7): error TS2345: Argument of type '{ topic: any; payload: any; user: string | undefined; client_id: string | null | undefined; }' is not assignable to parameter of type 'string'.
+Error: src/routes/mqtt.ts(55,18): error TS2345: Argument of type '{ err: unknown; topic: any; }' is not assignable to parameter of type 'string'.
+Error: src/routes/mqtt.ts(61,18): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/mqtt.ts(73,37): error TS7030: Not all code paths return a value.
+Error: src/routes/mqtt.ts(92,17): error TS2345: Argument of type '{ topic: any; }' is not assignable to parameter of type 'string'.
+Error: src/routes/mqtt.ts(107,7): error TS2345: Argument of type '{ topic: any; payload: any; source: string; }' is not assignable to parameter of type 'string'.
+Error: src/routes/mqtt.ts(125,18): error TS2345: Argument of type '{ err: unknown; topic: any; }' is not assignable to parameter of type 'string'.
+Error: src/routes/mqtt.ts(131,18): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/mqtt.ts(141,38): error TS6133: 'req' is declared but its value is never read.
+Error: src/routes/mythra.ts(34,43): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(53,33): error TS7030: Not all code paths return a value.
+Error: src/routes/mythra.ts(63,12): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(127,32): error TS7030: Not all code paths return a value.
+Error: src/routes/mythra.ts(141,16): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(158,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(167,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(168,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(169,18): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(198,28): error TS7030: Not all code paths return a value.
+Error: src/routes/mythra.ts(212,16): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(224,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(225,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(226,18): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(255,22): error TS7030: Not all code paths return a value.
+Error: src/routes/mythra.ts(269,7): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(281,15): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(282,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/mythra.ts(283,18): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(38,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(40,19): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(69,61): error TS7030: Not all code paths return a value.
+Error: src/routes/puzzles.ts(90,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(90,59): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(109,69): error TS7030: Not all code paths return a value.
+Error: src/routes/puzzles.ts(142,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(142,71): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(171,71): error TS7030: Not all code paths return a value.
+Error: src/routes/puzzles.ts(191,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(191,69): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(223,21): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ type: string; difficulty: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ type: string; difficulty: string; }'.
+Error: src/routes/puzzles.ts(226,14): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ type: string; difficulty: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ type: string; difficulty: string; }'.
+Error: src/routes/puzzles.ts(267,74): error TS7030: Not all code paths return a value.
+Error: src/routes/puzzles.ts(286,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(286,69): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/puzzles.ts(330,25): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/puzzles.ts(357,25): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/rooms.ts(73,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(75,19): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(91,26): error TS2345: Argument of type 'string | ParsedQs | 50 | (string | ParsedQs)[]' is not assignable to parameter of type 'string'.
+  Type 'ParsedQs' is not assignable to type 'string'.
+Error: src/routes/rooms.ts(91,43): error TS2345: Argument of type 'string | 0 | ParsedQs | (string | ParsedQs)[]' is not assignable to parameter of type 'string'.
+  Type 'number' is not assignable to type 'string'.
+Error: src/routes/rooms.ts(112,61): error TS7030: Not all code paths return a value.
+Error: src/routes/rooms.ts(134,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(134,57): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(179,60): error TS7030: Not all code paths return a value.
+Error: src/routes/rooms.ts(203,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(203,52): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(277,62): error TS7030: Not all code paths return a value.
+Error: src/routes/rooms.ts(291,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(291,69): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/rooms.ts(361,65): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(89,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(98,61): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(143,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(152,68): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(226,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scene-steps.ts(227,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scene-steps.ts(241,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(250,70): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(294,23): error TS7053: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{ scene_id: string; step_number: string; step_type: string; name: string; description: string; config: string; timing_config: string; required: string; repeatable: string; max_attempts: string; execution_mode: string; execution_interval: string; loop_id: string; }'.
+  No index signature with a parameter of type 'string' was found on type '{ scene_id: string; step_number: string; step_type: string; name: string; description: string; config: string; timing_config: string; required: string; repeatable: string; max_attempts: string; execution_mode: string; execution_interval: string; loop_id: string; }'.
+Error: src/routes/scene-steps.ts(310,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scene-steps.ts(342,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(351,73): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(374,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(383,75): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(414,24): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scene-steps.ts(422,30): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scene-steps.ts(450,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(459,75): error TS7030: Not all code paths return a value.
+Error: src/routes/scene-steps.ts(516,47): error TS18046: 'executorError' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(520,57): error TS18046: 'executorError' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(522,16): error TS18046: 'executorError' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(522,48): error TS18046: 'executorError' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(530,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scene-steps.ts(538,26): error TS7006: Parameter 'step' implicitly has an 'any' type.
+Error: src/routes/scene-steps.ts(614,10): error TS6133: 'getTestAction' is declared but its value is never read.
+Error: src/routes/scene-steps.ts(614,24): error TS7006: Parameter 'step' implicitly has an 'any' type.
+Error: src/routes/scenes.ts(55,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(57,19): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(92,61): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(114,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(114,58): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(156,68): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(199,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(199,52): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(245,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(256,9): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(272,70): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(295,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(295,58): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(297,54): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(297,123): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(350,17): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(369,9): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(384,73): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(407,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(407,58): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(431,67): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(453,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(453,58): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(494,76): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(524,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(524,58): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/scenes.ts(622,3): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(725,42): error TS2304: Cannot find name 'sceneIdSnakeCase'.
+Error: src/routes/scenes.ts(802,24): error TS2339: Property 'duration' does not exist on type '{ delayMs: number; action: string; target: string; }'.
+Error: src/routes/scenes.ts(807,24): error TS2339: Property 'execution' does not exist on type '{ delayMs: number; action: string; target: string; }'.
+Error: src/routes/scenes.ts(816,24): error TS2339: Property 'params' does not exist on type '{ delayMs: number; action: string; target: string; }'.
+Error: src/routes/scenes.ts(826,18): error TS2339: Property 'target' does not exist on type '{ delayMs: number; action: string; target: string; } | { delayMs: number; stepType: string; action: string; puzzleFile: string; waitForSolve: boolean; loopId?: undefined; } | { delayMs: number; stepType: string; action: string; loopId: any; puzzleFile?: undefined; waitForSolve?: undefined; }'.
+  Property 'target' does not exist on type '{ delayMs: number; stepType: string; action: string; puzzleFile: string; waitForSolve: boolean; loopId?: undefined; }'.
+Error: src/routes/scenes.ts(827,31): error TS2339: Property 'target' does not exist on type '{ delayMs: number; action: string; target: string; } | { delayMs: number; stepType: string; action: string; puzzleFile: string; waitForSolve: boolean; loopId?: undefined; } | { delayMs: number; stepType: string; action: string; loopId: any; puzzleFile?: undefined; waitForSolve?: undefined; }'.
+  Property 'target' does not exist on type '{ delayMs: number; stepType: string; action: string; puzzleFile: string; waitForSolve: boolean; loopId?: undefined; }'.
+Error: src/routes/scenes.ts(874,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(897,35): error TS7016: Could not find a declaration file for module 'node-fetch'. '/home/runner/work/sentient/sentient/node_modules/node-fetch/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/node-fetch` if it exists or add a new declaration (.d.ts) file containing `declare module 'node-fetch';`
+Error: src/routes/scenes.ts(914,20): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(926,10): error TS6133: 'req' is declared but its value is never read.
+Error: src/routes/scenes.ts(929,35): error TS7016: Could not find a declaration file for module 'node-fetch'. '/home/runner/work/sentient/sentient/node_modules/node-fetch/lib/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/node-fetch` if it exists or add a new declaration (.d.ts) file containing `declare module 'node-fetch';`
+Error: src/routes/scenes.ts(942,27): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(949,76): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(969,9): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(970,25): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(970,53): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(974,25): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(980,76): error TS7030: Not all code paths return a value.
+Error: src/routes/scenes.ts(999,9): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(1000,25): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(1000,53): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/scenes.ts(1004,25): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/system.ts(6,1): error TS6133: 'express' is declared but its value is never read.
+Error: src/routes/system.ts(23,44): error TS6133: 'req' is declared but its value is never read.
+Error: src/routes/system.ts(42,20): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/system.ts(48,61): error TS2339: Property 'value' does not exist on type 'PromiseSettledResult<{ service: string; name: string; status: string; version: any; uptime: any; error?: undefined; } | { service: string; name: string; status: string; version: string; error: any; uptime?: undefined; }>'.
+  Property 'value' does not exist on type 'PromiseRejectedResult'.
+Error: src/routes/users.ts(67,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(69,19): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(112,34): error TS7030: Not all code paths return a value.
+Error: src/routes/users.ts(117,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(117,38): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(155,67): error TS7030: Not all code paths return a value.
+Error: src/routes/users.ts(171,24): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(180,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(181,38): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(187,25): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(225,34): error TS7030: Not all code paths return a value.
+Error: src/routes/users.ts(230,26): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(231,21): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(286,26): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(305,51): error TS2345: Argument of type '{} | null' is not assignable to parameter of type 'string'.
+  Type 'null' is not assignable to type 'string'.
+Error: src/routes/users.ts(310,23): error TS18047: 'val' is possibly 'null'.
+Error: src/routes/users.ts(310,27): error TS2339: Property 'toLowerCase' does not exist on type '{}'.
+Error: src/routes/users.ts(350,72): error TS7030: Not all code paths return a value.
+Error: src/routes/users.ts(355,9): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(373,24): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(390,74): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'string'.
+Error: src/routes/users.ts(433,16): error TS6133: 'req' is declared but its value is never read.
+Error: src/routes/users.ts(444,65): error TS7030: Not all code paths return a value.
+Error: src/routes/users.ts(449,26): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(450,21): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(486,9): error TS2304: Cannot find name 'logger'.
+Error: src/routes/users.ts(486,73): error TS18046: 'err' is of type 'unknown'.
+Error: src/routes/users.ts(526,16): error TS18046: 'error' is of type 'unknown'.
+Error: src/routes/users.ts(532,43): error TS7030: Not all code paths return a value.
+Error: src/routes/users.ts(537,26): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(538,21): error TS18048: 'req.user' is possibly 'undefined'.
+Error: src/routes/users.ts(569,7): error TS2304: Cannot find name 'logger'.
+Error: src/routes/users.ts(569,53): error TS18046: 'err' is of type 'unknown'.
+Error: src/server.ts(7,19): error TS6133: 'Application' is declared but its value is never read.
+Error: src/server.ts(7,32): error TS6133: 'Request' is declared but its value is never read.
+Error: src/server.ts(7,41): error TS6133: 'Response' is declared but its value is never read.
+Error: src/server.ts(7,51): error TS6133: 'NextFunction' is declared but its value is never read.
+Error: src/server.ts(19,7): error TS6133: 'PORT' is declared but its value is never read.
+Error: src/server.ts(65,12): error TS7006: Parameter 'origin' implicitly has an 'any' type.
+Error: src/server.ts(65,20): error TS7006: Parameter 'callback' implicitly has an 'any' type.
+Error: src/server.ts(122,27): error TS6133: 'req' is declared but its value is never read.
+Error: src/server.ts(139,14): error TS18046: 'error' is of type 'unknown'.
+Error: src/server.ts(145,15): error TS6133: 'req' is declared but its value is never read.
+Error: src/server.ts(214,10): error TS7006: Parameter 'err' implicitly has an 'any' type.
+Error: src/server.ts(214,15): error TS7006: Parameter 'req' implicitly has an 'any' type.
+Error: src/server.ts(214,20): error TS7006: Parameter 'res' implicitly has an 'any' type.
+Error: src/server.ts(214,25): error TS6133: 'next' is declared but its value is never read.
+Error: src/server.ts(214,25): error TS7006: Parameter 'next' implicitly has an 'any' type.
+Error: src/types/api.ts(5,1): error TS6192: All imports in import declaration are unused.
+npm error Lifecycle script `build` failed with error:
+npm error code 2
+npm error path /home/runner/work/sentient/sentient/services/api
+npm error workspace sentient-api@1.2.0
+npm error location /home/runner/work/sentient/sentient/services/api
+npm error command failed
+npm error command sh -c tsc
+
+
+> @paragon/executor-engine@1.2.0 build
+> tsc -p tsconfig.json
+
+
+> @paragon/device-monitor@1.2.0 build
+> tsc -p tsconfig.json
+
+
+> sentient-web@1.2.0 build
+> tsc -b && vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 2194 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.47 kB │ gzip:   0.30 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+dist/assets/index-CmT1cA15.css   47.07 kB │ gzip:   8.66 kB
+dist/assets/index-BK6z-zru.js   779.50 kB │ gzip: 216.69 kB
+✓ built in 5.55s
+Error: Process completed with exit code 2.
