@@ -1,11 +1,64 @@
-# Production Docker Compose Configuration
+################################################################################
+# SENTIENT ENGINE - PRODUCTION DOCKER COMPOSE
+################################################################################
+#
 # Uses pre-built images from GitHub Container Registry (ghcr.io)
-
-version: '3.8'
+# Version: 1.2.0
+# 
+# Prerequisites:
+# - .env.production file with secure credentials
+# - MQTT broker running at mqtt.sentientengine.ai:1883
+# - PostgreSQL data directory permissions set
+# - Network access to GHCR (GitHub Container Registry)
+#
+################################################################################
 
 services:
+  ################################################################################
+  # DATABASE
+  ################################################################################
+  
+  postgres:
+    image: postgres:16-alpine
+    container_name: sentient-postgres-prod
+    restart: unless-stopped
+    env_file:
+      - .env.production
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - postgres-data-prod:/var/lib/postgresql/data
+    networks:
+      - sentient-prod
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 1G
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=postgres-prod"
+
+  ################################################################################
+  # CORE SERVICES
+  ################################################################################
+
   sentient-api:
-    image: ghcr.io/aaronlay10/sentient-api:latest
+    image: ghcr.io/aaronlay10/sentient-api:1.2.0
     container_name: sentient-api-prod
     restart: unless-stopped
     env_file:
@@ -20,58 +73,125 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       SESSION_SECRET: ${SESSION_SECRET}
       CORS_ORIGIN: ${CORS_ORIGIN}
+      LOG_LEVEL: ${LOG_LEVEL}
+      RATE_LIMIT_WINDOW_MS: ${RATE_LIMIT_WINDOW_MS}
+      RATE_LIMIT_MAX_REQUESTS: ${RATE_LIMIT_MAX_REQUESTS}
     ports:
       - "3000:3000"
     networks:
       - sentient-prod
     depends_on:
-      - postgres
-      - mosquitto
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=sentient-api-prod"
 
   executor-engine:
-    image: ghcr.io/aaronlay10/sentient-executor-engine:latest
+    image: ghcr.io/aaronlay10/executor-engine:1.2.0
     container_name: executor-engine-prod
     restart: unless-stopped
     env_file:
       - .env.production
     environment:
       NODE_ENV: production
-      PORT: 3004
+      SERVICE_PORT: 3004
       DATABASE_URL: ${DATABASE_URL}
       MQTT_URL: ${MQTT_URL}
       MQTT_USERNAME: ${MQTT_EXECUTOR_USERNAME}
       MQTT_PASSWORD: ${MQTT_EXECUTOR_PASSWORD}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - "3004:3004"
     networks:
       - sentient-prod
     depends_on:
-      - postgres
-      - mosquitto
+      postgres:
+        condition: service_healthy
+      sentient-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3004/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=executor-engine-prod"
 
   device-monitor:
-    image: ghcr.io/aaronlay10/sentient-device-monitor:latest
+    image: ghcr.io/aaronlay10/device-monitor:1.2.0
     container_name: device-monitor-prod
     restart: unless-stopped
     env_file:
       - .env.production
     environment:
       NODE_ENV: production
-      PORT: 3003
+      SERVICE_PORT: 3003
       DATABASE_URL: ${DATABASE_URL}
       MQTT_URL: ${MQTT_URL}
       MQTT_USERNAME: ${MQTT_MONITOR_USERNAME}
       MQTT_PASSWORD: ${MQTT_MONITOR_PASSWORD}
+      LOG_LEVEL: ${LOG_LEVEL}
     ports:
       - "3003:3003"
     networks:
       - sentient-prod
     depends_on:
-      - postgres
-      - mosquitto
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3003/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 128M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=device-monitor-prod"
 
   sentient-web:
-    image: ghcr.io/aaronlay10/sentient-web:latest
+    image: ghcr.io/aaronlay10/sentient-web:1.2.0
     container_name: sentient-web-prod
     restart: unless-stopped
     env_file:
@@ -84,46 +204,199 @@ services:
       - "3002:3002"
     networks:
       - sentient-prod
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3002 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=sentient-web-prod"
 
-  postgres:
-    image: postgres:16-alpine
-    container_name: sentient-postgres-prod
+  ################################################################################
+  # OBSERVABILITY (Optional)
+  ################################################################################
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sentient-prometheus-prod
     restart: unless-stopped
-    env_file:
-      - .env.production
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "9090:9090"
     volumes:
-      - postgres-data:/var/lib/postgresql/data
+      - ./config/prometheus/prometheus-prod.yml:/etc/prometheus/prometheus.yml:ro
+      - ./config/prometheus/alerts:/etc/prometheus/alerts:ro
+      - prometheus-data-prod:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
     networks:
       - sentient-prod
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:9090/-/healthy || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=prometheus-prod"
+    profiles:
+      - observability
 
-  mosquitto:
-    image: eclipse-mosquitto:2
-    container_name: sentient-mosquitto-prod
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sentient-grafana-prod
     restart: unless-stopped
     ports:
-      - "1883:1883"
-      - "9001:9001"
+      - "3200:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: https://grafana.sentientengine.ai
+      GF_INSTALL_PLUGINS: ""
+      GF_LOG_LEVEL: info
     volumes:
-      - ./config/mosquitto-prod:/mosquitto/config:ro
-      - mosquitto-data:/mosquitto/data
-      - mosquitto-logs:/mosquitto/log
+      - ./config/grafana/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./config/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+      - grafana-data-prod:/var/lib/grafana
+    depends_on:
+      - prometheus
+      - loki
     networks:
       - sentient-prod
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.1'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=grafana-prod"
+    profiles:
+      - observability
+
+  loki:
+    image: grafana/loki:latest
+    container_name: sentient-loki-prod
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./config/loki/loki-config-prod.yml:/etc/loki/loki-config.yml:ro
+      - loki-data-prod:/loki
+    command: -config.file=/etc/loki/loki-config.yml
+    networks:
+      - sentient-prod
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:3100/ready || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=loki-prod"
+    profiles:
+      - observability
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: sentient-promtail-prod
+    restart: unless-stopped
+    volumes:
+      - ./config/promtail/promtail-config-prod.yml:/etc/promtail/promtail-config.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/promtail-config.yml
+    depends_on:
+      - loki
+    networks:
+      - sentient-prod
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 256M
+        reservations:
+          cpus: '0.1'
+          memory: 64M
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+        labels: "service=promtail-prod"
+    profiles:
+      - observability
+
+################################################################################
+# NETWORKS
+################################################################################
 
 networks:
   sentient-prod:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.25.0.0/16
+
+################################################################################
+# VOLUMES
+################################################################################
 
 volumes:
-  postgres-data:
-  mosquitto-data:
-  mosquitto-logs:
+  postgres-data-prod:
+    driver: local
+  prometheus-data-prod:
+    driver: local
+  grafana-data-prod:
+    driver: local
+  loki-data-prod:
+    driver: local

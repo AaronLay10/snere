@@ -45,3 +45,4 @@ coverage/
 hardware/**/*.hex
 hardware/**/*.elf
 hardware/logs/
+.env.production
