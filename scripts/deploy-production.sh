@@ -101,6 +101,11 @@ pull_images() {
     
     cd "$PROJECT_ROOT"
     
+    # Source GHCR credentials from .env.production if not already set
+    if [ -z "${GHCR_TOKEN:-}" ] && [ -f "$PROJECT_ROOT/.env.production" ]; then
+        source <(grep -E '^GHCR_(TOKEN|USERNAME)=' "$PROJECT_ROOT/.env.production" | sed 's/^/export /')
+    fi
+    
     # Check if we need to login to GHCR (for private images)
     if [ -n "${GHCR_TOKEN:-}" ]; then
         log_info "Logging in to GitHub Container Registry..."

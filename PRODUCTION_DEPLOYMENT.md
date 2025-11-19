@@ -63,13 +63,25 @@ The Docker images are stored in GitHub Container Registry and may be private. Yo
 
 ### Option B: Use GitHub Token (For private images)
 
+1. **Create a GitHub Personal Access Token:**
+   - Go to https://github.com/settings/tokens
+   - Click "Generate new token (classic)"
+   - Name: "Sentient Production Deployment"
+   - Select scope: `read:packages`
+   - Generate and copy the token
+
+2. **Add to .env.production on your server:**
+
 ```bash
-# Create a GitHub Personal Access Token with `read:packages` scope
-# Then login to GHCR on your server:
-export GHCR_TOKEN=your_github_token_here
-export GHCR_USERNAME=AaronLay10
-echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USERNAME --password-stdin
+# Edit .env.production
+nano .env.production
+
+# Update these lines:
+GHCR_TOKEN=ghp_your_actual_token_here
+GHCR_USERNAME=AaronLay10
 ```
+
+The deployment script will automatically use these credentials to authenticate with GHCR.
 
 ## Step 3: Deploy to Production
 
