@@ -90,6 +90,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          path: /opt/sentient
 
       - name: Login to GitHub Container Registry
         run: |
@@ -98,11 +100,14 @@ jobs:
       - name: Deploy with deployment script
         working-directory: /opt/sentient
         run: |
-          # Pull latest code
-          git fetch origin
-          git reset --hard origin/main
+          # Ensure .env.production exists
+          if [ ! -f .env.production ]; then
+            echo "❌ .env.production not found. Please create it first."
+            exit 1
+          fi
 
           # Run deployment script
+          chmod +x ./scripts/deploy-production.sh
           ./scripts/deploy-production.sh
 
       - name: Health check
