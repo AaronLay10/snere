@@ -100,6 +100,15 @@ pull_images() {
     log_info "Pulling latest Docker images from GHCR..."
     
     cd "$PROJECT_ROOT"
+    
+    # Check if we need to login to GHCR (for private images)
+    if [ -n "${GHCR_TOKEN:-}" ]; then
+        log_info "Logging in to GitHub Container Registry..."
+        echo "$GHCR_TOKEN" | docker login ghcr.io -u "${GHCR_USERNAME:-$USER}" --password-stdin > /dev/null 2>&1 || {
+            log_warning "Failed to login to GHCR, attempting pull without auth..."
+        }
+    fi
+    
     docker compose -f docker-compose.prod.yml --env-file .env.production pull
     
     log_success "Images pulled successfully"

@@ -34,6 +34,7 @@ nano .env.production
 ```
 
 **Required changes:**
+
 - `POSTGRES_PASSWORD` - Secure PostgreSQL password
 - `MQTT_PASSWORD` - MQTT API service password
 - `MQTT_EXECUTOR_PASSWORD` - MQTT executor service password
@@ -43,10 +44,34 @@ nano .env.production
 - `GRAFANA_PASSWORD` - Grafana admin password (if using observability)
 
 **Optional changes:**
+
 - `VITE_API_URL` - Your production API URL
 - `CORS_ORIGIN` - Your production domains
 
-## Step 2: Deploy to Production
+## Step 2: Authenticate with GitHub Container Registry
+
+The Docker images are stored in GitHub Container Registry and may be private. You have two options:
+
+### Option A: Make Packages Public (Recommended for simpler deployment)
+
+1. Go to https://github.com/AaronLay10?tab=packages
+2. For each package (sentient-api, sentient-executor-engine, sentient-device-monitor, sentient-web):
+   - Click on the package
+   - Go to "Package settings"
+   - Scroll to "Danger Zone"
+   - Click "Change visibility" → "Public"
+
+### Option B: Use GitHub Token (For private images)
+
+```bash
+# Create a GitHub Personal Access Token with `read:packages` scope
+# Then login to GHCR on your server:
+export GHCR_TOKEN=your_github_token_here
+export GHCR_USERNAME=AaronLay10
+echo $GHCR_TOKEN | docker login ghcr.io -u $GHCR_USERNAME --password-stdin
+```
+
+## Step 3: Deploy to Production
 
 ### Option A: Using the Deployment Script (Recommended)
 
@@ -111,7 +136,7 @@ If using Nginx or another reverse proxy:
 server {
     listen 443 ssl;
     server_name api.sentientengine.ai;
-    
+
     location / {
         proxy_pass http://localhost:3000;
         proxy_set_header Host $host;
@@ -123,7 +148,7 @@ server {
 server {
     listen 443 ssl;
     server_name sentientengine.ai;
-    
+
     location / {
         proxy_pass http://localhost:3002;
         proxy_set_header Host $host;
@@ -140,6 +165,7 @@ server {
 ## Common Operations
 
 ### View Logs
+
 ```bash
 # All services
 docker compose -f docker-compose.prod.yml logs -f
@@ -149,6 +175,7 @@ docker compose -f docker-compose.prod.yml logs -f sentient-api
 ```
 
 ### Restart Services
+
 ```bash
 # All services
 docker compose -f docker-compose.prod.yml restart
@@ -158,6 +185,7 @@ docker compose -f docker-compose.prod.yml restart sentient-api
 ```
 
 ### Update to New Version
+
 ```bash
 # Pull new images
 docker compose -f docker-compose.prod.yml pull
@@ -167,16 +195,19 @@ docker compose -f docker-compose.prod.yml up -d
 ```
 
 ### Backup Database
+
 ```bash
 docker exec sentient-postgres-prod pg_dump -U sentient_prod sentient_prod > backup_$(date +%Y%m%d).sql
 ```
 
 ### Restore Database
+
 ```bash
 docker exec -i sentient-postgres-prod psql -U sentient_prod sentient_prod < backup.sql
 ```
 
 ### Stop All Services
+
 ```bash
 docker compose -f docker-compose.prod.yml down
 ```
@@ -186,11 +217,13 @@ docker compose -f docker-compose.prod.yml down
 ### Services Won't Start
 
 1. **Check logs:**
+
    ```bash
    docker compose -f docker-compose.prod.yml logs
    ```
 
 2. **Verify .env.production:**
+
    ```bash
    cat .env.production | grep CHANGE_ME
    # Should return nothing
@@ -204,6 +237,7 @@ docker compose -f docker-compose.prod.yml down
 ### Database Connection Issues
 
 1. **Check PostgreSQL is running:**
+
    ```bash
    docker compose -f docker-compose.prod.yml ps postgres
    ```
@@ -216,6 +250,7 @@ docker compose -f docker-compose.prod.yml down
 ### Image Pull Issues
 
 1. **Login to GitHub Container Registry:**
+
    ```bash
    echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
    ```
@@ -240,6 +275,7 @@ docker compose -f docker-compose.prod.yml down
 ## Support
 
 For issues or questions:
+
 - Check logs: `docker compose -f docker-compose.prod.yml logs -f`
 - Review system architecture: `SYSTEM_ARCHITECTURE.md`
 - Check deployment docs: `docs/DEPLOYMENT.md`
