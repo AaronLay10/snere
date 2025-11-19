@@ -1,33 +1,41 @@
 # Sentient API Production Dockerfile
 # Multi-stage build for optimized production image
 
-FROM node:20-alpine AS base
+FROM node:20-alpine AS builder
 
-# Install production dependencies
-RUN apk add --no-cache curl
+# Install build tools
+RUN apk add --no-cache python3 make g++
 
 WORKDIR /app
 
-# Copy package files (service-level package.json only, no lockfile needed for individual service)
-COPY package.json ./
+# Copy package files
+COPY package.json tsconfig.json ./
 
-# Install production dependencies directly (no lockfile verification)
-RUN npm install --omit=dev --no-package-lock
+# Install ALL dependencies (including dev for TypeScript compilation)
+RUN npm install --no-package-lock
 
 # Copy application source
 COPY src ./src
 
+# Build TypeScript
+RUN npm run build
+
 # Production stage
 FROM node:20-alpine AS runner
+
+# Install runtime dependencies
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy dependencies and source from base
-COPY --from=base /app/node_modules ./node_modules
-COPY --from=base /app/src ./src
+# Copy package files and install only production dependencies
 COPY package.json ./
+RUN npm install --omit=dev --no-package-lock
+
+# Copy built JavaScript from builder
+COPY --from=builder /app/dist ./dist
 
 # Create uploads directory
 RUN mkdir -p uploads
@@ -39,5 +47,5 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
-# Start application
-CMD ["node", "src/server.js"]
+# Start application from compiled dist
+CMD ["node", "dist/server.js"]
